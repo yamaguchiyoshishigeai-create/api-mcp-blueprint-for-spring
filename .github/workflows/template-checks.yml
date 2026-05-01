@@ -1,0 +1,37 @@
+name: template-checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Placeholder check
+        run: |
+          if grep -R -n "{{" . --exclude-dir=.git; then
+            echo "placeholder start token found"
+            exit 1
+          fi
+          if grep -R -n "}}" . --exclude-dir=.git; then
+            echo "placeholder end token found"
+            exit 1
+          fi
+
+      - name: Run task index check
+        run: python scripts/check_tsk_index_consistency.py
+
+      - name: Run AI evidence check
+        run: python scripts/check_ai_repo_result.py .github/PULL_REQUEST_TEMPLATE.md
+
+      - name: Run prompt git safety check
+        run: python scripts/test_codex_prompt_git_safety.py
