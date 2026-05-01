@@ -79,3 +79,30 @@ APIM-002に基づき、API + MCP Blueprint Compiler for Spring の初期リポ�
 
 - APIM-002成果物は `main` へ反映済み。
 - 今後の通常運用では、作業ブランチ → PR → ユーザーmerge判断の流れに戻す。
+
+## APIM-003配置（2026-05-02）
+
+- 作業ブランチ: `docs/apim-003-mvp-requirements`
+- PASS: APIM-003正本本文を指示書末尾の添付本文から `docs/20_要件定義/APIM-003-API-MCP-Blueprint-Compiler-for-Spring-MVP最小要件定義書-v0.1.md` に配置した。
+- PASS: `docs/20_要件定義/20_要件定義ガイド.md` にAPIM-003への導線を追加した。
+- PASS: `改善タスク課題一覧.md` の TSK-003 を `確認待ち` に更新した。
+- PASS: `未解決/TSK-003.md` を `確認待ち/TSK-003.md` へ移動し、個票状態を `確認待ち` に更新した。
+- PASS: `pom.xml` / `src/` / Spring Boot実装 / MCPサーバー実装の追加なし。
+
+## 作業ブランチ
+
+- `docs/apim-003-mvp-requirements`
+
+## 実施した検証
+
+- `Test-Path docs/20_要件定義/APIM-003-API-MCP-Blueprint-Compiler-for-Spring-MVP最小要件定義書-v0.1.md`
+- `git status`
+- `git diff --stat`
+- `git diff --name-only`
+- `python scripts/check_tsk_index_consistency.py`
+- `python scripts/check_ai_repo_result.py .github/PULL_REQUEST_TEMPLATE.md`
+- `python scripts/test_codex_prompt_git_safety.py`
+
+## 未実施の検証と理由
+
+- なし
