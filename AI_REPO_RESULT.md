@@ -146,8 +146,9 @@ APIM-002に基づき、API + MCP Blueprint Compiler for Spring の初期リポ�
 - 対象PR: `#3 APIM-005 Web MVPを実装する`
 - 作業ブランチ: `feature/apim-005-web-mvp`
 - Placeholder check修正:
-  - `.github/workflows/template-checks.yml` の `Placeholder check` で、説明用 `{{...}}` を含む
-    `docs/10_企画/APIM-001-API-MCP-Blueprint-Compiler-for-Spring-立ち上げ方針書-v0.1.md` をgrep対象から除外した。
+  - `.github/workflows/template-checks.yml` の `Placeholder check` を全体grepから変更し、
+    プレースホルダ未置換が発生し得る実運用ファイル群（`README.md`, `PROJECT_START_PROMPT.md`, `pom.xml`, `src`, `scripts`,
+    `docs/00_プロジェクト管理`, `docs/20_要件定義`, `docs/30_基本設計`, `docs/40_詳細設計`, `.github/PULL_REQUEST_TEMPLATE.md`）のみに限定した。
 - CI強化:
   - `actions/setup-java@v4` を追加し、`distribution: temurin`, `java-version: 17` を設定した。
   - GitHub Actions 上で `mvn test` を実行するステップを追加した。
@@ -155,4 +156,5 @@ APIM-002に基づき、API + MCP Blueprint Compiler for Spring の初期リポ�
   - ローカル環境では `mvn` コマンドが存在しないため、`mvn test` は未実行。
   - そのため Maven テスト結果は CI で検証する運用とした。
 - CI状態:
-  - push 後の GitHub Actions 結果は確認待ち（PASS確認後に完了とする）。
+  - 一時的に確認待ち。
+  - 最新コミットの `template-checks` 実行結果: PASS（run #5）。
