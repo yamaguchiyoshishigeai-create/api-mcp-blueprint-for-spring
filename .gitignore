@@ -1,0 +1,32 @@
+# Maven build outputs
+target/
+
+# Java build artifacts
+*.class
+*.jar
+*.war
+*.ear
+
+# Test and runtime logs
+*.log
+
+# Local APIM execution results
+APIM-*.result
+APIM-*-springboot.out
+APIM-*-springboot.err
+
+# IDE local files
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS local files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
