@@ -158,3 +158,42 @@ APIM-002に基づき、API + MCP Blueprint Compiler for Spring の初期リポ�
 - CI状態:
   - 一時的に確認待ち。
   - 最新コミットの `template-checks` 実行結果: PASS（run #5）。
+
+## APIM-006 Web MVP初回レビュー・改善
+
+### 作業ブランチ
+
+feature/apim-006-web-mvp-first-review
+
+### 実施内容
+
+- Web MVPの動作確認（可能範囲）
+- サンプル入力観点に基づく生成品質確認
+- UI / UX確認と軽微改善（結果画面導線・警告表示）
+- API / MCP生成品質確認・改善
+- セキュリティ・承認・監査ログ注意点確認・改善
+- README整合確認・追記
+- テスト追加・修正
+- TSK-006追加
+
+### 検証結果
+
+- mvn test: 未実施（ローカルに `mvn` コマンドがないため）
+- 起動確認: 未実施（ローカルに `mvn` コマンドがないため）
+- 入力画面確認: コードレビューで確認済み
+- サンプル入力確認: 単体テストで主要候補の生成を確認
+- Markdownプレビュー確認: テンプレート・テストで確認
+- AI実装指示書プレビュー確認: テンプレート・テストで確認
+- scripts検証: PASS
+
+### 実施しなかったこと
+
+- MCPサーバー実装
+- 外部LLM API連携
+- DB永続化
+- Spring Security導入
+- OpenAPI完全生成
+
+### 残課題
+
+- ローカル環境に Maven がないため、`mvn test` / `mvn spring-boot:run` の実機確認はCIに依存する。

@@ -19,8 +19,8 @@ public class OperationClassifier {
             OperationType.DELETE, new String[]{"削除", "廃止", "取消"},
             OperationType.APPROVAL, new String[]{"承認", "却下", "申請"},
             OperationType.SUMMARY, new String[]{"要約", "整理"},
-            OperationType.NOTIFICATION, new String[]{"通知", "送信"},
-            OperationType.PERMISSION, new String[]{"権限", "ロール", "許可"}
+            OperationType.NOTIFICATION, new String[]{"通知", "送信", "外部送信", "外部公開", "公開"},
+            OperationType.PERMISSION, new String[]{"権限", "ロール", "許可", "権限変更"}
     );
 
     public Set<OperationType> classify(BlueprintInput input) {

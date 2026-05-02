@@ -71,6 +71,12 @@ pre {
   color: #8a2e00;
 }
 
+.warning-strong {
+  background: #ffe8e0;
+  color: #9a1c00;
+  font-weight: 700;
+}
+
 .error {
   color: #b00020;
   margin: 4px 0 0;

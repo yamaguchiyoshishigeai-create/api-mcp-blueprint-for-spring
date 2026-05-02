@@ -26,5 +26,6 @@ class MarkdownDocumentGeneratorTest {
         assertThat(markdown).contains("## 5. RESTエンドポイント一覧");
         assertThat(markdown).contains("## 8. MCP tools一覧");
         assertThat(markdown).contains("## 13. セキュリティ注意点");
+        assertThat(markdown).contains("## 11. API / MCP tool 対応表");
     }
 }
