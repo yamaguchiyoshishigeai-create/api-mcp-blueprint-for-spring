@@ -140,3 +140,19 @@ APIM-002に基づき、API + MCP Blueprint Compiler for Spring の初期リポ�
   - 外部LLM API連携
   - Spring Security
   - OpenAPI完全生成
+
+## PR #3 追加修正（2026-05-02）
+
+- 対象PR: `#3 APIM-005 Web MVPを実装する`
+- 作業ブランチ: `feature/apim-005-web-mvp`
+- Placeholder check修正:
+  - `.github/workflows/template-checks.yml` の `Placeholder check` で、説明用 `{{...}}` を含む
+    `docs/10_企画/APIM-001-API-MCP-Blueprint-Compiler-for-Spring-立ち上げ方針書-v0.1.md` をgrep対象から除外した。
+- CI強化:
+  - `actions/setup-java@v4` を追加し、`distribution: temurin`, `java-version: 17` を設定した。
+  - GitHub Actions 上で `mvn test` を実行するステップを追加した。
+- ローカル実行について:
+  - ローカル環境では `mvn` コマンドが存在しないため、`mvn test` は未実行。
+  - そのため Maven テスト結果は CI で検証する運用とした。
+- CI状態:
+  - push 後の GitHub Actions 結果は確認待ち（PASS確認後に完了とする）。

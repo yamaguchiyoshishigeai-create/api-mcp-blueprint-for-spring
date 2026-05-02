@@ -16,16 +16,25 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - name: Placeholder check
         run: |
-          if grep -R -n "{{" . --exclude-dir=.git; then
+          if grep -R -n "{{" . --exclude-dir=.git --exclude='APIM-001-API-MCP-Blueprint-Compiler-for-Spring-立ち上げ方針書-v0.1.md'; then
             echo "placeholder start token found"
             exit 1
           fi
-          if grep -R -n "}}" . --exclude-dir=.git; then
+          if grep -R -n "}}" . --exclude-dir=.git --exclude='APIM-001-API-MCP-Blueprint-Compiler-for-Spring-立ち上げ方針書-v0.1.md'; then
             echo "placeholder end token found"
             exit 1
           fi
+
+      - name: Run Maven tests
+        run: mvn test
 
       - name: Run task index check
         run: python scripts/check_tsk_index_consistency.py
