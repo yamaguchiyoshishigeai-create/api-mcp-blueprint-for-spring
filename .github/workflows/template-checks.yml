@@ -41,8 +41,10 @@ jobs:
             exit 1
           fi
 
-      - name: Run Maven tests
-        run: mvn test
+      - name: Run Maven Wrapper tests
+        run: |
+          chmod +x ./mvnw
+          ./mvnw test
 
       - name: Run task index check
         run: python scripts/check_tsk_index_consistency.py

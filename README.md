@@ -10,6 +10,8 @@ API + MCP Blueprint Compiler for Spring（APIM for Spring）は、自然言語�
 
 APIM-005で、初期Web MVP（Spring Boot + Thymeleaf）を実装済みです。
 
+APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体が未導入でも、Windowsでは `./mvnw.cmd`、macOS/Linuxでは `./mvnw` からテスト・起動を実行できます。
+
 ## 初期MVP方針
 
 - 初期MVPは設計生成に限定する
@@ -59,6 +61,7 @@ APIM-005で、初期Web MVP（Spring Boot + Thymeleaf）を実装済みです。
 - 横断運用規程: `docs/00_プロジェクト管理/05_横断運用規程/`
 - PRテンプレート: `.github/PULL_REQUEST_TEMPLATE.md`
 - 最低限チェック: `.github/workflows/template-checks.yml`, `scripts/*.py`
+- Maven Wrapper: `mvnw`, `mvnw.cmd`, `.mvn/wrapper/maven-wrapper.properties`
 
 ## 作業分担
 
@@ -67,6 +70,20 @@ APIM-005で、初期Web MVP（Spring Boot + Thymeleaf）を実装済みです。
 - PR確認・merge判断: ユーザー
 
 ## Web MVP 起動方法
+
+Windows PowerShell:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+macOS/Linux:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Maven本体をインストール済みの場合:
 
 ```bash
 mvn spring-boot:run
@@ -77,6 +94,20 @@ mvn spring-boot:run
 `http://localhost:8080/`
 
 ## テスト実行
+
+Windows PowerShell:
+
+```powershell
+.\mvnw.cmd test
+```
+
+macOS/Linux:
+
+```bash
+./mvnw test
+```
+
+Maven本体をインストール済みの場合:
 
 ```bash
 mvn test
@@ -99,4 +130,4 @@ mvn test
 - Product Category: Spring向け API / MCP 設計生成支援ツール
 - Target Framework: Spring Boot / Spring Framework
 - Primary Runtime: Java 17
-- Build Tool: Maven
+- Build Tool: Maven / Maven Wrapper

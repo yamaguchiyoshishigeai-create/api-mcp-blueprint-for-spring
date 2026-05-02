@@ -197,3 +197,33 @@ feature/apim-006-web-mvp-first-review
 ### 残課題
 
 - ローカル環境に Maven がないため、`mvn test` / `mvn spring-boot:run` の実機確認はCIに依存する。
+
+## APIM-008 Maven Wrapper導入
+
+### 作業ブランチ
+
+feature/apim-008-maven-wrapper
+
+### 実施内容
+
+- Maven Wrapper設定を追加した。
+- `mvnw` を追加した。
+- `mvnw.cmd` を追加した。
+- `.mvn/wrapper/maven-wrapper.properties` を追加した。
+- GitHub ActionsのMaven testを `./mvnw test` 経由へ変更した。
+- READMEに Maven Wrapper を使った起動・テスト手順を追記した。
+- TSK-007を追加した。
+
+### 検証予定
+
+- GitHub Actions `template-checks`: 確認待ち
+- Windowsローカル: `./mvnw.cmd test` をAPIM-008 merge後に確認予定
+- Windowsローカル: `./mvnw.cmd spring-boot:run` をAPIM-008 merge後に確認予定
+
+### 実施しなかったこと
+
+- Spring-Tool-Development-Template 側の修正
+- Q-Scout-for-Spring 側の修正
+- 外部LLM API連携
+- DB永続化
+- MCPサーバー実装
