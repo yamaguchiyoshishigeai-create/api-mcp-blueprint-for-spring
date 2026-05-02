@@ -32,7 +32,7 @@ public class SecurityNotesGenerator {
             notes.add(new SecurityNote("権限変更", "権限変更操作はAI実行不可とし、管理者承認必須とする。"));
         }
         if (operations.contains(OperationType.NOTIFICATION)) {
-            notes.add(new SecurityNote("外部送信", "外部送信は承認フローと送信先制限を設ける。"));
+            notes.add(new SecurityNote("外部送信", "外部送信・外部公開は承認必須とし、AIの直接実行を禁止する。"));
         }
 
         String br = lower(input.getBusinessRequirements()) + " " + lower(input.getRequiredOperations());

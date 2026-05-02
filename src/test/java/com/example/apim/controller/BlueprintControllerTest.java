@@ -69,4 +69,18 @@ class BlueprintControllerTest {
                 .andExpect(view().name("result"))
                 .andExpect(model().attributeExists("blueprintResult"));
     }
+
+    @Test
+    void previewRedirectsWhenNoResultIsStored() throws Exception {
+        mockMvc.perform(get("/blueprint/preview"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void implementationPreviewRedirectsWhenNoResultIsStored() throws Exception {
+        mockMvc.perform(get("/blueprint/implementation-instructions"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/"));
+    }
 }

@@ -17,7 +17,7 @@ public class ImplementationInstructionGenerator {
                 .append("- API/MCP候補生成\n")
                 .append("- 結果表示とプレビュー\n\n")
                 .append("## 3. 実装しないこと\n")
-                .append("- 完全動作するMCPサーバー\n")
+                .append("- 完全動作するMCPサーバーは実装しない\n")
                 .append("- DB永続化\n")
                 .append("- 外部LLM API連携\n")
                 .append("- Spring Security\n\n")

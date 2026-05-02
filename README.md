@@ -8,6 +8,8 @@ API + MCP Blueprint Compiler for Spring（APIM for Spring）は、自然言語�
 
 本リポジトリは、APIM for Spring の設計・運用文書を正本管理し、MVPの要件整理と設計生成フローを段階的に具体化するための基盤です。
 
+APIM-005で、初期Web MVP（Spring Boot + Thymeleaf）を実装済みです。
+
 ## 初期MVP方針
 
 - 初期MVPは設計生成に限定する

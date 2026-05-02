@@ -13,14 +13,16 @@ public class DomainNameNormalizer {
             "顧客管理", "customers",
             "注文管理", "orders",
             "在庫管理", "inventory",
-            "商品管理", "products"
+            "商品管理", "products",
+            "ユーザー管理", "users"
     );
 
     private static final Map<String, String> CLASS_MAP = Map.of(
             "顧客管理", "Customer",
             "注文管理", "Order",
             "在庫管理", "Inventory",
-            "商品管理", "Product"
+            "商品管理", "Product",
+            "ユーザー管理", "User"
     );
 
     private static final Pattern NON_ALNUM = Pattern.compile("[^a-z0-9]+");
