@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>APIM for Spring ヘルプ</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <h1>ヘルプ</h1>
+
+    <h2>APIM for Spring の目的</h2>
+    <p>業務要件から API と MCP を同時に設計するための支援ツールです。</p>
+
+    <h2>APIとMCPの違い</h2>
+    <ul>
+        <li>API: 人間・フロントエンド・他システム向け</li>
+        <li>MCP: AIエージェント向けの操作・参照入口</li>
+    </ul>
+
+    <h2>初期MVPで生成するもの</h2>
+    <ul>
+        <li>REST API候補</li>
+        <li>MCP tools/resources/prompts 候補</li>
+        <li>API/MCP対応表</li>
+        <li>セキュリティ・承認・監査ログ注意点</li>
+        <li>Markdown設計書とAI実装指示書</li>
+    </ul>
+
+    <h2>初期MVPで生成しないもの</h2>
+    <ul>
+        <li>完全動作するMCPサーバー</li>
+        <li>外部LLM API連携</li>
+        <li>DB永続化</li>
+        <li>認証認可の本格実装</li>
+    </ul>
+
+    <h2>Q-Scout for Spring との差別化</h2>
+    <p>APIM for Spring は新規設計生成、Q-Scout for Spring は既存システム診断を対象とします。</p>
+
+    <h2>AI実装指示書利用時の注意</h2>
+    <p>出力は人間レビュー前提です。削除・権限変更・外部送信は承認フローを設計してください。</p>
+
+    <a href="/">入力画面へ戻る</a>
+</main>
+</body>
+</html>

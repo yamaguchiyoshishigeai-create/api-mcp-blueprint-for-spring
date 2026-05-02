@@ -1,0 +1,83 @@
+package com.example.apim.controller;
+
+import com.example.apim.model.BlueprintInput;
+import com.example.apim.model.BlueprintResult;
+import com.example.apim.service.BlueprintGenerationService;
+import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
+
+@Controller
+@SessionAttributes("blueprintResult")
+public class BlueprintController {
+
+    private final BlueprintGenerationService generationService;
+
+    public BlueprintController(BlueprintGenerationService generationService) {
+        this.generationService = generationService;
+    }
+
+    @ModelAttribute("blueprintInput")
+    public BlueprintInput blueprintInput() {
+        return new BlueprintInput();
+    }
+
+    @ModelAttribute("blueprintResult")
+    public BlueprintResult blueprintResult() {
+        return new BlueprintResult();
+    }
+
+    @GetMapping("/")
+    public String showForm(Model model) {
+        model.addAttribute("sampleBusinessRequirements", sampleBusinessRequirements());
+        return "index";
+    }
+
+    @PostMapping("/blueprint/generate")
+    public String generate(@Valid @ModelAttribute("blueprintInput") BlueprintInput input,
+                           BindingResult bindingResult,
+                           Model model) {
+        model.addAttribute("sampleBusinessRequirements", sampleBusinessRequirements());
+        if (bindingResult.hasErrors()) {
+            return "index";
+        }
+        BlueprintResult result = generationService.generate(input);
+        model.addAttribute("blueprintResult", result);
+        return "result";
+    }
+
+    @GetMapping("/blueprint/preview")
+    public String previewBlueprint(@ModelAttribute("blueprintResult") BlueprintResult result) {
+        if (result.getBlueprintMarkdown() == null || result.getBlueprintMarkdown().isBlank()) {
+            return "redirect:/";
+        }
+        return "blueprint-preview";
+    }
+
+    @GetMapping("/blueprint/implementation-instructions")
+    public String previewImplementationInstructions(@ModelAttribute("blueprintResult") BlueprintResult result) {
+        if (result.getImplementationInstructions() == null || result.getImplementationInstructions().isBlank()) {
+            return "redirect:/";
+        }
+        return "implementation-instructions-preview";
+    }
+
+    @GetMapping("/help")
+    public String help() {
+        return "help";
+    }
+
+    private String sampleBusinessRequirements() {
+        return """
+                社内の営業担当が顧客情報を検索し、問い合わせ履歴を確認できる。
+                管理者は顧客情報を登録・更新できる。
+                AIアシスタントには顧客検索と問い合わせ履歴の要約を許可したい。
+                顧客情報の更新はAIが直接実行せず、変更案を作成して人間承認後に反映する。
+                """;
+    }
+}

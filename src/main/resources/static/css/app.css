@@ -1,0 +1,97 @@
+body {
+  font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
+  margin: 0;
+  background: #f7f8fb;
+  color: #1d2430;
+}
+
+.container {
+  width: min(980px, 92vw);
+  margin: 24px auto 48px;
+  background: #fff;
+  border: 1px solid #d8dee9;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+h1, h2, h3 {
+  margin-top: 1.2em;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin: 10px 0 6px;
+}
+
+input, textarea, select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #bfc7d5;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+button {
+  margin-top: 14px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #1c4ccf;
+  color: #fff;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+th, td {
+  border: 1px solid #d8dee9;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+pre, code {
+  font-family: Consolas, "Courier New", monospace;
+}
+
+pre {
+  border: 1px solid #d8dee9;
+  background: #f5f7fb;
+  padding: 12px;
+  overflow-x: auto;
+}
+
+.warning {
+  color: #8a2e00;
+}
+
+.error {
+  color: #b00020;
+  margin: 4px 0 0;
+}
+
+.notice {
+  background: #f0f5ff;
+  border: 1px solid #c8d6f8;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.links {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.card {
+  border: 1px solid #e1e6f0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}

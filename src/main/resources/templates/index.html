@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>APIM for Spring - 入力画面</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <h1>API + MCP Blueprint Compiler for Spring</h1>
+    <p>自然言語の業務要件から、API設計とMCP設計の候補を生成します。</p>
+
+    <section class="notice">
+        <h2>初期MVPで生成するもの</h2>
+        <ul>
+            <li>API設計候補</li>
+            <li>MCP tools / resources / prompts 候補</li>
+            <li>API/MCP対応表</li>
+            <li>セキュリティ・承認・監査ログ注意点</li>
+            <li>Markdown設計書 / AI実装指示書</li>
+        </ul>
+        <h2>初期MVPで生成しないもの</h2>
+        <ul>
+            <li>完全動作するMCPサーバー</li>
+            <li>DB永続化</li>
+            <li>外部LLM API連携</li>
+        </ul>
+    </section>
+
+    <section>
+        <button type="button" onclick="fillSample()">サンプル入力を挿入</button>
+        <a href="/help">ヘルプ</a>
+    </section>
+
+    <form method="post" th:action="@{/blueprint/generate}" th:object="${blueprintInput}">
+        <label>業務要件（必須）</label>
+        <textarea id="businessRequirements" th:field="*{businessRequirements}" rows="7"></textarea>
+        <p class="error" th:if="${#fields.hasErrors('businessRequirements')}" th:errors="*{businessRequirements}"></p>
+
+        <label>対象ドメイン（必須）</label>
+        <input id="targetDomain" type="text" th:field="*{targetDomain}">
+        <p class="error" th:if="${#fields.hasErrors('targetDomain')}" th:errors="*{targetDomain}"></p>
+
+        <label>ユーザー種別（必須）</label>
+        <textarea id="userTypes" th:field="*{userTypes}" rows="4"></textarea>
+        <p class="error" th:if="${#fields.hasErrors('userTypes')}" th:errors="*{userTypes}"></p>
+
+        <label>必要な操作（必須）</label>
+        <textarea id="requiredOperations" th:field="*{requiredOperations}" rows="5"></textarea>
+        <p class="error" th:if="${#fields.hasErrors('requiredOperations')}" th:errors="*{requiredOperations}"></p>
+
+        <label>AIアシスタントに許可したい操作（必須）</label>
+        <textarea id="allowedAiOperations" th:field="*{allowedAiOperations}" rows="5"></textarea>
+        <p class="error" th:if="${#fields.hasErrors('allowedAiOperations')}" th:errors="*{allowedAiOperations}"></p>
+
+        <label>読み取り専用操作（任意）</label>
+        <textarea id="readOnlyOperations" th:field="*{readOnlyOperations}" rows="3"></textarea>
+
+        <label>書き込み許可操作（任意）</label>
+        <textarea id="writeOperations" th:field="*{writeOperations}" rows="3"></textarea>
+
+        <label>承認必須操作（任意）</label>
+        <textarea id="approvalRequiredOperations" th:field="*{approvalRequiredOperations}" rows="3"></textarea>
+
+        <label>監査ログが必要な操作（任意）</label>
+        <textarea id="auditLogRequiredOperations" th:field="*{auditLogRequiredOperations}" rows="3"></textarea>
+
+        <label>想定認証方式（任意）</label>
+        <input id="authenticationMethod" type="text" th:field="*{authenticationMethod}">
+
+        <label>想定利用者（任意）</label>
+        <input id="targetUsers" type="text" th:field="*{targetUsers}">
+
+        <label>出力言語（任意）</label>
+        <select id="outputLanguage" th:field="*{outputLanguage}">
+            <option value="日本語">日本語</option>
+            <option value="English">English</option>
+        </select>
+
+        <button type="submit">設計候補を生成する</button>
+    </form>
+</main>
+
+<script th:inline="javascript">
+    function fillSample() {
+        document.getElementById('businessRequirements').value = /*[[${sampleBusinessRequirements}]]*/ '';
+        document.getElementById('targetDomain').value = '顧客管理';
+        document.getElementById('userTypes').value = '- 営業担当\n- 管理者\n- AIアシスタント';
+        document.getElementById('requiredOperations').value = '- 顧客検索\n- 顧客詳細取得\n- 顧客登録\n- 顧客更新\n- 問い合わせ履歴取得\n- 問い合わせ履歴要約';
+        document.getElementById('allowedAiOperations').value = '- 顧客検索\n- 顧客詳細参照\n- 問い合わせ履歴要約\n- 顧客更新案の作成';
+        document.getElementById('approvalRequiredOperations').value = '- 顧客情報更新\n- 顧客削除';
+        document.getElementById('outputLanguage').value = '日本語';
+    }
+</script>
+</body>
+</html>

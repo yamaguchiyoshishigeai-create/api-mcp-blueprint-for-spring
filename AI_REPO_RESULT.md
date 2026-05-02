@@ -115,3 +115,28 @@ APIM-002に基づき、API + MCP Blueprint Compiler for Spring の初期リポ�
 - PASS: `改善タスク課題一覧.md` に `TSK-004` を追加し、状態を `確認待ち` とした。
 - PASS: `docs/00_プロジェクト管理/02_改善タスク管理/確認待ち/TSK-004.md` を追加した。
 - PASS: `pom.xml` / `src/` / Spring Boot実装 / MCPサーバー実装の追加なし。
+
+## APIM-005 Web MVP実装
+
+- 作業ブランチ: `feature/apim-005-web-mvp`
+- Spring Boot Web MVPを実装
+- 入力フォームを実装
+- API / MCP設計候補生成を実装
+- Markdown設計書生成を実装
+- AI実装指示書生成を実装
+- セキュリティ・承認・監査ログ注意点生成を実装
+- Unit Test / MVC Testを実装
+- `mvn test` 実行結果: FAIL（ローカル環境に `mvn` コマンドが存在しないため未実行）
+- 実施した検証:
+  - `Test-Path` による主要ファイル存在確認: PASS
+  - 禁止依存確認（`spring-boot-starter-security`, `spring-boot-starter-data-jpa`, `openai`, `anthropic`, `swagger`, `springdoc`）: PASS
+  - 禁止実装確認（`Entity|Repository|SecurityConfig|McpServer`）: PASS
+  - `python scripts/check_tsk_index_consistency.py`: PASS
+  - `python scripts/check_ai_repo_result.py .github/PULL_REQUEST_TEMPLATE.md`: PASS
+  - `python scripts/test_codex_prompt_git_safety.py`: PASS
+- 実装対象外:
+  - MCPサーバー
+  - DB永続化
+  - 外部LLM API連携
+  - Spring Security
+  - OpenAPI完全生成
