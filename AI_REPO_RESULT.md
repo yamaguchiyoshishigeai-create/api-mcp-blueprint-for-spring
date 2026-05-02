@@ -227,3 +227,58 @@ feature/apim-008-maven-wrapper
 - 外部LLM API連携
 - DB永続化
 - MCPサーバー実装
+
+## APIM-014 Domain Vocabulary / Resource Naming 改善（2026-05-03）
+
+### 作業目的
+
+日本語ドメイン名から生成される REST API path、DTO名、Controller雛形、MCP tools/resources/prompts 名に業務固有語彙を反映し、主要生成名が `domain-items` / `DomainItem` に寄る問題を改善する。
+
+### 修正した主要ファイル
+
+- `src/main/java/com/example/apim/support/DomainNameNormalizer.java`
+- `src/test/java/com/example/apim/support/DomainNameNormalizerTest.java`（新規）
+- `src/test/java/com/example/apim/service/BlueprintGenerationServiceTest.java`
+- `src/test/java/com/example/apim/service/McpDesignGeneratorTest.java`
+- `src/test/java/com/example/apim/service/ApiDesignGeneratorTest.java`
+- `docs/00_プロジェクト管理/02_改善タスク管理/改善タスク課題一覧.md`
+- `docs/00_プロジェクト管理/02_改善タスク管理/確認待ち/TSK-010.md`（新規）
+
+### 追加・更新したテスト
+
+- 追加: `DomainNameNormalizerTest`
+- 更新: `BlueprintGenerationServiceTest`
+- 更新: `McpDesignGeneratorTest`
+- 更新: `ApiDesignGeneratorTest`
+
+### Maven Wrapperテスト実行結果
+
+- 実行コマンド: `./mvnw.cmd test`
+- 結果: PASS（Tests run: 22, Failures: 0, Errors: 0, Skipped: 0）
+
+### 3サンプル改善確認
+
+- 備品貸出管理:
+  - API path: `/api/equipment`
+  - DTO: `EquipmentSearchRequest` ほか
+  - MCP tool: `searchEquipment`, `getEquipmentDetail`, `proposeEquipmentUpdate`, `requestEquipmentDeletionApproval`
+  - 主要生成名が `domain-items` / `DomainItem` にフォールバックしないことをテストで確認
+- 社内申請ワークフロー:
+  - API path: `/api/applications`
+  - DTO: `ApplicationSearchRequest` ほか
+  - MCP tool: `searchApplications`, `getApplicationDetail`, `requestApprovalForApplications`
+  - 主要生成名が `domain-items` / `DomainItem` にフォールバックしないことをテストで確認
+- ナレッジ検索・要約:
+  - API path: `/api/knowledge-articles`
+  - DTO: `KnowledgeArticleSearchRequest` ほか
+  - MCP tool: `searchKnowledgeArticles`, `getKnowledgeArticleDetail`, `summarizeKnowledgeArticle...`
+  - 主要生成名が `domain-items` / `DomainItem` にフォールバックしないことをテストで確認
+
+### スコープ確認
+
+- 初期MVP対象外機能（MCPサーバー実装、DB永続化、外部LLM API連携、Spring Security本格実装、OpenAPI完全生成）は追加していない。
+- 承認必須・監査ログ・危険操作の注意観点は既存仕様を維持し、関連テストでも確認した。
+
+### PR
+
+- URL: 作成後に追記
