@@ -321,4 +321,4 @@ APIM-013で手動確認した3サンプル（備品貸出管理、社内申請�
 
 ### PR
 
-- URL: 作成後に追記
+- URL: https://github.com/yamaguchiyoshishigeai-create/api-mcp-blueprint-for-spring/pull/13
