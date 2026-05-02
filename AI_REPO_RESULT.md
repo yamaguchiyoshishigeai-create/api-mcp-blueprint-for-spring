@@ -281,4 +281,4 @@ feature/apim-008-maven-wrapper
 
 ### PR
 
-- URL: 作成後に追記
+- URL: https://github.com/yamaguchiyoshishigeai-create/api-mcp-blueprint-for-spring/pull/11
