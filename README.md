@@ -10,7 +10,7 @@ API + MCP Blueprint Compiler for Spring（APIM for Spring）は、自然言語�
 
 APIM-005で、初期Web MVP（Spring Boot + Thymeleaf）を実装済みです。
 
-APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体が未導入でも、Windowsでは `./mvnw.cmd`、macOS/Linuxでは `./mvnw` からテスト・起動を実行できます。
+APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体が未導入でも、Windowsでは `mvnw.cmd`、macOS/Linuxでは `mvnw` からテスト・packageを実行できます。
 
 ## 初期MVP方針
 
@@ -71,47 +71,33 @@ APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体�
 
 ## Web MVP 起動方法
 
-Windows PowerShell:
+Windows PowerShellでは、APIM-007の手動確認結果に基づき、jar起動方式を推奨します。
 
-```powershell
-.\mvnw.cmd spring-boot:run
-```
+1. `mvnw.cmd package` を実行します。
+2. 生成された `target/apim-0.0.1-SNAPSHOT.jar` をJavaで起動します。
+3. ブラウザで `http://localhost:8080/` を開きます。
 
-macOS/Linux:
+macOS/Linuxでも同様に、`mvnw package` 実行後に生成されたjarをJavaで起動します。
 
-```bash
-./mvnw spring-boot:run
-```
+### 既知課題
 
-Maven本体をインストール済みの場合:
+Windowsローカル環境では、`mvnw.cmd spring-boot:run` 実行時に main class を検出できない事象を確認しています。
 
-```bash
-mvn spring-boot:run
-```
-
-アクセスURL:
-
-`http://localhost:8080/`
+当面は package 後の jar起動を正式なローカル起動手順とします。この原因調査は TSK-008 で扱います。
 
 ## テスト実行
 
 Windows PowerShell:
 
-```powershell
-.\mvnw.cmd test
-```
+`mvnw.cmd test`
 
 macOS/Linux:
 
-```bash
-./mvnw test
-```
+`mvnw test`
 
 Maven本体をインストール済みの場合:
 
-```bash
-mvn test
-```
+`mvn test`
 
 ## 初期MVPの実装範囲（APIM-005）
 
@@ -122,6 +108,19 @@ mvn test
 - Markdown設計書生成
 - AI実装指示書生成
 - セキュリティ・承認・監査ログ注意点生成
+
+## APIM-007 手動確認結果
+
+Windowsローカル環境で以下を確認済みです。
+
+- `mvnw.cmd test`: PASS
+- `mvnw.cmd package`: PASS
+- jar起動: PASS
+- `http://localhost:8080/` 入力画面表示: PASS
+- 顧客管理サンプル生成: PASS
+- Markdown設計書プレビュー: PASS
+- AI実装指示書プレビュー: PASS
+- ヘルプ画面: PASS
 
 ## リポジトリ情報
 
