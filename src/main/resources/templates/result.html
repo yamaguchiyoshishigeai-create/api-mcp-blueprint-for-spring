@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>APIM for Spring - 生成結果</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <h1>生成結果</h1>
+    <p th:text="${blueprintResult.inputSummary}"></p>
+    <p th:text="${blueprintResult.apiDesignSummary}"></p>
+
+    <h2>RESTエンドポイント一覧</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Method</th>
+            <th>Path</th>
+            <th>Purpose</th>
+            <th>Approval</th>
+            <th>Audit</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e : ${blueprintResult.apiEndpoints}">
+            <td th:text="${e.httpMethod}"></td>
+            <td th:text="${e.path}"></td>
+            <td th:text="${e.purpose}"></td>
+            <td th:text="${e.approvalRequired}"></td>
+            <td th:text="${e.auditLogRequired}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>DTO候補</h2>
+    <div th:each="d : ${blueprintResult.dtoCandidates}" class="card">
+        <h3 th:text="${d.name}"></h3>
+        <p th:text="${d.purpose}"></p>
+        <ul>
+            <li th:each="f : ${d.fields}">
+                <span th:text="${f.name}"></span> :
+                <span th:text="${f.javaType}"></span>
+                (<span th:text="${f.required ? 'required' : 'optional'}"></span>)
+            </li>
+        </ul>
+    </div>
+
+    <h2>Controller雛形</h2>
+    <pre th:text="${blueprintResult.controllerSkeleton.sourceCode}"></pre>
+
+    <h2>MCP tools</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Tool</th>
+            <th>Policy</th>
+            <th>Approval</th>
+            <th>API</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${blueprintResult.mcpTools}">
+            <td th:text="${t.name}"></td>
+            <td th:text="${t.aiExecutionPolicy}"></td>
+            <td th:text="${t.approvalRequired}"></td>
+            <td th:text="${t.relatedApi}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>MCP resources</h2>
+    <ul>
+        <li th:each="r : ${blueprintResult.mcpResources}">
+            <span th:text="${r.name}"></span> -
+            <span th:text="${r.purpose}"></span>
+            (<span th:text="${r.scope}"></span>)
+        </li>
+    </ul>
+
+    <h2>MCP prompts</h2>
+    <ul>
+        <li th:each="p : ${blueprintResult.mcpPrompts}">
+            <strong th:text="${p.name}"></strong>:
+            <span th:text="${p.purpose}"></span>
+        </li>
+    </ul>
+
+    <h2>API / MCP対応表</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>API</th>
+            <th>Tool</th>
+            <th>Notes</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${blueprintResult.apiMcpMappings}">
+            <td th:text="${m.apiPath}"></td>
+            <td th:text="${m.toolName}"></td>
+            <td th:text="${m.notes}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>セキュリティ・承認・監査ログ注意点</h2>
+    <ul>
+        <li th:each="n : ${blueprintResult.securityNotes}" class="warning">
+            <strong th:text="${n.category}"></strong>:
+            <span th:text="${n.message}"></span>
+        </li>
+    </ul>
+
+    <nav class="links">
+        <a href="/blueprint/preview">Markdown設計書プレビュー</a>
+        <a href="/blueprint/implementation-instructions">AI実装指示書プレビュー</a>
+        <a href="/">入力画面へ戻る</a>
+    </nav>
+</main>
+</body>
+</html>

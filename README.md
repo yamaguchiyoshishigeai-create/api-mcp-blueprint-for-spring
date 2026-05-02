@@ -35,11 +35,12 @@ API + MCP Blueprint Compiler for Spring（APIM for Spring）は、自然言語�
 
 ## 現時点で実装しないこと
 
-- Spring Boot実装コード
-- MCPサーバー実装コード
-- API生成ロジック実装
-- `pom.xml` 作成
-- `src/main/java` / `src/test/java` 作成
+- 完全動作するMCPサーバー実装
+- 外部LLM API連携
+- DB永続化
+- 認証認可の本格実装
+- OpenAPI完全生成
+- Docker / 本番デプロイ構成
 
 ## docs参照導線
 
@@ -62,6 +63,32 @@ API + MCP Blueprint Compiler for Spring（APIM for Spring）は、自然言語�
 - 指示書作成: ChatGPT（会話内）
 - 初期リポジトリ生成: Codex
 - PR確認・merge判断: ユーザー
+
+## Web MVP 起動方法
+
+```bash
+mvn spring-boot:run
+```
+
+アクセスURL:
+
+`http://localhost:8080/`
+
+## テスト実行
+
+```bash
+mvn test
+```
+
+## 初期MVPの実装範囲（APIM-005）
+
+- 業務要件入力フォーム
+- API設計候補生成
+- MCP設計候補生成
+- API/MCP対応表生成
+- Markdown設計書生成
+- AI実装指示書生成
+- セキュリティ・承認・監査ログ注意点生成
 
 ## リポジトリ情報
 

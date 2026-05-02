@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Implementation Instructions Preview</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <h1>AI実装指示書プレビュー</h1>
+    <pre th:text="${blueprintResult.implementationInstructions}"></pre>
+    <a href="/blueprint/preview">Markdown設計書プレビューへ</a>
+    <a href="/">入力画面へ戻る</a>
+</main>
+</body>
+</html>
