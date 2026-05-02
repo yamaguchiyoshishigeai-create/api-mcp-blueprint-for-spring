@@ -4,6 +4,7 @@ import com.example.apim.model.BlueprintInput;
 import com.example.apim.support.DomainNameNormalizer;
 import com.example.apim.support.NamingSupport;
 import com.example.apim.support.OperationClassifier;
+import com.example.apim.testsupport.BlueprintInputFixtures;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,16 +63,7 @@ class BlueprintGenerationServiceTest {
 
     @Test
     void equipmentSampleUsesEquipmentVocabularyAcrossOutputs() {
-        var result = newService().generate(sampleInput(
-                "備品貸出管理",
-                """
-                        備品を検索し、詳細参照と登録・更新・削除を行う。
-                        予約や修理依頼の対応履歴を要約する。
-                        """,
-                "- 備品検索\n- 備品詳細取得\n- 備品登録\n- 備品更新\n- 備品削除\n- 予約要約",
-                "- 備品検索\n- 備品詳細参照\n- 備品更新案の作成",
-                "- 備品削除\n- 外部業者への修理依頼送信"
-        ));
+        var result = newService().generate(BlueprintInputFixtures.equipmentLoanManagement());
 
         assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/equipment"));
         assertThat(result.getApiEndpoints()).noneMatch(e -> e.path().contains("/api/domain-items"));
@@ -89,16 +81,7 @@ class BlueprintGenerationServiceTest {
 
     @Test
     void applicationSampleUsesApplicationVocabularyAcrossOutputs() {
-        var result = newService().generate(sampleInput(
-                "社内申請ワークフロー",
-                """
-                        社内申請の検索、詳細参照、作成、更新、承認依頼を行う。
-                        申請内容の要約をAIで補助する。
-                        """,
-                "- 申請検索\n- 申請詳細取得\n- 申請作成\n- 申請更新\n- 承認依頼",
-                "- 申請検索\n- 申請詳細参照\n- 申請要約\n- 申請更新案の作成",
-                "- 承認\n- 却下\n- 代理承認者変更"
-        ));
+        var result = newService().generate(BlueprintInputFixtures.internalApplicationWorkflow());
 
         assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/applications"));
         assertThat(result.getApiEndpoints()).noneMatch(e -> e.path().contains("/api/domain-items"));
@@ -115,16 +98,7 @@ class BlueprintGenerationServiceTest {
 
     @Test
     void knowledgeSampleUsesKnowledgeArticleVocabularyAcrossOutputs() {
-        var result = newService().generate(sampleInput(
-                "ナレッジ検索・要約",
-                """
-                        ナレッジ記事の検索、詳細参照、作成、更新、外部共有リンク発行を扱う。
-                        AIが記事要約を行う。
-                        """,
-                "- ナレッジ検索\n- ナレッジ詳細取得\n- ナレッジ登録\n- ナレッジ更新\n- ナレッジ要約\n- 外部共有リンク発行",
-                "- ナレッジ検索\n- ナレッジ詳細参照\n- ナレッジ要約\n- ナレッジ更新案の作成",
-                "- 未公開記事の参照\n- 公開状態変更\n- 外部共有リンク発行"
-        ));
+        var result = newService().generate(BlueprintInputFixtures.knowledgeSearchAndSummary());
 
         assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/knowledge-articles"));
         assertThat(result.getApiEndpoints()).noneMatch(e -> e.path().contains("/api/domain-items"));
@@ -153,20 +127,4 @@ class BlueprintGenerationServiceTest {
         );
     }
 
-    private BlueprintInput sampleInput(
-            String domain,
-            String requirements,
-            String requiredOperations,
-            String allowedAiOperations,
-            String approvalRequiredOperations
-    ) {
-        BlueprintInput input = new BlueprintInput();
-        input.setBusinessRequirements(requirements);
-        input.setTargetDomain(domain);
-        input.setUserTypes("- 担当者\n- 管理者\n- AIアシスタント");
-        input.setRequiredOperations(requiredOperations);
-        input.setAllowedAiOperations(allowedAiOperations);
-        input.setApprovalRequiredOperations(approvalRequiredOperations);
-        return input;
-    }
 }

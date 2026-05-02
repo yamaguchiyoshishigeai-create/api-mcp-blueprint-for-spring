@@ -282,3 +282,43 @@ feature/apim-008-maven-wrapper
 ### PR
 
 - URL: https://github.com/yamaguchiyoshishigeai-create/api-mcp-blueprint-for-spring/pull/11
+
+## APIM-015 生成品質回帰テスト自動化（2026-05-03）
+
+### 作業目的
+
+APIM-013で手動確認した3サンプル（備品貸出管理、社内申請ワークフロー、ナレッジ検索・要約）をJUnitベースの自動回帰テストへ整理し、命名改善や生成ロジック変更時の手動ブラウザ確認負荷を下げる。
+
+### 追加・更新したテストファイル
+
+- `src/test/java/com/example/apim/testsupport/BlueprintInputFixtures.java`（新規）
+- `src/test/java/com/example/apim/service/BlueprintGenerationRegressionTest.java`（新規）
+- `src/test/java/com/example/apim/service/BlueprintGenerationServiceTest.java`
+
+### テスト観点
+
+- 3サンプル入力を再利用可能なフィクスチャとして提供する。
+- API path、DTO名、MCP tool名へ業務固有語彙が反映されることを検証する。
+- 主要生成名に `domain-items` / `DomainItem` が含まれないことを検証する。
+- 承認必須、監査ログ、禁止操作の注意点が生成結果に残ることを検証する。
+- Markdown設計書とAI実装指示書の主要章が維持されることを検証する。
+- 初期MVP対象外（MCPサーバー実装、DB永続化、外部LLM API連携、Spring Security本格実装、OpenAPI完全生成）を追加していないことを文書出力上でも確認する。
+
+### Maven Wrapperテスト実行結果
+
+- 初回: `.\mvnw.cmd test` はPowerShell実行ポリシーにより停止。
+- 再実行: `powershell -ExecutionPolicy Bypass -NoProfile -File .mvn\wrapper\mvnw-wrapper.ps1 test`
+- 結果: PASS（Tests run: 25, Failures: 0, Errors: 0, Skipped: 0）
+
+### GitHub Actions結果
+
+- PR作成後に確認予定。
+
+### 今後の確認運用
+
+- 生成ロジック、命名、文書章、承認・監査観点の通常確認はJUnit回帰テストを優先する。
+- ブラウザ手動確認はUIレイアウト変更、操作フロー変更、表示崩れ確認など画面固有リスクがある場合に限定する。
+
+### PR
+
+- URL: 作成後に追記
