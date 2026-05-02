@@ -54,3 +54,19 @@ jobs:
 
       - name: Run prompt git safety check
         run: python scripts/test_codex_prompt_git_safety.py
+
+  windows-wrapper-check:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Run Windows Maven Wrapper tests
+        shell: pwsh
+        run: .\mvnw.cmd test
