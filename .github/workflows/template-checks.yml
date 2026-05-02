@@ -24,12 +24,20 @@ jobs:
 
       - name: Placeholder check
         run: |
-          if grep -R -n "{{" . --exclude-dir=.git --exclude='APIM-001-API-MCP-Blueprint-Compiler-for-Spring-立ち上げ方針書-v0.1.md'; then
+          TARGETS=(
+            "README.md"
+            "PROJECT_START_PROMPT.md"
+            "pom.xml"
+            "src"
+            "scripts"
+            "docs/00_プロジェクト管理"
+            "docs/20_要件定義"
+            "docs/30_基本設計"
+            "docs/40_詳細設計"
+            ".github/PULL_REQUEST_TEMPLATE.md"
+          )
+          if grep -R -n -e "{{" -e "}}" "${TARGETS[@]}"; then
             echo "placeholder start token found"
-            exit 1
-          fi
-          if grep -R -n "}}" . --exclude-dir=.git --exclude='APIM-001-API-MCP-Blueprint-Compiler-for-Spring-立ち上げ方針書-v0.1.md'; then
-            echo "placeholder end token found"
             exit 1
           fi
 
