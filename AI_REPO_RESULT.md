@@ -106,3 +106,12 @@ APIM-002に基づき、API + MCP Blueprint Compiler for Spring の初期リポ�
 ## 未実施の検証と理由
 
 - なし
+
+## APIM-004配置（2026-05-02）
+
+- 作業ブランチ: `docs/apim-004-basic-design`
+- PASS: APIM-004正本本文を指示書末尾の添付本文から `docs/30_基本設計/APIM-004-API-MCP-Blueprint-Compiler-for-Spring-基本設計書-v0.1.md` に配置した。
+- PASS: `docs/30_基本設計/基本設計.md` にAPIM-004への導線を追加した。
+- PASS: `改善タスク課題一覧.md` に `TSK-004` を追加し、状態を `確認待ち` とした。
+- PASS: `docs/00_プロジェクト管理/02_改善タスク管理/確認待ち/TSK-004.md` を追加した。
+- PASS: `pom.xml` / `src/` / Spring Boot実装 / MCPサーバー実装の追加なし。
