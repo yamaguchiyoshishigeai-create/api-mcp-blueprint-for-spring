@@ -312,7 +312,7 @@ APIM-013で手動確認した3サンプル（備品貸出管理、社内申請�
 
 ### GitHub Actions結果
 
-- PR作成後に確認予定。
+- PASS（template-checks run #18）
 
 ### 今後の確認運用
 
