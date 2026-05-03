@@ -68,56 +68,76 @@
                     <button type="button" onclick="setAllChecked('domainCatalog', false); syncSelectedDomainsToTarget();">全解除</button>
                 </div>
 
-                <p class="form-help"><strong>人事・総務</strong></p>
-                <div class="checkbox-grid">
-                    <label><input type="checkbox" data-target="domainCatalog" value="社員情報管理" onchange="syncSelectedDomainsToTarget()">社員情報管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="組織管理" onchange="syncSelectedDomainsToTarget()">組織管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="勤怠管理" onchange="syncSelectedDomainsToTarget()">勤怠管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="経費精算" onchange="syncSelectedDomainsToTarget()">経費精算</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="休暇申請" onchange="syncSelectedDomainsToTarget()">休暇申請</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="備品貸出管理" onchange="syncSelectedDomainsToTarget()">備品貸出管理</label>
-                </div>
+                <div class="domain-category-list">
+                    <section class="domain-category-card">
+                        <h3>人事・総務</h3>
+                        <p>社員・組織・勤怠・申請など、社内管理系の業務ドメインです。</p>
+                        <div class="checkbox-grid">
+                            <label><input type="checkbox" data-target="domainCatalog" value="社員情報管理" onchange="syncSelectedDomainsToTarget()">社員情報管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="組織管理" onchange="syncSelectedDomainsToTarget()">組織管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="勤怠管理" onchange="syncSelectedDomainsToTarget()">勤怠管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="経費精算" onchange="syncSelectedDomainsToTarget()">経費精算</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="休暇申請" onchange="syncSelectedDomainsToTarget()">休暇申請</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="備品貸出管理" onchange="syncSelectedDomainsToTarget()">備品貸出管理</label>
+                        </div>
+                    </section>
 
-                <p class="form-help"><strong>販売・EC</strong></p>
-                <div class="checkbox-grid">
-                    <label><input type="checkbox" data-target="domainCatalog" value="顧客管理" onchange="syncSelectedDomainsToTarget()">顧客管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="注文管理" onchange="syncSelectedDomainsToTarget()">注文管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="商品管理" onchange="syncSelectedDomainsToTarget()">商品管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="在庫管理" onchange="syncSelectedDomainsToTarget()">在庫管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="請求管理" onchange="syncSelectedDomainsToTarget()">請求管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="決済管理" onchange="syncSelectedDomainsToTarget()">決済管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="配送管理" onchange="syncSelectedDomainsToTarget()">配送管理</label>
-                </div>
+                    <section class="domain-category-card">
+                        <h3>販売・EC</h3>
+                        <p>顧客・注文・商品・在庫・請求・決済・配送など、販売活動に関する業務ドメインです。</p>
+                        <div class="checkbox-grid">
+                            <label><input type="checkbox" data-target="domainCatalog" value="顧客管理" onchange="syncSelectedDomainsToTarget()">顧客管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="注文管理" onchange="syncSelectedDomainsToTarget()">注文管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="商品管理" onchange="syncSelectedDomainsToTarget()">商品管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="在庫管理" onchange="syncSelectedDomainsToTarget()">在庫管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="請求管理" onchange="syncSelectedDomainsToTarget()">請求管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="決済管理" onchange="syncSelectedDomainsToTarget()">決済管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="配送管理" onchange="syncSelectedDomainsToTarget()">配送管理</label>
+                        </div>
+                    </section>
 
-                <p class="form-help"><strong>承認・統制</strong></p>
-                <div class="checkbox-grid">
-                    <label><input type="checkbox" data-target="domainCatalog" value="承認ワークフロー" onchange="syncSelectedDomainsToTarget()">承認ワークフロー</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="通知管理" onchange="syncSelectedDomainsToTarget()">通知管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="権限管理" onchange="syncSelectedDomainsToTarget()">権限管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="監査ログ管理" onchange="syncSelectedDomainsToTarget()">監査ログ管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="契約管理" onchange="syncSelectedDomainsToTarget()">契約管理</label>
-                </div>
+                    <section class="domain-category-card">
+                        <h3>承認・統制</h3>
+                        <p>承認、通知、権限、監査ログ、契約など、統制・ガバナンスに関する横断ドメインです。</p>
+                        <div class="checkbox-grid">
+                            <label><input type="checkbox" data-target="domainCatalog" value="承認ワークフロー" onchange="syncSelectedDomainsToTarget()">承認ワークフロー</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="通知管理" onchange="syncSelectedDomainsToTarget()">通知管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="権限管理" onchange="syncSelectedDomainsToTarget()">権限管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="監査ログ管理" onchange="syncSelectedDomainsToTarget()">監査ログ管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="契約管理" onchange="syncSelectedDomainsToTarget()">契約管理</label>
+                        </div>
+                    </section>
 
-                <p class="form-help"><strong>保守・サポート</strong></p>
-                <div class="checkbox-grid">
-                    <label><input type="checkbox" data-target="domainCatalog" value="問い合わせ管理" onchange="syncSelectedDomainsToTarget()">問い合わせ管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="修理依頼" onchange="syncSelectedDomainsToTarget()">修理依頼</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="保守契約管理" onchange="syncSelectedDomainsToTarget()">保守契約管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="FAQ管理" onchange="syncSelectedDomainsToTarget()">FAQ管理</label>
-                </div>
+                    <section class="domain-category-card">
+                        <h3>保守・サポート</h3>
+                        <p>問い合わせ、修理依頼、保守契約、FAQなど、顧客・利用者サポートに関する業務ドメインです。</p>
+                        <div class="checkbox-grid">
+                            <label><input type="checkbox" data-target="domainCatalog" value="問い合わせ管理" onchange="syncSelectedDomainsToTarget()">問い合わせ管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="修理依頼" onchange="syncSelectedDomainsToTarget()">修理依頼</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="保守契約管理" onchange="syncSelectedDomainsToTarget()">保守契約管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="FAQ管理" onchange="syncSelectedDomainsToTarget()">FAQ管理</label>
+                        </div>
+                    </section>
 
-                <p class="form-help"><strong>ナレッジ・文書</strong></p>
-                <div class="checkbox-grid">
-                    <label><input type="checkbox" data-target="domainCatalog" value="ナレッジ検索・要約" onchange="syncSelectedDomainsToTarget()">ナレッジ検索・要約</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="文書管理" onchange="syncSelectedDomainsToTarget()">文書管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="議事録管理" onchange="syncSelectedDomainsToTarget()">議事録管理</label>
-                </div>
+                    <section class="domain-category-card">
+                        <h3>ナレッジ・文書</h3>
+                        <p>文書、FAQ、議事録、検索・要約など、知識活用に関する業務ドメインです。</p>
+                        <div class="checkbox-grid">
+                            <label><input type="checkbox" data-target="domainCatalog" value="ナレッジ検索・要約" onchange="syncSelectedDomainsToTarget()">ナレッジ検索・要約</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="文書管理" onchange="syncSelectedDomainsToTarget()">文書管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="議事録管理" onchange="syncSelectedDomainsToTarget()">議事録管理</label>
+                        </div>
+                    </section>
 
-                <p class="form-help"><strong>開発・運用</strong></p>
-                <div class="checkbox-grid">
-                    <label><input type="checkbox" data-target="domainCatalog" value="開発タスク管理" onchange="syncSelectedDomainsToTarget()">開発タスク管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="障害管理" onchange="syncSelectedDomainsToTarget()">障害管理</label>
-                    <label><input type="checkbox" data-target="domainCatalog" value="リリース管理" onchange="syncSelectedDomainsToTarget()">リリース管理</label>
+                    <section class="domain-category-card">
+                        <h3>開発・運用</h3>
+                        <p>開発タスク、障害、リリースなど、開発・運用プロセスに関する業務ドメインです。</p>
+                        <div class="checkbox-grid">
+                            <label><input type="checkbox" data-target="domainCatalog" value="開発タスク管理" onchange="syncSelectedDomainsToTarget()">開発タスク管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="障害管理" onchange="syncSelectedDomainsToTarget()">障害管理</label>
+                            <label><input type="checkbox" data-target="domainCatalog" value="リリース管理" onchange="syncSelectedDomainsToTarget()">リリース管理</label>
+                        </div>
+                    </section>
                 </div>
             </fieldset>
 
