@@ -71,19 +71,31 @@ APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体�
 
 ## Web MVP 起動方法
 
-Windows PowerShellでは、APIM-007の手動確認結果に基づき、jar起動方式を推奨します。
+Windows PowerShellでは、以下のいずれかの方式で起動できます。
+
+### 方式1: spring-boot:run
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+正常起動すると、Spring Boot Webサーバーが前面で継続実行されます。停止する場合は `Ctrl+C` を使用します。
+
+### 方式2: package 後の jar 起動
 
 1. `mvnw.cmd package` を実行します。
 2. 生成された `target/apim-0.0.1-SNAPSHOT.jar` をJavaで起動します。
 3. ブラウザで `http://localhost:8080/` を開きます。
 
-macOS/Linuxでも同様に、`mvnw package` 実行後に生成されたjarをJavaで起動します。
+macOS/Linuxでも同様に、`./mvnw spring-boot:run` または `./mvnw package` 後のjar起動を利用できます。
 
-### 既知課題
+### TSK-008 再検証結果
 
-Windowsローカル環境では、`mvnw.cmd spring-boot:run` 実行時に main class を検出できない事象を確認しています。
+旧環境では、Windowsローカル環境で `mvnw.cmd spring-boot:run` 実行時に main class を検出できない事象を確認していました。
 
-当面は package 後の jar起動を正式なローカル起動手順とします。この原因調査は TSK-008 で扱います。
+2026-05-03に、リポジトリを `C:\academia\src\api-mcp-blueprint-for-spring` 配下へ移動した状態で再検証した結果、`mvnw.cmd spring-boot:run`、main class明示版、fork=false指定版のいずれも `Tomcat started on port 8080` / `Started ApimApplication` まで到達しました。
+
+このため、TSK-008は現行環境では再現しないものとして解決済みです。旧事象は、旧OneDrive配下パス、当時のPowerShell引数指定、または当時のローカル環境条件に起因していた可能性があります。
 
 ## テスト実行
 
