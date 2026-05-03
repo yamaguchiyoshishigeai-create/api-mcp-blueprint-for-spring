@@ -4,6 +4,11 @@ import com.example.apim.model.BlueprintInput;
 import com.example.apim.model.BlueprintResult;
 import com.example.apim.service.BlueprintGenerationService;
 import jakarta.validation.Valid;
+import java.nio.charset.StandardCharsets;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +20,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Controller
 @SessionAttributes("blueprintResult")
 public class BlueprintController {
+
+    private static final MediaType TEXT_MARKDOWN_UTF8 = new MediaType("text", "markdown", StandardCharsets.UTF_8);
 
     private final BlueprintGenerationService generationService;
 
@@ -59,6 +66,14 @@ public class BlueprintController {
         return "blueprint-preview";
     }
 
+    @GetMapping("/blueprint/download")
+    public ResponseEntity<String> downloadBlueprint(@ModelAttribute("blueprintResult") BlueprintResult result) {
+        if (result.getBlueprintMarkdown() == null || result.getBlueprintMarkdown().isBlank()) {
+            return ResponseEntity.notFound().build();
+        }
+        return markdownDownload("api-mcp-blueprint.md", result.getBlueprintMarkdown());
+    }
+
     @GetMapping("/blueprint/implementation-instructions")
     public String previewImplementationInstructions(@ModelAttribute("blueprintResult") BlueprintResult result) {
         if (result.getImplementationInstructions() == null || result.getImplementationInstructions().isBlank()) {
@@ -67,9 +82,26 @@ public class BlueprintController {
         return "implementation-instructions-preview";
     }
 
+    @GetMapping("/blueprint/implementation-instructions/download")
+    public ResponseEntity<String> downloadImplementationInstructions(
+            @ModelAttribute("blueprintResult") BlueprintResult result) {
+        if (result.getImplementationInstructions() == null || result.getImplementationInstructions().isBlank()) {
+            return ResponseEntity.notFound().build();
+        }
+        return markdownDownload("implementation-instructions.md", result.getImplementationInstructions());
+    }
+
     @GetMapping("/help")
     public String help() {
         return "help";
+    }
+
+    private ResponseEntity<String> markdownDownload(String filename, String body) {
+        return ResponseEntity.ok()
+                .contentType(TEXT_MARKDOWN_UTF8)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename(filename, StandardCharsets.UTF_8).build().toString())
+                .body(body);
     }
 
     private String sampleBusinessRequirements() {
