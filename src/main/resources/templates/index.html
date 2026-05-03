@@ -8,9 +8,14 @@
 <body>
 <main class="container">
     <h1>API + MCP Blueprint Compiler for Spring</h1>
-    <p>自然言語の業務要件から、API設計とMCP設計の候補を生成します。</p>
+    <p>選択された構造化要素から、API設計とMCP設計の候補を生成します。</p>
 
     <section class="notice">
+        <h2>初期MVPの位置づけ</h2>
+        <p>
+            APIM for Spring は、自由文を意味理解するAIではなく、選択された業務ドメイン・利用者・操作種別から
+            Spring REST API / MCP設計候補を組み立てる静的ルールベースMVPです。
+        </p>
         <h2>初期MVPで生成するもの</h2>
         <ul>
             <li>API設計候補</li>
@@ -21,76 +26,302 @@
         </ul>
         <h2>初期MVPで生成しないもの</h2>
         <ul>
+            <li>自由文からの業務ルール自動抽出</li>
             <li>完全動作するMCPサーバー</li>
             <li>DB永続化</li>
             <li>外部LLM API連携</li>
         </ul>
     </section>
 
-    <section>
+    <section class="toolbar">
         <button type="button" onclick="fillSample()">サンプル入力を挿入</button>
         <a href="/help">ヘルプ</a>
     </section>
 
-    <form method="post" th:action="@{/blueprint/generate}" th:object="${blueprintInput}">
-        <label>業務要件（必須）</label>
-        <textarea id="businessRequirements" th:field="*{businessRequirements}" rows="7"></textarea>
-        <p class="error" th:if="${#fields.hasErrors('businessRequirements')}" th:errors="*{businessRequirements}"></p>
+    <form id="blueprintForm" method="post" th:action="@{/blueprint/generate}" th:object="${blueprintInput}">
+        <section class="form-section">
+            <h2>1. 対象と利用者</h2>
 
-        <label>対象ドメイン（必須）</label>
-        <input id="targetDomain" type="text" th:field="*{targetDomain}">
-        <p class="error" th:if="${#fields.hasErrors('targetDomain')}" th:errors="*{targetDomain}"></p>
+            <label>対象ドメインプリセット</label>
+            <select id="domainPreset" onchange="applyDomainPreset()">
+                <option value="">選択してください</option>
+                <option value="顧客管理">顧客管理</option>
+                <option value="注文管理">注文管理</option>
+                <option value="在庫管理">在庫管理</option>
+                <option value="商品管理">商品管理</option>
+                <option value="ユーザー管理">ユーザー管理</option>
+                <option value="経費精算">経費精算</option>
+                <option value="休暇申請">休暇申請</option>
+                <option value="修理依頼">修理依頼</option>
+                <option value="備品貸出管理">備品貸出管理</option>
+                <option value="ナレッジ検索・要約">ナレッジ検索・要約</option>
+            </select>
 
-        <label>ユーザー種別（必須）</label>
-        <textarea id="userTypes" th:field="*{userTypes}" rows="4"></textarea>
-        <p class="error" th:if="${#fields.hasErrors('userTypes')}" th:errors="*{userTypes}"></p>
+            <label>対象ドメイン（必須）</label>
+            <input id="targetDomain" type="text" th:field="*{targetDomain}" placeholder="例: 顧客管理">
+            <p class="error" th:if="${#fields.hasErrors('targetDomain')}" th:errors="*{targetDomain}"></p>
 
-        <label>必要な操作（必須）</label>
-        <textarea id="requiredOperations" th:field="*{requiredOperations}" rows="5"></textarea>
-        <p class="error" th:if="${#fields.hasErrors('requiredOperations')}" th:errors="*{requiredOperations}"></p>
+            <label>利用者種別</label>
+            <div class="checkbox-grid">
+                <label><input type="checkbox" data-target="userTypes" value="申請者">申請者</label>
+                <label><input type="checkbox" data-target="userTypes" value="承認者">承認者</label>
+                <label><input type="checkbox" data-target="userTypes" value="営業担当">営業担当</label>
+                <label><input type="checkbox" data-target="userTypes" value="管理者">管理者</label>
+                <label><input type="checkbox" data-target="userTypes" value="経理担当">経理担当</label>
+                <label><input type="checkbox" data-target="userTypes" value="AIアシスタント">AIアシスタント</label>
+            </div>
+            <label>利用者種別の任意追記</label>
+            <input id="customUserTypes" type="text" placeholder="例: 監査担当, 外部委託先">
+            <p class="error" th:if="${#fields.hasErrors('userTypes')}" th:errors="*{userTypes}"></p>
+        </section>
 
-        <label>AIアシスタントに許可したい操作（必須）</label>
-        <textarea id="allowedAiOperations" th:field="*{allowedAiOperations}" rows="5"></textarea>
-        <p class="error" th:if="${#fields.hasErrors('allowedAiOperations')}" th:errors="*{allowedAiOperations}"></p>
+        <section class="form-section">
+            <h2>2. 操作種別</h2>
+            <p class="form-help">APIMは、ここで選択された操作種別をもとにAPI/MCP候補を定型生成します。</p>
 
-        <label>読み取り専用操作（任意）</label>
-        <textarea id="readOnlyOperations" th:field="*{readOnlyOperations}" rows="3"></textarea>
+            <fieldset>
+                <legend>必要な操作（必須）</legend>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="requiredOperations" value="検索">検索</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="一覧">一覧</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="詳細取得">詳細取得</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="登録">登録</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="更新">更新</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="削除">削除</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="承認">承認</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="却下">却下</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="要約">要約</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="通知">通知</label>
+                    <label><input type="checkbox" data-target="requiredOperations" value="権限変更">権限変更</label>
+                </div>
+            </fieldset>
+            <p class="error" th:if="${#fields.hasErrors('requiredOperations')}" th:errors="*{requiredOperations}"></p>
 
-        <label>書き込み許可操作（任意）</label>
-        <textarea id="writeOperations" th:field="*{writeOperations}" rows="3"></textarea>
+            <fieldset>
+                <legend>AIアシスタントに許可したい操作（必須）</legend>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="allowedAiOperations" value="検索">検索</label>
+                    <label><input type="checkbox" data-target="allowedAiOperations" value="一覧">一覧</label>
+                    <label><input type="checkbox" data-target="allowedAiOperations" value="詳細参照">詳細参照</label>
+                    <label><input type="checkbox" data-target="allowedAiOperations" value="要約">要約</label>
+                    <label><input type="checkbox" data-target="allowedAiOperations" value="下書き作成">下書き作成</label>
+                    <label><input type="checkbox" data-target="allowedAiOperations" value="更新案の作成">更新案の作成</label>
+                </div>
+            </fieldset>
+            <p class="error" th:if="${#fields.hasErrors('allowedAiOperations')}" th:errors="*{allowedAiOperations}"></p>
 
-        <label>承認必須操作（任意）</label>
-        <textarea id="approvalRequiredOperations" th:field="*{approvalRequiredOperations}" rows="3"></textarea>
+            <fieldset>
+                <legend>AIに禁止する操作</legend>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="businessRequirements" value="AIは削除を直接実行しない">削除</label>
+                    <label><input type="checkbox" data-target="businessRequirements" value="AIは承認を直接実行しない">承認</label>
+                    <label><input type="checkbox" data-target="businessRequirements" value="AIは却下を直接実行しない">却下</label>
+                    <label><input type="checkbox" data-target="businessRequirements" value="AIは権限変更を直接実行しない">権限変更</label>
+                    <label><input type="checkbox" data-target="businessRequirements" value="AIは外部送信を直接実行しない">外部送信</label>
+                </div>
+            </fieldset>
+        </section>
 
-        <label>監査ログが必要な操作（任意）</label>
-        <textarea id="auditLogRequiredOperations" th:field="*{auditLogRequiredOperations}" rows="3"></textarea>
+        <section class="form-section">
+            <h2>3. 承認・監査・権限</h2>
 
-        <label>想定認証方式（任意）</label>
-        <input id="authenticationMethod" type="text" th:field="*{authenticationMethod}">
+            <fieldset>
+                <legend>読み取り専用操作</legend>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="readOnlyOperations" value="検索">検索</label>
+                    <label><input type="checkbox" data-target="readOnlyOperations" value="一覧">一覧</label>
+                    <label><input type="checkbox" data-target="readOnlyOperations" value="詳細取得">詳細取得</label>
+                    <label><input type="checkbox" data-target="readOnlyOperations" value="要約">要約</label>
+                </div>
+            </fieldset>
 
-        <label>想定利用者（任意）</label>
-        <input id="targetUsers" type="text" th:field="*{targetUsers}">
+            <fieldset>
+                <legend>書き込み許可操作</legend>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="writeOperations" value="登録">登録</label>
+                    <label><input type="checkbox" data-target="writeOperations" value="更新">更新</label>
+                    <label><input type="checkbox" data-target="writeOperations" value="削除">削除</label>
+                    <label><input type="checkbox" data-target="writeOperations" value="通知">通知</label>
+                    <label><input type="checkbox" data-target="writeOperations" value="権限変更">権限変更</label>
+                </div>
+            </fieldset>
 
-        <label>出力言語（任意）</label>
-        <select id="outputLanguage" th:field="*{outputLanguage}">
-            <option value="日本語">日本語</option>
-            <option value="English">English</option>
-        </select>
+            <fieldset>
+                <legend>承認必須操作</legend>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="approvalRequiredOperations" value="更新">更新</label>
+                    <label><input type="checkbox" data-target="approvalRequiredOperations" value="削除">削除</label>
+                    <label><input type="checkbox" data-target="approvalRequiredOperations" value="承認">承認</label>
+                    <label><input type="checkbox" data-target="approvalRequiredOperations" value="却下">却下</label>
+                    <label><input type="checkbox" data-target="approvalRequiredOperations" value="外部送信">外部送信</label>
+                    <label><input type="checkbox" data-target="approvalRequiredOperations" value="権限変更">権限変更</label>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>監査ログが必要な操作</legend>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="auditLogRequiredOperations" value="登録">登録</label>
+                    <label><input type="checkbox" data-target="auditLogRequiredOperations" value="更新">更新</label>
+                    <label><input type="checkbox" data-target="auditLogRequiredOperations" value="削除">削除</label>
+                    <label><input type="checkbox" data-target="auditLogRequiredOperations" value="承認">承認</label>
+                    <label><input type="checkbox" data-target="auditLogRequiredOperations" value="却下">却下</label>
+                    <label><input type="checkbox" data-target="auditLogRequiredOperations" value="通知">通知</label>
+                    <label><input type="checkbox" data-target="auditLogRequiredOperations" value="権限変更">権限変更</label>
+                </div>
+            </fieldset>
+
+            <label>想定認証方式（任意）</label>
+            <select id="authenticationMethod" th:field="*{authenticationMethod}">
+                <option value="">未指定</option>
+                <option value="Spring Security + セッション認証">Spring Security + セッション認証</option>
+                <option value="OAuth2 / OIDC">OAuth2 / OIDC</option>
+                <option value="JWT Bearer Token">JWT Bearer Token</option>
+                <option value="社内SSO">社内SSO</option>
+            </select>
+
+            <label>想定利用者（任意）</label>
+            <input id="targetUsers" type="text" th:field="*{targetUsers}" placeholder="例: 社内利用者、管理部門、営業部門">
+
+            <label>出力言語（任意）</label>
+            <select id="outputLanguage" th:field="*{outputLanguage}">
+                <option value="日本語">日本語</option>
+                <option value="English">English</option>
+            </select>
+        </section>
+
+        <section class="form-section">
+            <h2>4. 補足情報</h2>
+            <p class="form-help">
+                補足情報は出力文書へ反映されますが、現時点では自由文をAIのように意味解析して業務モデルを抽出するものではありません。
+            </p>
+            <label>補足業務要件</label>
+            <textarea id="structuredSupplement" rows="5" placeholder="例: 更新は人間承認後に反映する。削除操作は管理者のみ許可する。"></textarea>
+        </section>
+
+        <section class="future-llm-template" aria-hidden="true">
+            <h2>将来LLM抽出レイヤー用の自由文入力様式</h2>
+            <label>業務要件（必須）</label>
+            <textarea id="businessRequirements" th:field="*{businessRequirements}" rows="7"></textarea>
+            <p class="error" th:if="${#fields.hasErrors('businessRequirements')}" th:errors="*{businessRequirements}"></p>
+
+            <label>ユーザー種別（必須）</label>
+            <textarea id="userTypes" th:field="*{userTypes}" rows="4"></textarea>
+            <p class="error" th:if="${#fields.hasErrors('userTypes')}" th:errors="*{userTypes}"></p>
+
+            <label>必要な操作（必須）</label>
+            <textarea id="requiredOperations" th:field="*{requiredOperations}" rows="5"></textarea>
+
+            <label>AIアシスタントに許可したい操作（必須）</label>
+            <textarea id="allowedAiOperations" th:field="*{allowedAiOperations}" rows="5"></textarea>
+
+            <label>読み取り専用操作（任意）</label>
+            <textarea id="readOnlyOperations" th:field="*{readOnlyOperations}" rows="3"></textarea>
+
+            <label>書き込み許可操作（任意）</label>
+            <textarea id="writeOperations" th:field="*{writeOperations}" rows="3"></textarea>
+
+            <label>承認必須操作（任意）</label>
+            <textarea id="approvalRequiredOperations" th:field="*{approvalRequiredOperations}" rows="3"></textarea>
+
+            <label>監査ログが必要な操作（任意）</label>
+            <textarea id="auditLogRequiredOperations" th:field="*{auditLogRequiredOperations}" rows="3"></textarea>
+        </section>
 
         <button type="submit">設計候補を生成する</button>
     </form>
 </main>
 
 <script th:inline="javascript">
-    function fillSample() {
-        document.getElementById('businessRequirements').value = /*[[${sampleBusinessRequirements}]]*/ '';
-        document.getElementById('targetDomain').value = '顧客管理';
-        document.getElementById('userTypes').value = '- 営業担当\n- 管理者\n- AIアシスタント';
-        document.getElementById('requiredOperations').value = '- 顧客検索\n- 顧客詳細取得\n- 顧客登録\n- 顧客更新\n- 問い合わせ履歴取得\n- 問い合わせ履歴要約';
-        document.getElementById('allowedAiOperations').value = '- 顧客検索\n- 顧客詳細参照\n- 問い合わせ履歴要約\n- 顧客更新案の作成';
-        document.getElementById('approvalRequiredOperations').value = '- 顧客情報更新\n- 顧客削除';
-        document.getElementById('outputLanguage').value = '日本語';
+    const sampleBusinessRequirements = /*[[${sampleBusinessRequirements}]]*/ '';
+
+    function applyDomainPreset() {
+        const preset = document.getElementById('domainPreset').value;
+        if (preset) {
+            document.getElementById('targetDomain').value = preset;
+        }
     }
+
+    function checkedValues(target) {
+        return Array.from(document.querySelectorAll('input[data-target="' + target + '"]:checked'))
+            .map(input => input.value);
+    }
+
+    function setChecked(target, values) {
+        document.querySelectorAll('input[data-target="' + target + '"]').forEach(input => {
+            input.checked = values.includes(input.value);
+        });
+    }
+
+    function bulletList(values) {
+        return values.filter(value => value && value.trim().length > 0)
+            .map(value => '- ' + value.trim())
+            .join('\n');
+    }
+
+    function splitCustomValues(raw) {
+        if (!raw) {
+            return [];
+        }
+        return raw.split(/[、,\n]/).map(value => value.trim()).filter(value => value.length > 0);
+    }
+
+    function syncStructuredInputs() {
+        const userTypes = checkedValues('userTypes').concat(splitCustomValues(document.getElementById('customUserTypes').value));
+        const requiredOperations = checkedValues('requiredOperations');
+        const allowedAiOperations = checkedValues('allowedAiOperations');
+        const readOnlyOperations = checkedValues('readOnlyOperations');
+        const writeOperations = checkedValues('writeOperations');
+        const approvalRequiredOperations = checkedValues('approvalRequiredOperations');
+        const auditLogRequiredOperations = checkedValues('auditLogRequiredOperations');
+        const aiForbiddenNotes = checkedValues('businessRequirements');
+        const supplement = document.getElementById('structuredSupplement').value.trim();
+        const requirements = [];
+
+        if (sampleBusinessRequirements && sampleBusinessRequirements.trim().length > 0 && document.getElementById('targetDomain').value === '顧客管理') {
+            requirements.push(sampleBusinessRequirements.trim());
+        }
+        if (supplement.length > 0) {
+            requirements.push(supplement);
+        }
+        if (aiForbiddenNotes.length > 0) {
+            requirements.push(aiForbiddenNotes.join('\n'));
+        }
+        if (requirements.length === 0) {
+            requirements.push('選択された構造化要素に基づき、API/MCP設計候補を生成する。');
+        }
+
+        document.getElementById('businessRequirements').value = requirements.join('\n\n');
+        document.getElementById('userTypes').value = bulletList(userTypes);
+        document.getElementById('requiredOperations').value = bulletList(requiredOperations);
+        document.getElementById('allowedAiOperations').value = bulletList(allowedAiOperations);
+        document.getElementById('readOnlyOperations').value = bulletList(readOnlyOperations);
+        document.getElementById('writeOperations').value = bulletList(writeOperations);
+        document.getElementById('approvalRequiredOperations').value = bulletList(approvalRequiredOperations);
+        document.getElementById('auditLogRequiredOperations').value = bulletList(auditLogRequiredOperations);
+    }
+
+    function fillSample() {
+        document.getElementById('domainPreset').value = '顧客管理';
+        document.getElementById('targetDomain').value = '顧客管理';
+        document.getElementById('customUserTypes').value = '';
+        document.getElementById('structuredSupplement').value = '顧客情報の更新はAIが直接実行せず、変更案を作成して人間承認後に反映する。';
+        document.getElementById('authenticationMethod').value = 'Spring Security + セッション認証';
+        document.getElementById('targetUsers').value = '営業担当、管理者、AIアシスタント';
+        document.getElementById('outputLanguage').value = '日本語';
+
+        setChecked('userTypes', ['営業担当', '管理者', 'AIアシスタント']);
+        setChecked('requiredOperations', ['検索', '詳細取得', '登録', '更新', '要約']);
+        setChecked('allowedAiOperations', ['検索', '詳細参照', '要約', '更新案の作成']);
+        setChecked('readOnlyOperations', ['検索', '詳細取得', '要約']);
+        setChecked('writeOperations', ['登録', '更新']);
+        setChecked('approvalRequiredOperations', ['更新', '削除']);
+        setChecked('auditLogRequiredOperations', ['登録', '更新', '削除']);
+        setChecked('businessRequirements', ['AIは削除を直接実行しない']);
+        syncStructuredInputs();
+    }
+
+    document.getElementById('blueprintForm').addEventListener('submit', syncStructuredInputs);
 </script>
 </body>
 </html>
