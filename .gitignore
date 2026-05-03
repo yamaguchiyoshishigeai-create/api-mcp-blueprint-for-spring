@@ -10,6 +10,10 @@ target/
 # Test and runtime logs
 *.log
 
+# AI execution result files
+ChatExec.result
+CodexExec.result
+
 # Local APIM execution results
 APIM-*.result
 APIM-*-springboot.out
