@@ -89,20 +89,12 @@ class BlueprintControllerTest {
     }
 
     @Test
-    void blueprintDownloadReturnsMarkdownAttachmentAfterGenerate() throws Exception {
+    void blueprintDownloadReturnsMarkdownAttachmentWhenResultIsStored() throws Exception {
         BlueprintResult mockResult = new BlueprintResult();
         mockResult.setBlueprintMarkdown("# API MCP Blueprint");
-        when(generationService.generate(any())).thenReturn(mockResult);
 
-        mockMvc.perform(post("/blueprint/generate")
-                        .param("businessRequirements", "顧客検索を行う")
-                        .param("targetDomain", "顧客管理")
-                        .param("userTypes", "営業担当")
-                        .param("requiredOperations", "顧客検索")
-                        .param("allowedAiOperations", "顧客検索"))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(get("/blueprint/download"))
+        mockMvc.perform(get("/blueprint/download")
+                        .sessionAttr("blueprintResult", mockResult))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION,
                         containsString("api-mcp-blueprint.md")))
@@ -116,20 +108,12 @@ class BlueprintControllerTest {
     }
 
     @Test
-    void implementationInstructionsDownloadReturnsMarkdownAttachmentAfterGenerate() throws Exception {
+    void implementationInstructionsDownloadReturnsMarkdownAttachmentWhenResultIsStored() throws Exception {
         BlueprintResult mockResult = new BlueprintResult();
         mockResult.setImplementationInstructions("# Implementation Instructions");
-        when(generationService.generate(any())).thenReturn(mockResult);
 
-        mockMvc.perform(post("/blueprint/generate")
-                        .param("businessRequirements", "顧客検索を行う")
-                        .param("targetDomain", "顧客管理")
-                        .param("userTypes", "営業担当")
-                        .param("requiredOperations", "顧客検索")
-                        .param("allowedAiOperations", "顧客検索"))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(get("/blueprint/implementation-instructions/download"))
+        mockMvc.perform(get("/blueprint/implementation-instructions/download")
+                        .sessionAttr("blueprintResult", mockResult))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION,
                         containsString("implementation-instructions.md")))
