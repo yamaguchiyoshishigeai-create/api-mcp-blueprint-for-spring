@@ -139,6 +139,30 @@ legend {
   font-weight: 500;
 }
 
+.domain-category-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.domain-category-card {
+  border: 1px solid #ccd6e8;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.domain-category-card h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.domain-category-card p {
+  margin: 0 0 10px;
+  color: #536071;
+  font-size: 13px;
+}
+
 .future-llm-template {
   display: none;
 }
