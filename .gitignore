@@ -13,6 +13,10 @@ target/
 # AI execution result files
 ChatExec.result
 CodexExec.result
+ChatExec-*.out
+ChatExec-*.err
+CodexExec-*.out
+CodexExec-*.err
 
 # Local APIM execution results
 APIM-*.result
