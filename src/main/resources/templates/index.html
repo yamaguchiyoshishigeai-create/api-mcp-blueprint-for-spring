@@ -42,6 +42,16 @@
         <section class="form-section">
             <h2>1. 対象と利用者</h2>
 
+            <label>対象システム種別プリセット</label>
+            <select id="systemTypePreset" onchange="applySystemTypePreset()">
+                <option value="">選択してください</option>
+                <option value="internal-application-portal">社内申請ポータル</option>
+                <option value="sales-commerce">EC / 販売管理</option>
+                <option value="support-management">保守サポート管理</option>
+                <option value="knowledge-platform">ナレッジ活用基盤</option>
+            </select>
+            <p class="form-help">対象システム種別を選ぶと、標準ドメイン・利用者・操作種別の初期案を自動投入します。投入後も各チェック項目は自由に調整できます。</p>
+
             <label>対象ドメインプリセット</label>
             <select id="domainPreset" onchange="applyDomainPreset()">
                 <option value="">選択してください</option>
@@ -56,6 +66,53 @@
                 <option value="備品貸出管理">備品貸出管理</option>
                 <option value="ナレッジ検索・要約">ナレッジ検索・要約</option>
             </select>
+
+            <fieldset>
+                <legend>カテゴリ別ドメイン候補</legend>
+                <p class="form-help">複数の業務ドメインを選択すると、対象ドメイン欄へ自動反映します。必要に応じて対象ドメイン欄を直接編集できます。</p>
+                <div class="bulk-controls">
+                    <button type="button" onclick="setAllChecked('domainCatalog', true); syncSelectedDomainsToTarget();">全選択</button>
+                    <button type="button" onclick="setAllChecked('domainCatalog', false); syncSelectedDomainsToTarget();">全解除</button>
+                </div>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="domainCatalog" value="社員情報管理" onchange="syncSelectedDomainsToTarget()">社員情報管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="組織管理" onchange="syncSelectedDomainsToTarget()">組織管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="勤怠管理" onchange="syncSelectedDomainsToTarget()">勤怠管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="経費精算" onchange="syncSelectedDomainsToTarget()">経費精算</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="休暇申請" onchange="syncSelectedDomainsToTarget()">休暇申請</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="備品貸出管理" onchange="syncSelectedDomainsToTarget()">備品貸出管理</label>
+                </div>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="domainCatalog" value="顧客管理" onchange="syncSelectedDomainsToTarget()">顧客管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="注文管理" onchange="syncSelectedDomainsToTarget()">注文管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="商品管理" onchange="syncSelectedDomainsToTarget()">商品管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="在庫管理" onchange="syncSelectedDomainsToTarget()">在庫管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="請求管理" onchange="syncSelectedDomainsToTarget()">請求管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="決済管理" onchange="syncSelectedDomainsToTarget()">決済管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="配送管理" onchange="syncSelectedDomainsToTarget()">配送管理</label>
+                </div>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="domainCatalog" value="承認ワークフロー" onchange="syncSelectedDomainsToTarget()">承認ワークフロー</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="通知管理" onchange="syncSelectedDomainsToTarget()">通知管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="権限管理" onchange="syncSelectedDomainsToTarget()">権限管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="監査ログ管理" onchange="syncSelectedDomainsToTarget()">監査ログ管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="契約管理" onchange="syncSelectedDomainsToTarget()">契約管理</label>
+                </div>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="domainCatalog" value="問い合わせ管理" onchange="syncSelectedDomainsToTarget()">問い合わせ管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="修理依頼" onchange="syncSelectedDomainsToTarget()">修理依頼</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="保守契約管理" onchange="syncSelectedDomainsToTarget()">保守契約管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="FAQ管理" onchange="syncSelectedDomainsToTarget()">FAQ管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="ナレッジ検索・要約" onchange="syncSelectedDomainsToTarget()">ナレッジ検索・要約</label>
+                </div>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" data-target="domainCatalog" value="文書管理" onchange="syncSelectedDomainsToTarget()">文書管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="議事録管理" onchange="syncSelectedDomainsToTarget()">議事録管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="開発タスク管理" onchange="syncSelectedDomainsToTarget()">開発タスク管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="障害管理" onchange="syncSelectedDomainsToTarget()">障害管理</label>
+                    <label><input type="checkbox" data-target="domainCatalog" value="リリース管理" onchange="syncSelectedDomainsToTarget()">リリース管理</label>
+                </div>
+            </fieldset>
 
             <label>対象ドメイン（必須）</label>
             <input id="targetDomain" type="text" th:field="*{targetDomain}" placeholder="例: 顧客管理">
@@ -266,12 +323,115 @@
 
 <script th:inline="javascript">
     const sampleBusinessRequirements = /*[[${sampleBusinessRequirements}]]*/ '';
+    const systemTypePresets = {
+        'internal-application-portal': {
+            domains: ['経費精算', '休暇申請', '社員情報管理', '承認ワークフロー', '通知管理'],
+            domainPreset: '経費精算',
+            targetDomain: '経費精算 / 休暇申請 / 社員情報管理',
+            customUserTypes: '',
+            targetUsers: '申請者、承認者、管理者、経理担当、AIアシスタント',
+            authenticationMethod: '社内SSO',
+            supplement: '社内申請ポータルとして、経費精算、休暇申請、社員情報管理を対象にする。更新・承認・却下は人間確認と監査ログを前提にする。',
+            userTypes: ['申請者', '承認者', '管理者', '経理担当', 'AIアシスタント'],
+            requiredOperations: ['検索', '一覧', '詳細取得', '登録', '更新', '承認', '却下', '通知'],
+            allowedAiOperations: ['検索', '一覧', '詳細参照', '要約', '下書き作成', '更新案の作成'],
+            businessRequirements: ['AIは承認を直接実行しない', 'AIは却下を直接実行しない', 'AIは権限変更を直接実行しない'],
+            readOnlyOperations: ['検索', '一覧', '詳細取得', '要約'],
+            writeOperations: ['登録', '更新', '通知'],
+            approvalRequiredOperations: ['更新', '承認', '却下'],
+            auditLogRequiredOperations: ['登録', '更新', '承認', '却下', '通知']
+        },
+        'sales-commerce': {
+            domains: ['注文管理', '商品管理', '在庫管理', '請求管理', '決済管理', '配送管理'],
+            domainPreset: '注文管理',
+            targetDomain: '注文管理 / 商品管理 / 在庫管理',
+            customUserTypes: '購入者, 出荷担当',
+            targetUsers: '購入者、営業担当、出荷担当、管理者、AIアシスタント',
+            authenticationMethod: 'OAuth2 / OIDC',
+            supplement: 'EC / 販売管理として、注文管理、商品管理、在庫管理を対象にする。削除・外部送信は人間確認を前提にする。',
+            userTypes: ['営業担当', '管理者', 'AIアシスタント'],
+            requiredOperations: ['検索', '一覧', '詳細取得', '登録', '更新', '削除', '通知'],
+            allowedAiOperations: ['検索', '一覧', '詳細参照', '要約', '下書き作成'],
+            businessRequirements: ['AIは削除を直接実行しない', 'AIは外部送信を直接実行しない'],
+            readOnlyOperations: ['検索', '一覧', '詳細取得', '要約'],
+            writeOperations: ['登録', '更新', '削除', '通知'],
+            approvalRequiredOperations: ['削除', '外部送信'],
+            auditLogRequiredOperations: ['登録', '更新', '削除', '通知']
+        },
+        'support-management': {
+            domains: ['修理依頼', '顧客管理', '問い合わせ管理', 'FAQ管理', 'ナレッジ検索・要約'],
+            domainPreset: '修理依頼',
+            targetDomain: '修理依頼 / 顧客管理 / ナレッジ検索・要約',
+            customUserTypes: 'サポート担当',
+            targetUsers: 'サポート担当、営業担当、管理者、AIアシスタント',
+            authenticationMethod: 'Spring Security + セッション認証',
+            supplement: '保守サポート管理として、修理依頼、顧客管理、ナレッジ検索・要約を対象にする。外部送信や重要更新は人間確認を前提にする。',
+            userTypes: ['営業担当', '管理者', 'AIアシスタント'],
+            requiredOperations: ['検索', '一覧', '詳細取得', '登録', '更新', '要約', '通知'],
+            allowedAiOperations: ['検索', '一覧', '詳細参照', '要約', '下書き作成', '更新案の作成'],
+            businessRequirements: ['AIは削除を直接実行しない', 'AIは外部送信を直接実行しない'],
+            readOnlyOperations: ['検索', '一覧', '詳細取得', '要約'],
+            writeOperations: ['登録', '更新', '通知'],
+            approvalRequiredOperations: ['更新', '外部送信'],
+            auditLogRequiredOperations: ['登録', '更新', '通知']
+        },
+        'knowledge-platform': {
+            domains: ['ナレッジ検索・要約', '文書管理', 'FAQ管理', '議事録管理'],
+            domainPreset: 'ナレッジ検索・要約',
+            targetDomain: 'ナレッジ検索・要約',
+            customUserTypes: '一般利用者, コンテンツ管理者',
+            targetUsers: '一般利用者、コンテンツ管理者、管理者、AIアシスタント',
+            authenticationMethod: '社内SSO',
+            supplement: 'ナレッジ活用基盤として、文書検索、要約、コンテンツ管理を対象にする。削除や重要文書更新は人間確認を前提にする。',
+            userTypes: ['管理者', 'AIアシスタント'],
+            requiredOperations: ['検索', '一覧', '詳細取得', '登録', '更新', '削除', '要約'],
+            allowedAiOperations: ['検索', '一覧', '詳細参照', '要約', '下書き作成'],
+            businessRequirements: ['AIは削除を直接実行しない'],
+            readOnlyOperations: ['検索', '一覧', '詳細取得', '要約'],
+            writeOperations: ['登録', '更新', '削除'],
+            approvalRequiredOperations: ['更新', '削除'],
+            auditLogRequiredOperations: ['登録', '更新', '削除']
+        }
+    };
 
     function applyDomainPreset() {
         const preset = document.getElementById('domainPreset').value;
         if (preset) {
+            setChecked('domainCatalog', [preset]);
             document.getElementById('targetDomain').value = preset;
         }
+    }
+
+    function syncSelectedDomainsToTarget() {
+        const selectedDomains = checkedValues('domainCatalog');
+        document.getElementById('targetDomain').value = selectedDomains.join(' / ');
+    }
+
+    function applySystemTypePreset() {
+        const presetKey = document.getElementById('systemTypePreset').value;
+        const preset = systemTypePresets[presetKey];
+        if (!preset) {
+            return;
+        }
+
+        document.getElementById('domainPreset').value = preset.domainPreset;
+        setChecked('domainCatalog', preset.domains);
+        document.getElementById('targetDomain').value = preset.targetDomain;
+        document.getElementById('customUserTypes').value = preset.customUserTypes;
+        document.getElementById('structuredSupplement').value = preset.supplement;
+        document.getElementById('authenticationMethod').value = preset.authenticationMethod;
+        document.getElementById('targetUsers').value = preset.targetUsers;
+        document.getElementById('outputLanguage').value = '日本語';
+
+        setChecked('userTypes', preset.userTypes);
+        setChecked('requiredOperations', preset.requiredOperations);
+        setChecked('allowedAiOperations', preset.allowedAiOperations);
+        setChecked('businessRequirements', preset.businessRequirements);
+        setChecked('readOnlyOperations', preset.readOnlyOperations);
+        setChecked('writeOperations', preset.writeOperations);
+        setChecked('approvalRequiredOperations', preset.approvalRequiredOperations);
+        setChecked('auditLogRequiredOperations', preset.auditLogRequiredOperations);
+        syncStructuredInputs();
     }
 
     function checkedValues(target) {
@@ -340,7 +500,9 @@
     }
 
     function fillSample() {
+        document.getElementById('systemTypePreset').value = '';
         document.getElementById('domainPreset').value = '顧客管理';
+        setChecked('domainCatalog', ['顧客管理']);
         document.getElementById('targetDomain').value = '顧客管理';
         document.getElementById('customUserTypes').value = '';
         document.getElementById('structuredSupplement').value = '顧客情報の更新はAIが直接実行せず、変更案を作成して人間承認後に反映する。';
