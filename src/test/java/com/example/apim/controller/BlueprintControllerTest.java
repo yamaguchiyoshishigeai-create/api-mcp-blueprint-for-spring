@@ -6,12 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -82,5 +86,43 @@ class BlueprintControllerTest {
         mockMvc.perform(get("/blueprint/implementation-instructions"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void blueprintDownloadReturnsMarkdownAttachmentWhenResultIsStored() throws Exception {
+        BlueprintResult mockResult = new BlueprintResult();
+        mockResult.setBlueprintMarkdown("# API MCP Blueprint");
+
+        mockMvc.perform(get("/blueprint/download")
+                        .sessionAttr("blueprintResult", mockResult))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION,
+                        containsString("api-mcp-blueprint.md")))
+                .andExpect(content().string("# API MCP Blueprint"));
+    }
+
+    @Test
+    void blueprintDownloadReturns404WhenNoResultIsStored() throws Exception {
+        mockMvc.perform(get("/blueprint/download"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void implementationInstructionsDownloadReturnsMarkdownAttachmentWhenResultIsStored() throws Exception {
+        BlueprintResult mockResult = new BlueprintResult();
+        mockResult.setImplementationInstructions("# Implementation Instructions");
+
+        mockMvc.perform(get("/blueprint/implementation-instructions/download")
+                        .sessionAttr("blueprintResult", mockResult))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION,
+                        containsString("implementation-instructions.md")))
+                .andExpect(content().string("# Implementation Instructions"));
+    }
+
+    @Test
+    void implementationInstructionsDownloadReturns404WhenNoResultIsStored() throws Exception {
+        mockMvc.perform(get("/blueprint/implementation-instructions/download"))
+                .andExpect(status().isNotFound());
     }
 }
