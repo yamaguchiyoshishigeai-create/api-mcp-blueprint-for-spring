@@ -62,6 +62,10 @@
             <p class="error" th:if="${#fields.hasErrors('targetDomain')}" th:errors="*{targetDomain}"></p>
 
             <label>利用者種別</label>
+            <div class="bulk-controls">
+                <button type="button" onclick="setAllChecked('userTypes', true)">全選択</button>
+                <button type="button" onclick="setAllChecked('userTypes', false)">全解除</button>
+            </div>
             <div class="checkbox-grid">
                 <label><input type="checkbox" data-target="userTypes" value="申請者">申請者</label>
                 <label><input type="checkbox" data-target="userTypes" value="承認者">承認者</label>
@@ -81,6 +85,10 @@
 
             <fieldset>
                 <legend>必要な操作（必須）</legend>
+                <div class="bulk-controls">
+                    <button type="button" onclick="setAllChecked('requiredOperations', true)">全選択</button>
+                    <button type="button" onclick="setAllChecked('requiredOperations', false)">全解除</button>
+                </div>
                 <div class="checkbox-grid">
                     <label><input type="checkbox" data-target="requiredOperations" value="検索">検索</label>
                     <label><input type="checkbox" data-target="requiredOperations" value="一覧">一覧</label>
@@ -99,6 +107,10 @@
 
             <fieldset>
                 <legend>AIアシスタントに許可したい操作（必須）</legend>
+                <div class="bulk-controls">
+                    <button type="button" onclick="setAllChecked('allowedAiOperations', true)">全選択</button>
+                    <button type="button" onclick="setAllChecked('allowedAiOperations', false)">全解除</button>
+                </div>
                 <div class="checkbox-grid">
                     <label><input type="checkbox" data-target="allowedAiOperations" value="検索">検索</label>
                     <label><input type="checkbox" data-target="allowedAiOperations" value="一覧">一覧</label>
@@ -112,6 +124,10 @@
 
             <fieldset>
                 <legend>AIに禁止する操作</legend>
+                <div class="bulk-controls">
+                    <button type="button" onclick="setAllChecked('businessRequirements', true)">全選択</button>
+                    <button type="button" onclick="setAllChecked('businessRequirements', false)">全解除</button>
+                </div>
                 <div class="checkbox-grid">
                     <label><input type="checkbox" data-target="businessRequirements" value="AIは削除を直接実行しない">削除</label>
                     <label><input type="checkbox" data-target="businessRequirements" value="AIは承認を直接実行しない">承認</label>
@@ -127,6 +143,10 @@
 
             <fieldset>
                 <legend>読み取り専用操作</legend>
+                <div class="bulk-controls">
+                    <button type="button" onclick="setAllChecked('readOnlyOperations', true)">全選択</button>
+                    <button type="button" onclick="setAllChecked('readOnlyOperations', false)">全解除</button>
+                </div>
                 <div class="checkbox-grid">
                     <label><input type="checkbox" data-target="readOnlyOperations" value="検索">検索</label>
                     <label><input type="checkbox" data-target="readOnlyOperations" value="一覧">一覧</label>
@@ -137,6 +157,10 @@
 
             <fieldset>
                 <legend>書き込み許可操作</legend>
+                <div class="bulk-controls">
+                    <button type="button" onclick="setAllChecked('writeOperations', true)">全選択</button>
+                    <button type="button" onclick="setAllChecked('writeOperations', false)">全解除</button>
+                </div>
                 <div class="checkbox-grid">
                     <label><input type="checkbox" data-target="writeOperations" value="登録">登録</label>
                     <label><input type="checkbox" data-target="writeOperations" value="更新">更新</label>
@@ -148,6 +172,10 @@
 
             <fieldset>
                 <legend>承認必須操作</legend>
+                <div class="bulk-controls">
+                    <button type="button" onclick="setAllChecked('approvalRequiredOperations', true)">全選択</button>
+                    <button type="button" onclick="setAllChecked('approvalRequiredOperations', false)">全解除</button>
+                </div>
                 <div class="checkbox-grid">
                     <label><input type="checkbox" data-target="approvalRequiredOperations" value="更新">更新</label>
                     <label><input type="checkbox" data-target="approvalRequiredOperations" value="削除">削除</label>
@@ -160,6 +188,10 @@
 
             <fieldset>
                 <legend>監査ログが必要な操作</legend>
+                <div class="bulk-controls">
+                    <button type="button" onclick="setAllChecked('auditLogRequiredOperations', true)">全選択</button>
+                    <button type="button" onclick="setAllChecked('auditLogRequiredOperations', false)">全解除</button>
+                </div>
                 <div class="checkbox-grid">
                     <label><input type="checkbox" data-target="auditLogRequiredOperations" value="登録">登録</label>
                     <label><input type="checkbox" data-target="auditLogRequiredOperations" value="更新">更新</label>
@@ -250,6 +282,12 @@
     function setChecked(target, values) {
         document.querySelectorAll('input[data-target="' + target + '"]').forEach(input => {
             input.checked = values.includes(input.value);
+        });
+    }
+
+    function setAllChecked(target, checked) {
+        document.querySelectorAll('input[data-target="' + target + '"]').forEach(input => {
+            input.checked = checked;
         });
     }
 
