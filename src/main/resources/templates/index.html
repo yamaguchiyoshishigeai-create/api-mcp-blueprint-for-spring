@@ -42,6 +42,16 @@
         <section class="form-section">
             <h2>1. 対象と利用者</h2>
 
+            <label>対象システム種別プリセット</label>
+            <select id="systemTypePreset" onchange="applySystemTypePreset()">
+                <option value="">選択してください</option>
+                <option value="internal-application-portal">社内申請ポータル</option>
+                <option value="sales-commerce">EC / 販売管理</option>
+                <option value="support-management">保守サポート管理</option>
+                <option value="knowledge-platform">ナレッジ活用基盤</option>
+            </select>
+            <p class="form-help">対象システム種別を選ぶと、標準ドメイン・利用者・操作種別の初期案を自動投入します。投入後も各チェック項目は自由に調整できます。</p>
+
             <label>対象ドメインプリセット</label>
             <select id="domainPreset" onchange="applyDomainPreset()">
                 <option value="">選択してください</option>
@@ -266,12 +276,104 @@
 
 <script th:inline="javascript">
     const sampleBusinessRequirements = /*[[${sampleBusinessRequirements}]]*/ '';
+    const systemTypePresets = {
+        'internal-application-portal': {
+            domainPreset: '経費精算',
+            targetDomain: '経費精算 / 休暇申請 / 社員情報管理',
+            customUserTypes: '',
+            targetUsers: '申請者、承認者、管理者、経理担当、AIアシスタント',
+            authenticationMethod: '社内SSO',
+            supplement: '社内申請ポータルとして、経費精算、休暇申請、社員情報管理を対象にする。更新・承認・却下は人間確認と監査ログを前提にする。',
+            userTypes: ['申請者', '承認者', '管理者', '経理担当', 'AIアシスタント'],
+            requiredOperations: ['検索', '一覧', '詳細取得', '登録', '更新', '承認', '却下', '通知'],
+            allowedAiOperations: ['検索', '一覧', '詳細参照', '要約', '下書き作成', '更新案の作成'],
+            businessRequirements: ['AIは承認を直接実行しない', 'AIは却下を直接実行しない', 'AIは権限変更を直接実行しない'],
+            readOnlyOperations: ['検索', '一覧', '詳細取得', '要約'],
+            writeOperations: ['登録', '更新', '通知'],
+            approvalRequiredOperations: ['更新', '承認', '却下'],
+            auditLogRequiredOperations: ['登録', '更新', '承認', '却下', '通知']
+        },
+        'sales-commerce': {
+            domainPreset: '注文管理',
+            targetDomain: '注文管理 / 商品管理 / 在庫管理',
+            customUserTypes: '購入者, 出荷担当',
+            targetUsers: '購入者、営業担当、出荷担当、管理者、AIアシスタント',
+            authenticationMethod: 'OAuth2 / OIDC',
+            supplement: 'EC / 販売管理として、注文管理、商品管理、在庫管理を対象にする。削除・外部送信は人間確認を前提にする。',
+            userTypes: ['営業担当', '管理者', 'AIアシスタント'],
+            requiredOperations: ['検索', '一覧', '詳細取得', '登録', '更新', '削除', '通知'],
+            allowedAiOperations: ['検索', '一覧', '詳細参照', '要約', '下書き作成'],
+            businessRequirements: ['AIは削除を直接実行しない', 'AIは外部送信を直接実行しない'],
+            readOnlyOperations: ['検索', '一覧', '詳細取得', '要約'],
+            writeOperations: ['登録', '更新', '削除', '通知'],
+            approvalRequiredOperations: ['削除', '外部送信'],
+            auditLogRequiredOperations: ['登録', '更新', '削除', '通知']
+        },
+        'support-management': {
+            domainPreset: '修理依頼',
+            targetDomain: '修理依頼 / 顧客管理 / ナレッジ検索・要約',
+            customUserTypes: 'サポート担当',
+            targetUsers: 'サポート担当、営業担当、管理者、AIアシスタント',
+            authenticationMethod: 'Spring Security + セッション認証',
+            supplement: '保守サポート管理として、修理依頼、顧客管理、ナレッジ検索・要約を対象にする。外部送信や重要更新は人間確認を前提にする。',
+            userTypes: ['営業担当', '管理者', 'AIアシスタント'],
+            requiredOperations: ['検索', '一覧', '詳細取得', '登録', '更新', '要約', '通知'],
+            allowedAiOperations: ['検索', '一覧', '詳細参照', '要約', '下書き作成', '更新案の作成'],
+            businessRequirements: ['AIは削除を直接実行しない', 'AIは外部送信を直接実行しない'],
+            readOnlyOperations: ['検索', '一覧', '詳細取得', '要約'],
+            writeOperations: ['登録', '更新', '通知'],
+            approvalRequiredOperations: ['更新', '外部送信'],
+            auditLogRequiredOperations: ['登録', '更新', '通知']
+        },
+        'knowledge-platform': {
+            domainPreset: 'ナレッジ検索・要約',
+            targetDomain: 'ナレッジ検索・要約',
+            customUserTypes: '一般利用者, コンテンツ管理者',
+            targetUsers: '一般利用者、コンテンツ管理者、管理者、AIアシスタント',
+            authenticationMethod: '社内SSO',
+            supplement: 'ナレッジ活用基盤として、文書検索、要約、コンテンツ管理を対象にする。削除や重要文書更新は人間確認を前提にする。',
+            userTypes: ['管理者', 'AIアシスタント'],
+            requiredOperations: ['検索', '一覧', '詳細取得', '登録', '更新', '削除', '要約'],
+            allowedAiOperations: ['検索', '一覧', '詳細参照', '要約', '下書き作成'],
+            businessRequirements: ['AIは削除を直接実行しない'],
+            readOnlyOperations: ['検索', '一覧', '詳細取得', '要約'],
+            writeOperations: ['登録', '更新', '削除'],
+            approvalRequiredOperations: ['更新', '削除'],
+            auditLogRequiredOperations: ['登録', '更新', '削除']
+        }
+    };
 
     function applyDomainPreset() {
         const preset = document.getElementById('domainPreset').value;
         if (preset) {
             document.getElementById('targetDomain').value = preset;
         }
+    }
+
+    function applySystemTypePreset() {
+        const presetKey = document.getElementById('systemTypePreset').value;
+        const preset = systemTypePresets[presetKey];
+        if (!preset) {
+            return;
+        }
+
+        document.getElementById('domainPreset').value = preset.domainPreset;
+        document.getElementById('targetDomain').value = preset.targetDomain;
+        document.getElementById('customUserTypes').value = preset.customUserTypes;
+        document.getElementById('structuredSupplement').value = preset.supplement;
+        document.getElementById('authenticationMethod').value = preset.authenticationMethod;
+        document.getElementById('targetUsers').value = preset.targetUsers;
+        document.getElementById('outputLanguage').value = '日本語';
+
+        setChecked('userTypes', preset.userTypes);
+        setChecked('requiredOperations', preset.requiredOperations);
+        setChecked('allowedAiOperations', preset.allowedAiOperations);
+        setChecked('businessRequirements', preset.businessRequirements);
+        setChecked('readOnlyOperations', preset.readOnlyOperations);
+        setChecked('writeOperations', preset.writeOperations);
+        setChecked('approvalRequiredOperations', preset.approvalRequiredOperations);
+        setChecked('auditLogRequiredOperations', preset.auditLogRequiredOperations);
+        syncStructuredInputs();
     }
 
     function checkedValues(target) {
@@ -340,6 +442,7 @@
     }
 
     function fillSample() {
+        document.getElementById('systemTypePreset').value = '';
         document.getElementById('domainPreset').value = '顧客管理';
         document.getElementById('targetDomain').value = '顧客管理';
         document.getElementById('customUserTypes').value = '';
