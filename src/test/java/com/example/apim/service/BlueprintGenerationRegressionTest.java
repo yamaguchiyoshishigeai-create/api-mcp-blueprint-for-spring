@@ -106,6 +106,7 @@ class BlueprintGenerationRegressionTest {
     private BlueprintGenerationService newService() {
         return new BlueprintGenerationService(
                 new OperationClassifier(),
+                new BlueprintInputNormalizer(),
                 new DomainNameNormalizer(),
                 new ApiDesignGenerator(),
                 new DtoCandidateGenerator(),
