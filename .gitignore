@@ -17,6 +17,7 @@ ChatExec-*.out
 ChatExec-*.err
 CodexExec-*.out
 CodexExec-*.err
+.chatexec2/
 
 # Local APIM execution results
 APIM-*.result
