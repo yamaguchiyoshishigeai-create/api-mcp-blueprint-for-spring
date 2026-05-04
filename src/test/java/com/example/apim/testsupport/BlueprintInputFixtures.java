@@ -126,6 +126,9 @@ public final class BlueprintInputFixtures {
     private static BlueprintInput baseInput(String targetDomain) {
         BlueprintInput input = new BlueprintInput();
         input.setTargetDomain(targetDomain);
+        input.setPrimaryDomain(targetDomain);
+        input.setRelatedDomains(java.util.List.of(targetDomain));
+        input.setSystemTypes(java.util.List.of("customer-crm"));
         input.setUserTypes("- 担当者\n- 管理者\n- AIアシスタント");
         input.setOutputLanguage("日本語");
         return input;

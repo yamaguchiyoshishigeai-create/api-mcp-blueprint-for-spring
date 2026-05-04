@@ -1,16 +1,20 @@
 package com.example.apim.controller;
 
+import com.example.apim.model.BlueprintInput;
 import com.example.apim.model.BlueprintResult;
 import com.example.apim.service.BlueprintGenerationService;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -72,6 +76,33 @@ class BlueprintControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("result"))
                 .andExpect(model().attributeExists("blueprintResult"));
+    }
+
+    @Test
+    void postGenerateBindsMultiSystemAndDomainFields() throws Exception {
+        BlueprintResult mockResult = new BlueprintResult();
+        mockResult.setInputSummary("summary");
+        when(generationService.generate(any())).thenReturn(mockResult);
+
+        mockMvc.perform(post("/blueprint/generate")
+                        .param("businessRequirements", "顧客検索を行う")
+                        .param("targetDomain", "顧客管理 / 問い合わせ管理")
+                        .param("systemTypes", "customer-crm", "support-management")
+                        .param("primaryDomain", "顧客管理")
+                        .param("relatedDomains", "顧客管理", "問い合わせ管理")
+                        .param("userTypes", "営業担当")
+                        .param("requiredOperations", "顧客検索")
+                        .param("allowedAiOperations", "顧客検索"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("result"))
+                .andExpect(model().attributeExists("blueprintResult"));
+
+        ArgumentCaptor<BlueprintInput> captor = ArgumentCaptor.forClass(BlueprintInput.class);
+        verify(generationService).generate(captor.capture());
+        assertThat(captor.getValue().getTargetDomain()).isEqualTo("顧客管理 / 問い合わせ管理");
+        assertThat(captor.getValue().getPrimaryDomain()).isEqualTo("顧客管理");
+        assertThat(captor.getValue().getSystemTypes()).containsExactly("customer-crm", "support-management");
+        assertThat(captor.getValue().getRelatedDomains()).containsExactly("顧客管理", "問い合わせ管理");
     }
 
     @Test

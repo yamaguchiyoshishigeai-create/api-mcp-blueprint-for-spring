@@ -2,6 +2,8 @@ package com.example.apim.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlueprintInput {
 
@@ -12,6 +14,15 @@ public class BlueprintInput {
     @NotBlank
     @Size(max = 100)
     private String targetDomain = "";
+
+    @Size(max = 20)
+    private List<@Size(max = 100) String> systemTypes = new ArrayList<>();
+
+    @Size(max = 100)
+    private String primaryDomain = "";
+
+    @Size(max = 20)
+    private List<@Size(max = 100) String> relatedDomains = new ArrayList<>();
 
     @NotBlank
     @Size(max = 2000)
@@ -59,6 +70,30 @@ public class BlueprintInput {
 
     public void setTargetDomain(String targetDomain) {
         this.targetDomain = valueOrEmpty(targetDomain);
+    }
+
+    public List<String> getSystemTypes() {
+        return systemTypes;
+    }
+
+    public void setSystemTypes(List<String> systemTypes) {
+        this.systemTypes = valuesOrEmpty(systemTypes);
+    }
+
+    public String getPrimaryDomain() {
+        return primaryDomain;
+    }
+
+    public void setPrimaryDomain(String primaryDomain) {
+        this.primaryDomain = valueOrEmpty(primaryDomain);
+    }
+
+    public List<String> getRelatedDomains() {
+        return relatedDomains;
+    }
+
+    public void setRelatedDomains(List<String> relatedDomains) {
+        this.relatedDomains = valuesOrEmpty(relatedDomains);
     }
 
     public String getUserTypes() {
@@ -143,5 +178,16 @@ public class BlueprintInput {
 
     private String valueOrEmpty(String value) {
         return value == null ? "" : value;
+    }
+
+    private List<String> valuesOrEmpty(List<String> values) {
+        if (values == null) {
+            return new ArrayList<>();
+        }
+        List<String> safeValues = new ArrayList<>(values.size());
+        for (String value : values) {
+            safeValues.add(valueOrEmpty(value));
+        }
+        return safeValues;
     }
 }
