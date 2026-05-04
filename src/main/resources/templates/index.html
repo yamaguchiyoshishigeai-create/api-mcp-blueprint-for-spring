@@ -143,6 +143,9 @@
 
             <label>対象ドメイン（必須）</label>
             <input id="targetDomain" type="text" th:field="*{targetDomain}" placeholder="例: 顧客管理 / 注文管理 / 在庫管理">
+            <input id="primaryDomain" type="hidden" th:field="*{primaryDomain}">
+            <div id="systemTypesFieldContainer"></div>
+            <div id="relatedDomainsFieldContainer"></div>
             <p class="form-help">カテゴリ別ドメイン候補の選択結果を確認するための欄です。候補にないドメイン名の手動補正にも利用できます。</p>
             <p class="error" th:if="${#fields.hasErrors('targetDomain')}" th:errors="*{targetDomain}"></p>
 
@@ -333,6 +336,7 @@
 
     function syncSelectedDomainsToTarget() {
         document.getElementById('targetDomain').value = checkedValues('domainCatalog').join(' / ');
+        syncInputModelFields();
     }
 
     function applySystemTypePresets() {
@@ -358,6 +362,7 @@
         setChecked('approvalRequiredOperations', uniqueValues(selectedPresets.flatMap(preset => preset.approvalRequiredOperations)));
         setChecked('auditLogRequiredOperations', uniqueValues(selectedPresets.flatMap(preset => preset.auditLogRequiredOperations)));
         syncStructuredInputs();
+        syncInputModelFields();
     }
 
     function checkedValues(target) {
@@ -414,6 +419,29 @@
         document.getElementById('auditLogRequiredOperations').value = bulletList(checkedValues('auditLogRequiredOperations'));
     }
 
+    function syncInputModelFields() {
+        const systemTypes = checkedValues('systemTypePresets');
+        const relatedDomains = checkedValues('domainCatalog');
+        const manualDomains = splitCustomValues(document.getElementById('targetDomain').value.replace(/\//g, ','));
+        const primaryDomain = relatedDomains.length > 0 ? relatedDomains[0] : (manualDomains[0] || '');
+
+        replaceHiddenList('systemTypesFieldContainer', 'systemTypes', systemTypes);
+        replaceHiddenList('relatedDomainsFieldContainer', 'relatedDomains', relatedDomains);
+        document.getElementById('primaryDomain').value = primaryDomain;
+    }
+
+    function replaceHiddenList(containerId, fieldName, values) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        values.forEach(value => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = fieldName;
+            input.value = value;
+            container.appendChild(input);
+        });
+    }
+
     function fillSample() {
         setChecked('systemTypePresets', ['customer-crm']);
         setChecked('domainCatalog', ['顧客管理']);
@@ -432,9 +460,13 @@
         setChecked('auditLogRequiredOperations', ['登録', '更新', '削除']);
         setChecked('businessRequirements', ['AIは削除を直接実行しない']);
         syncStructuredInputs();
+        syncInputModelFields();
     }
 
-    document.getElementById('blueprintForm').addEventListener('submit', syncStructuredInputs);
+    document.getElementById('blueprintForm').addEventListener('submit', () => {
+        syncStructuredInputs();
+        syncInputModelFields();
+    });
 </script>
 </body>
 </html>
