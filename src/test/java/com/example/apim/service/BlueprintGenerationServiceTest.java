@@ -113,9 +113,29 @@ class BlueprintGenerationServiceTest {
         assertThat(result.getSecurityNotes()).anyMatch(n -> n.category().equals("外部送信"));
     }
 
+    @Test
+    void prioritizesPrimaryAndRelatedDomainsWhenTargetDomainIsEmpty() {
+        BlueprintInput input = new BlueprintInput();
+        input.setBusinessRequirements("顧客情報を検索して更新する。");
+        input.setTargetDomain("");
+        input.setPrimaryDomain("注文管理");
+        input.setRelatedDomains(java.util.List.of("在庫管理", "商品管理"));
+        input.setUserTypes("営業担当\n管理者");
+        input.setRequiredOperations("注文検索\n注文更新");
+        input.setAllowedAiOperations("注文検索\n注文更新案の作成");
+
+        var result = newService().generate(input);
+
+        assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/orders"));
+        assertThat(result.getApiEndpoints()).noneMatch(e -> e.path().contains("/api/domain-items"));
+        assertThat(result.getDtoCandidates()).anyMatch(d -> d.getName().equals("OrderSearchRequest"));
+        assertThat(result.getInputSummary()).contains("対象ドメイン: 注文管理 / 在庫管理 / 商品管理");
+    }
+
     private BlueprintGenerationService newService() {
         return new BlueprintGenerationService(
                 new OperationClassifier(),
+                new BlueprintInputNormalizer(),
                 new DomainNameNormalizer(),
                 new ApiDesignGenerator(),
                 new DtoCandidateGenerator(),
