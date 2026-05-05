@@ -14,7 +14,6 @@ import java.util.List;
 public class ControllerSkeletonGenerator {
 
     private static final String PRIMARY_DOMAIN_API = "主ドメインAPI";
-    private static final String RELATED_DOMAIN_REFERENCE_API = "関連ドメイン参照API";
 
     private final NamingSupport namingSupport;
 
@@ -24,7 +23,7 @@ public class ControllerSkeletonGenerator {
 
     public ControllerSkeleton generate(String domainClass, String domainPath, List<ApiEndpointCandidate> endpoints) {
         String controllerName = domainClass + "Controller";
-        return new ControllerSkeleton(controllerName, buildControllerSource(controllerName, domainPath, endpoints));
+        return new ControllerSkeleton(controllerName, buildControllerSource(controllerName, domainPath, endpoints, List.of()));
     }
 
     public ControllerSkeleton generate(
@@ -36,28 +35,32 @@ public class ControllerSkeletonGenerator {
         String primaryDomainPath = domainNameNormalizer.normalizeUrlSegment(primaryDomain);
         String primaryDomainClass = domainNameNormalizer.normalizeClassName(primaryDomain);
         String primaryControllerName = primaryDomainClass + "Controller";
-        StringBuilder sb = new StringBuilder();
-        sb.append(buildControllerSource(primaryControllerName, primaryDomainPath,
-                endpointsByDomain(endpoints, PRIMARY_DOMAIN_API, primaryDomain)));
-
-        for (String relatedDomain : normalizedInput.relatedDomains()) {
-            String relatedDomainPath = domainNameNormalizer.normalizeUrlSegment(relatedDomain);
-            String relatedDomainClass = domainNameNormalizer.normalizeClassName(relatedDomain);
-            String relatedControllerName = relatedDomainClass + "ReferenceController";
-            sb.append("\n\n");
-            sb.append(buildControllerSource(relatedControllerName, relatedDomainPath,
-                    endpointsByDomain(endpoints, RELATED_DOMAIN_REFERENCE_API, relatedDomain)));
-        }
-        return new ControllerSkeleton(primaryControllerName, sb.toString());
+        List<String> relatedControllerCandidates = relatedControllerCandidates(normalizedInput, domainNameNormalizer);
+        String sourceCode = buildControllerSource(primaryControllerName, primaryDomainPath,
+                endpointsByDomain(endpoints, PRIMARY_DOMAIN_API, primaryDomain), relatedControllerCandidates);
+        return new ControllerSkeleton(primaryControllerName, sourceCode);
     }
 
-    private String buildControllerSource(String controllerName, String domainPath, List<ApiEndpointCandidate> endpoints) {
+    private String buildControllerSource(
+            String controllerName,
+            String domainPath,
+            List<ApiEndpointCandidate> endpoints,
+            List<String> relatedControllerCandidates
+    ) {
         StringBuilder sb = new StringBuilder();
         sb.append("package com.example.generated.controller;\n\n");
         sb.append("import org.springframework.web.bind.annotation.*;\n\n");
         sb.append("@RestController\n");
         sb.append("@RequestMapping(\"/api/").append(domainPath).append("\")\n");
         sb.append("public class ").append(controllerName).append(" {\n\n");
+        for (String relatedControllerCandidate : relatedControllerCandidates) {
+            sb.append("    // 関連ドメイン参照Controller候補: ")
+                    .append(relatedControllerCandidate)
+                    .append("\n");
+        }
+        if (!relatedControllerCandidates.isEmpty()) {
+            sb.append("\n");
+        }
         for (ApiEndpointCandidate endpoint : endpoints) {
             String methodName = toMethodName(endpoint);
             sb.append("    @").append(annotation(endpoint.httpMethod())).append("(\"")
@@ -72,6 +75,19 @@ public class ControllerSkeletonGenerator {
         }
         sb.append("}\n");
         return sb.toString();
+    }
+
+    private List<String> relatedControllerCandidates(
+            NormalizedBlueprintInput normalizedInput,
+            DomainNameNormalizer domainNameNormalizer
+    ) {
+        List<String> candidates = new ArrayList<>();
+        for (String relatedDomain : normalizedInput.relatedDomains()) {
+            String relatedDomainPath = domainNameNormalizer.normalizeUrlSegment(relatedDomain);
+            String relatedDomainClass = domainNameNormalizer.normalizeClassName(relatedDomain);
+            candidates.add(relatedDomainClass + "ReferenceController (/api/" + relatedDomainPath + ")");
+        }
+        return candidates;
     }
 
     private List<ApiEndpointCandidate> endpointsByDomain(List<ApiEndpointCandidate> endpoints, String domainRole, String domainName) {

@@ -142,10 +142,14 @@ class BlueprintGenerationServiceTest {
         assertThat(result.getDtoCandidates()).anyMatch(d -> d.getName().equals("ProductReferenceResponse"));
         assertThat(result.getControllerSkeleton().sourceCode())
                 .contains("public class OrderController")
-                .contains("public class InventoryReferenceController")
-                .contains("public class ProductReferenceController")
-                .contains("@RequestMapping(\"/api/inventory\")")
-                .contains("@RequestMapping(\"/api/products\")");
+                .contains("関連ドメイン参照Controller候補: InventoryReferenceController (/api/inventory)")
+                .contains("関連ドメイン参照Controller候補: ProductReferenceController (/api/products)")
+                .contains("@RequestMapping(\"/api/orders\")")
+                .doesNotContain("public class InventoryReferenceController")
+                .doesNotContain("public class ProductReferenceController");
+        assertThat(result.getControllerSkeleton().sourceCode())
+                .containsOnlyOnce("package com.example.generated.controller;")
+                .containsOnlyOnce("import org.springframework.web.bind.annotation.*;");
         assertThat(result.getInputSummary()).contains("対象ドメイン: 注文管理 / 在庫管理 / 商品管理");
         assertThat(result.getBlueprintMarkdown())
                 .contains("- 対象システム種別: EC / 販売管理 / 資産・備品管理")
