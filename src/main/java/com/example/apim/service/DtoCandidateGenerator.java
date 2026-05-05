@@ -13,9 +13,15 @@ import java.util.Map;
 @Service
 public class DtoCandidateGenerator {
 
+    private static final String RELATED_DOMAIN_REFERENCE_API = "関連ドメイン参照API";
+
     public List<DtoCandidate> generate(String domainClass, List<ApiEndpointCandidate> endpoints) {
         Map<String, DtoCandidate> dtos = new LinkedHashMap<>();
         for (ApiEndpointCandidate endpoint : endpoints) {
+            if (RELATED_DOMAIN_REFERENCE_API.equals(endpoint.domainRole())) {
+                addRelatedDomainReferenceDtos(dtos, endpoint);
+                continue;
+            }
             switch (endpoint.httpMethod()) {
                 case "GET" -> {
                     if (endpoint.path().endsWith("}")) {
@@ -44,6 +50,21 @@ public class DtoCandidateGenerator {
             }
         }
         return new ArrayList<>(dtos.values());
+    }
+
+    private void addRelatedDomainReferenceDtos(Map<String, DtoCandidate> dtos, ApiEndpointCandidate endpoint) {
+        String domainLabel = endpoint.domainName().isBlank() ? "関連ドメイン" : endpoint.domainName();
+        if (endpoint.requestDto() != null && !endpoint.requestDto().isBlank()) {
+            addIfMissing(dtos, endpoint.requestDto(), domainLabel + "参照検索条件", defaultSearchFields());
+        }
+        if (endpoint.responseDto() == null || endpoint.responseDto().isBlank()) {
+            return;
+        }
+        if (endpoint.path().endsWith("}")) {
+            addIfMissing(dtos, endpoint.responseDto(), domainLabel + "参照詳細レスポンス", defaultResponseFields());
+        } else {
+            addIfMissing(dtos, endpoint.responseDto(), domainLabel + "参照一覧レスポンス", defaultSummaryFields());
+        }
     }
 
     private void addIfMissing(Map<String, DtoCandidate> dtos, String name, String purpose, List<DtoFieldCandidate> fields) {
