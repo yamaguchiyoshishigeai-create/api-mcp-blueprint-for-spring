@@ -7,10 +7,15 @@ import org.springframework.stereotype.Service;
 public class MarkdownDocumentGenerator {
 
     public String generate(BlueprintInput input, BlueprintResult result) {
+        return generate(new BlueprintInputNormalizer().normalize(input), result);
+    }
+
+    public String generate(NormalizedBlueprintInput normalizedInput, BlueprintResult result) {
+        BlueprintInput input = normalizedInput.originalInput();
         StringBuilder sb = new StringBuilder();
         sb.append("# api-mcp-blueprint.md\n\n");
         appendTitle(sb);
-        appendInputSummary(sb, input);
+        appendInputSummary(sb, input, normalizedInput);
         appendApiDesignSummary(sb, result);
         appendEndpoints(sb, result);
         appendDtoCandidates(sb, result);
@@ -31,8 +36,12 @@ public class MarkdownDocumentGenerator {
                 .append("## 2. 入力要件サマリー\n");
     }
 
-    private void appendInputSummary(StringBuilder sb, BlueprintInput input) {
-        sb.append("- 対象ドメイン: ").append(input.getTargetDomain()).append("\n")
+    private void appendInputSummary(StringBuilder sb, BlueprintInput input, NormalizedBlueprintInput normalizedInput) {
+        sb.append("- 対象システム種別: ").append(joinOrDefault(normalizedInput.systemTypes(), "未指定")).append("\n")
+                .append("- 主ドメイン: ").append(valueOrDefault(normalizedInput.primaryDomain(), "未指定")).append("\n")
+                .append("- 関連ドメイン: ").append(joinOrDefault(normalizedInput.relatedDomains(), "なし")).append("\n")
+                .append("- 正規化後ドメイン一覧: ").append(joinOrDefault(normalizedInput.allDomains(), "未指定")).append("\n")
+                .append("- 対象ドメイン: ").append(valueOrDefault(normalizedInput.targetDomainText(), input.getTargetDomain())).append("\n")
                 .append("- ユーザー種別: ").append(input.getUserTypes().replace("\n", " / ")).append("\n")
                 .append("- 必要な操作: ").append(input.getRequiredOperations().replace("\n", " / ")).append("\n\n")
                 .append("## 3. 想定ユーザー・ロール\n")
@@ -136,5 +145,16 @@ public class MarkdownDocumentGenerator {
     private void appendNextSteps(StringBuilder sb) {
         sb.append("## 15. 次の実装ステップ\n")
                 .append("APIM-005の実装内容をレビューし、APIM-006以降で改善する。");
+    }
+
+    private String joinOrDefault(java.util.List<String> values, String defaultValue) {
+        if (values == null || values.isEmpty()) {
+            return defaultValue;
+        }
+        return String.join(" / ", values);
+    }
+
+    private String valueOrDefault(String value, String defaultValue) {
+        return value == null || value.isBlank() ? defaultValue : value;
     }
 }

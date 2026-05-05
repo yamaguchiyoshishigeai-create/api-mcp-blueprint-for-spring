@@ -68,8 +68,8 @@ public class BlueprintGenerationService {
         result.setMcpPrompts(mcp.prompts());
         result.setApiMcpMappings(mcp.mappings());
         result.setSecurityNotes(securityNotesGenerator.generate(input, operations));
-        result.setBlueprintMarkdown(markdownDocumentGenerator.generate(input, result));
-        result.setImplementationInstructions(implementationInstructionGenerator.generate(input, result));
+        result.setBlueprintMarkdown(markdownDocumentGenerator.generate(normalizedInput, result));
+        result.setImplementationInstructions(implementationInstructionGenerator.generate(normalizedInput, result));
         return result;
     }
 
