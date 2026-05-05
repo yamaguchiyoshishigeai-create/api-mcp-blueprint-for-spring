@@ -50,17 +50,28 @@ public class BlueprintGenerationService {
 
     public BlueprintResult generate(BlueprintInput input) {
         NormalizedBlueprintInput normalizedInput = blueprintInputNormalizer.normalize(input);
-        String domainPath = domainNameNormalizer.normalizeUrlSegment(normalizedInput.targetDomainText());
-        String domainClass = domainNameNormalizer.normalizeClassName(normalizedInput.targetDomainText());
+        String primaryDomainText = normalizedInput.primaryDomain().isBlank()
+                ? normalizedInput.targetDomainText()
+                : normalizedInput.primaryDomain();
+        String domainPath = domainNameNormalizer.normalizeUrlSegment(primaryDomainText);
+        String domainClass = domainNameNormalizer.normalizeClassName(primaryDomainText);
         Set<OperationType> operations = operationClassifier.classify(input);
         String actors = input.getUserTypes().replace("\n", " / ");
 
         BlueprintResult result = new BlueprintResult();
         result.setInputSummary(buildInputSummary(input, normalizedInput));
         result.setApiDesignSummary("業務要件からREST API候補とMCP設計候補を生成した。");
-        result.setApiEndpoints(apiDesignGenerator.generate(domainPath, domainClass, operations, actors));
+        if (normalizedInput.relatedDomains().isEmpty()) {
+            result.setApiEndpoints(apiDesignGenerator.generate(domainPath, domainClass, operations, actors));
+        } else {
+            result.setApiEndpoints(apiDesignGenerator.generate(normalizedInput, domainNameNormalizer, operations, actors));
+        }
         result.setDtoCandidates(dtoCandidateGenerator.generate(domainClass, result.getApiEndpoints()));
-        result.setControllerSkeleton(controllerSkeletonGenerator.generate(domainClass, domainPath, result.getApiEndpoints()));
+        if (normalizedInput.relatedDomains().isEmpty()) {
+            result.setControllerSkeleton(controllerSkeletonGenerator.generate(domainClass, domainPath, result.getApiEndpoints()));
+        } else {
+            result.setControllerSkeleton(controllerSkeletonGenerator.generate(normalizedInput, domainNameNormalizer, result.getApiEndpoints()));
+        }
 
         McpDesignGenerator.McpDesignResult mcp = mcpDesignGenerator.generate(domainClass, domainPath, operations, result.getApiEndpoints());
         result.setMcpTools(mcp.tools());

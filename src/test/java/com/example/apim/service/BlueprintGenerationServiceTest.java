@@ -128,18 +128,60 @@ class BlueprintGenerationServiceTest {
         var result = newService().generate(input);
 
         assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/orders"));
+        assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/orders")
+                && e.domainRole().equals("主ドメインAPI"));
+        assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/inventory")
+                && e.domainRole().equals("関連ドメイン参照API"));
+        assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/products/{id}")
+                && e.domainName().equals("商品管理"));
+        assertThat(result.getApiEndpoints()).noneMatch(e -> e.path().equals("/api/inventory")
+                && e.httpMethod().equals("POST"));
         assertThat(result.getApiEndpoints()).noneMatch(e -> e.path().contains("/api/domain-items"));
         assertThat(result.getDtoCandidates()).anyMatch(d -> d.getName().equals("OrderSearchRequest"));
+        assertThat(result.getDtoCandidates()).anyMatch(d -> d.getName().equals("InventoryReferenceSearchRequest"));
+        assertThat(result.getDtoCandidates()).anyMatch(d -> d.getName().equals("ProductReferenceResponse"));
+        assertThat(result.getControllerSkeleton().sourceCode())
+                .contains("public class OrderController")
+                .contains("関連ドメイン参照Controller候補: InventoryReferenceController (/api/inventory)")
+                .contains("関連ドメイン参照Controller候補: ProductReferenceController (/api/products)")
+                .contains("@RequestMapping(\"/api/orders\")")
+                .doesNotContain("public class InventoryReferenceController")
+                .doesNotContain("public class ProductReferenceController");
+        assertThat(result.getControllerSkeleton().sourceCode())
+                .containsOnlyOnce("package com.example.generated.controller;")
+                .containsOnlyOnce("import org.springframework.web.bind.annotation.*;");
         assertThat(result.getInputSummary()).contains("対象ドメイン: 注文管理 / 在庫管理 / 商品管理");
         assertThat(result.getBlueprintMarkdown())
                 .contains("- 対象システム種別: EC / 販売管理 / 資産・備品管理")
                 .contains("- 主ドメイン: 注文管理")
                 .contains("- 関連ドメイン: 在庫管理 / 商品管理")
-                .contains("- 正規化後ドメイン一覧: 注文管理 / 在庫管理 / 商品管理");
+                .contains("- 正規化後ドメイン一覧: 注文管理 / 在庫管理 / 商品管理")
+                .contains("主ドメインAPI(注文管理):")
+                .contains("関連ドメイン参照API(在庫管理):");
         assertThat(result.getImplementationInstructions())
                 .contains("### ドメイン実装境界")
                 .contains("関連ドメインは参照・連携境界として扱う")
                 .contains("- 対象システム種別: EC / 販売管理 / 資産・備品管理");
+    }
+
+    @Test
+    void legacyTargetDomainOnlyKeepsSingleDomainApiDesignCandidates() {
+        BlueprintInput input = new BlueprintInput();
+        input.setBusinessRequirements("顧客情報を検索して詳細参照する。");
+        input.setTargetDomain("顧客管理");
+        input.setUserTypes("営業担当");
+        input.setRequiredOperations("顧客検索\n顧客詳細取得");
+        input.setAllowedAiOperations("顧客検索");
+
+        var result = newService().generate(input);
+
+        assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/customers"));
+        assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/customers/{id}"));
+        assertThat(result.getApiEndpoints()).allMatch(e -> e.domainRole().isBlank());
+        assertThat(result.getDtoCandidates()).anyMatch(d -> d.getName().equals("CustomerSearchRequest"));
+        assertThat(result.getControllerSkeleton().sourceCode())
+                .contains("public class CustomerController")
+                .doesNotContain("ReferenceController");
     }
 
     private BlueprintGenerationService newService() {
