@@ -118,6 +118,7 @@ class BlueprintGenerationServiceTest {
         BlueprintInput input = new BlueprintInput();
         input.setBusinessRequirements("顧客情報を検索して更新する。");
         input.setTargetDomain("");
+        input.setSystemTypes(java.util.List.of("EC / 販売管理", "資産・備品管理"));
         input.setPrimaryDomain("注文管理");
         input.setRelatedDomains(java.util.List.of("在庫管理", "商品管理"));
         input.setUserTypes("営業担当\n管理者");
@@ -130,6 +131,15 @@ class BlueprintGenerationServiceTest {
         assertThat(result.getApiEndpoints()).noneMatch(e -> e.path().contains("/api/domain-items"));
         assertThat(result.getDtoCandidates()).anyMatch(d -> d.getName().equals("OrderSearchRequest"));
         assertThat(result.getInputSummary()).contains("対象ドメイン: 注文管理 / 在庫管理 / 商品管理");
+        assertThat(result.getBlueprintMarkdown())
+                .contains("- 対象システム種別: EC / 販売管理 / 資産・備品管理")
+                .contains("- 主ドメイン: 注文管理")
+                .contains("- 関連ドメイン: 在庫管理 / 商品管理")
+                .contains("- 正規化後ドメイン一覧: 注文管理 / 在庫管理 / 商品管理");
+        assertThat(result.getImplementationInstructions())
+                .contains("### ドメイン実装境界")
+                .contains("関連ドメインは参照・連携境界として扱う")
+                .contains("- 対象システム種別: EC / 販売管理 / 資産・備品管理");
     }
 
     private BlueprintGenerationService newService() {
