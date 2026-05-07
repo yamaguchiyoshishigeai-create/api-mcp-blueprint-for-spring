@@ -292,6 +292,54 @@ class BlueprintControllerTest {
     }
 
     @Test
+    void editFormPreservesFreeFormOperationsOnResubmission() throws Exception {
+        BlueprintResult firstResult = new BlueprintResult();
+        firstResult.setInputSummary("summary");
+        firstResult.setBlueprintMarkdown("# API MCP Blueprint");
+        when(generationService.generate(any())).thenReturn(firstResult);
+
+        MockHttpSession session = new MockHttpSession();
+        mockMvc.perform(post("/blueprint/generate")
+                        .session(session)
+                        .param("businessRequirements", "顧客検索と問い合わせ回答を行う")
+                        .param("targetDomain", "顧客管理 / 問い合わせ管理")
+                        .param("userTypes", "- 営業担当\n- AIアシスタント")
+                        .param("requiredOperations", "- 検索\n- 顧客検索\n- 問い合わせ詳細取得")
+                        .param("allowedAiOperations", "- 詳細参照\n- 問い合わせ詳細取得\n- 問い合わせ要約"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("result"));
+
+        mockMvc.perform(get("/blueprint/edit").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("function syncOperationTextareaPreservingFreeForm(target)")))
+                .andExpect(content().string(containsString("syncOperationTextareaPreservingFreeForm('requiredOperations')")))
+                .andExpect(content().string(containsString("syncOperationTextareaPreservingFreeForm('allowedAiOperations')")))
+                .andExpect(content().string(containsString("顧客検索")))
+                .andExpect(content().string(containsString("問い合わせ詳細取得")))
+                .andExpect(content().string(containsString("問い合わせ要約")));
+
+        mockMvc.perform(post("/blueprint/generate")
+                        .session(session)
+                        .param("businessRequirements", "顧客検索と問い合わせ回答を行う")
+                        .param("targetDomain", "顧客管理 / 問い合わせ管理")
+                        .param("userTypes", "- 営業担当\n- AIアシスタント")
+                        .param("requiredOperations", "- 検索\n- 顧客検索\n- 問い合わせ詳細取得")
+                        .param("allowedAiOperations", "- 詳細参照\n- 問い合わせ詳細取得\n- 問い合わせ要約"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("result"));
+
+        ArgumentCaptor<BlueprintInput> captor = ArgumentCaptor.forClass(BlueprintInput.class);
+        verify(generationService, org.mockito.Mockito.times(2)).generate(captor.capture());
+        BlueprintInput resubmittedInput = captor.getAllValues().get(1);
+        assertThat(resubmittedInput.getRequiredOperations())
+                .contains("顧客検索")
+                .contains("問い合わせ詳細取得");
+        assertThat(resubmittedInput.getAllowedAiOperations())
+                .contains("問い合わせ詳細取得")
+                .contains("問い合わせ要約");
+    }
+
+    @Test
     void implementationPreviewRedirectsWhenNoResultIsStored() throws Exception {
         mockMvc.perform(get("/blueprint/implementation-instructions"))
                 .andExpect(status().is3xxRedirection())

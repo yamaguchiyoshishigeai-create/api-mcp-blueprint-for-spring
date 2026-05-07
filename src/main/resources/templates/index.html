@@ -430,6 +430,16 @@
             .filter(value => value.length > 0);
     }
 
+    function checkboxCandidateValues(target) {
+        return Array.from(document.querySelectorAll('input[data-target="' + target + '"]')).map(input => input.value);
+    }
+
+    function syncOperationTextareaPreservingFreeForm(target) {
+        const candidateValues = checkboxCandidateValues(target);
+        const freeFormValues = textareaValues(target).filter(value => !candidateValues.includes(value));
+        document.getElementById(target).value = bulletList(uniqueValues(checkedValues(target).concat(freeFormValues)));
+    }
+
     function restoreGeneratedInputState() {
         setChecked('systemTypePresets', restoredSystemTypes);
         setChecked('domainCatalog', restoredRelatedDomains);
@@ -476,8 +486,8 @@
         }
         document.getElementById('businessRequirements').value = requirements.join('\n\n');
         document.getElementById('userTypes').value = bulletList(userTypes);
-        document.getElementById('requiredOperations').value = bulletList(checkedValues('requiredOperations'));
-        document.getElementById('allowedAiOperations').value = bulletList(checkedValues('allowedAiOperations'));
+        syncOperationTextareaPreservingFreeForm('requiredOperations');
+        syncOperationTextareaPreservingFreeForm('allowedAiOperations');
         document.getElementById('readOnlyOperations').value = bulletList(checkedValues('readOnlyOperations'));
         document.getElementById('writeOperations').value = bulletList(checkedValues('writeOperations'));
         document.getElementById('approvalRequiredOperations').value = bulletList(checkedValues('approvalRequiredOperations'));
