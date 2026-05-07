@@ -11,8 +11,9 @@
     <p>業務要件から、Spring REST API設計とMCP tools/resources/prompts設計候補を同時生成するWeb MVPです。</p>
 
     <section class="notice">
-        <h2>初回訪問者向け体験</h2>
-        <p>APIM for Spring は、選択された業務ドメイン・利用者・操作種別から、API設計書、MCP tools/resources/prompts、API/MCP対応表、AI実装指示書を生成します。生成物は実装前レビューや、Codex等の実装支援AIへの入力として使えます。</p>
+        <h2>このページでできること</h2>
+        <p>APIM for Spring は、業務要件からAPI設計とMCP設計候補を同時に作る設計支援ツールです。まだコードを書く前に、必要なAPI、AIエージェント向け操作、承認・監査観点、Codex等の実装支援AIへ渡す指示を整理できます。</p>
+        <p>まずサンプルで試すと、どのような入力からAPI設計書、MCP設計候補、API/MCP対応表、AI実装指示書が得られるかを短時間で確認できます。</p>
         <h2>このMVPで生成するもの</h2>
         <ul>
             <li>API設計書 / REST API設計候補</li>
@@ -32,10 +33,30 @@
         </ul>
     </section>
 
-    <section class="toolbar">
-        <button type="button" onclick="fillSample()">注文管理サンプルを挿入</button>
-        <button type="button" onclick="clearSample()">自由入力へ戻す</button>
-        <a href="/help">ヘルプ</a>
+    <section class="form-section">
+        <h2>はじめて試す場合の3ステップ</h2>
+        <ol>
+            <li>「注文管理サンプルを挿入」を押して、注文管理 / 在庫管理 / 商品管理を題材にしたサンプル業務要件をフォームへ自動入力します。</li>
+            <li>入力内容を眺めて、業務要件、利用者、操作、承認条件、監査ログ条件がどう表現されるか確認します。</li>
+            <li>サンプルまたは自分の要件を確認したら、「設計候補を生成する」を押して、API設計書・MCP設計候補・AI実装指示書を見ます。</li>
+        </ol>
+        <p class="form-help">サンプル投入だけでは生成は実行されません。フォームに値が入った後、画面下部の「設計候補を生成する」を押すと生成結果へ進みます。入力をやり直したい場合は「自由入力へ戻す」を使えます。</p>
+        <div class="toolbar">
+            <button type="button" onclick="fillSample()">注文管理サンプルを挿入</button>
+            <button type="button" onclick="clearSample()">自由入力へ戻す</button>
+            <a href="/help">ヘルプ</a>
+        </div>
+        <p id="sampleNextAction" class="form-help">サンプルを使うと、注文検索、在庫確認、商品情報参照、承認必須操作、監査ログ対象を含む入力例がフォームに入ります。</p>
+    </section>
+
+    <section class="notice">
+        <h2>生成前に分かる実務上の使い道</h2>
+        <ul>
+            <li>開発前に、どのAPIが必要かを整理できます。</li>
+            <li>AIアシスタントに許可する操作と禁止する操作を分けて考えられます。</li>
+            <li>承認が必要な操作や監査ログが必要な操作を見落としにくくなります。</li>
+            <li>生成されたAI実装指示書をCodex等へ渡し、実装着手の材料にできます。</li>
+        </ul>
     </section>
 
     <form id="blueprintForm" method="post" th:action="@{/blueprint/generate}" th:object="${blueprintInput}">
@@ -314,6 +335,7 @@
             <label>承認必須操作（任意）</label><textarea id="approvalRequiredOperations" th:field="*{approvalRequiredOperations}" rows="3"></textarea>
             <label>監査ログが必要な操作（任意）</label><textarea id="auditLogRequiredOperations" th:field="*{auditLogRequiredOperations}" rows="3"></textarea>
         </section>
+        <p class="form-help">サンプルまたは自分の要件を確認したら、このボタンで生成します。生成後は入力サマリー、RESTエンドポイント、MCP tools/resources/prompts、API/MCP対応表、AI実装指示書の順に確認できます。</p>
         <button type="submit">設計候補を生成する</button>
     </form>
 </main>
@@ -467,6 +489,7 @@
         setChecked('businessRequirements', ['AIは外部送信を直接実行しない']);
         syncStructuredInputs();
         syncInputModelFields();
+        document.getElementById('sampleNextAction').textContent = '注文管理サンプルを投入しました。内容を確認したら、画面下部の「設計候補を生成する」を押してください。';
     }
 
     function applyFirstVisitorSampleTextFields() {
@@ -502,6 +525,7 @@
         document.getElementById('approvalRequiredOperations').value = '';
         document.getElementById('auditLogRequiredOperations').value = '';
         syncInputModelFields();
+        document.getElementById('sampleNextAction').textContent = '自由入力へ戻しました。対象ドメイン、利用者、操作、承認・監査条件を入力してから生成できます。';
     }
 
     document.getElementById('blueprintForm').addEventListener('submit', () => {
