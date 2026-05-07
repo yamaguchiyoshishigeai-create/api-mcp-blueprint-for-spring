@@ -19,6 +19,15 @@
     <p th:text="${blueprintResult.apiDesignSummary}"></p>
 
     <section class="notice">
+        <h2>おすすめの読み順</h2>
+        <ol>
+            <li>まず入力サマリーで、どの業務要件から生成されたかを確認します。</li>
+            <li>RESTエンドポイント一覧で、人間向けAPI候補を確認します。</li>
+            <li>MCP tools/resources/promptsで、AIエージェントに公開する操作候補を確認します。</li>
+            <li>API/MCP対応表で、人間向けAPIとAI向け操作入口の対応を確認します。</li>
+            <li>セキュリティ・承認・監査ログ注意点で、危険操作や人間確認が必要な箇所を確認します。</li>
+            <li>Markdown設計書やAI実装指示書を、レビューやCodex等への実装依頼に使います。</li>
+        </ol>
         <h2>出力物の見方</h2>
         <ul>
             <li>API設計書は、人間による設計レビューやdocs転記に使います。</li>
