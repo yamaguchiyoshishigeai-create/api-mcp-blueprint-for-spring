@@ -94,13 +94,17 @@ class BlueprintGenerationRegressionTest {
 
         assertThat(result.getImplementationInstructions())
                 .contains("## 1. 実装目的")
-                .contains("## 3. 実装しないこと")
-                .contains("## 8. 認可・承認・監査ログ方針")
-                .contains("## 10. テスト観点")
+                .contains("## 4. 実装するREST API")
+                .contains("## 7. 実装するMCP tools/resources/prompts")
+                .contains("## 9. 認証・認可・承認・人間確認・監査ログ方針")
+                .contains("## 10. 実装しないこと")
+                .contains("## 11. テスト観点")
+                .contains("対象業務アプリケーションを実装するための実装支援AI向け指示")
                 .contains("完全動作するMCPサーバーは実装しない")
                 .contains("外部LLM API連携")
                 .contains("DB永続化")
-                .contains("Spring Security");
+                .contains("APIM for Spring本体の改修指示ではない")
+                .doesNotContain("APIM for Spring のMVPを段階実装する");
     }
 
     private BlueprintGenerationService newService() {
