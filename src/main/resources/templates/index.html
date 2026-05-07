@@ -168,8 +168,12 @@
             <label>対象ドメイン（必須）</label>
             <input id="targetDomain" type="text" th:field="*{targetDomain}" placeholder="例: 顧客管理 / 注文管理 / 在庫管理">
             <input id="primaryDomain" type="hidden" th:field="*{primaryDomain}">
-            <div id="systemTypesFieldContainer"></div>
-            <div id="relatedDomainsFieldContainer"></div>
+            <div id="systemTypesFieldContainer">
+                <input th:each="systemType : *{systemTypes}" type="hidden" name="systemTypes" th:value="${systemType}">
+            </div>
+            <div id="relatedDomainsFieldContainer">
+                <input th:each="relatedDomain : *{relatedDomains}" type="hidden" name="relatedDomains" th:value="${relatedDomain}">
+            </div>
             <p class="form-help">カテゴリ別ドメイン候補の選択結果を確認するための欄です。候補にないドメイン名の手動補正にも利用できます。</p>
             <p class="error" th:if="${#fields.hasErrors('targetDomain')}" th:errors="*{targetDomain}"></p>
 
@@ -342,6 +346,8 @@
 
 <script th:inline="javascript">
     const sampleBusinessRequirements = /*[[${sampleBusinessRequirements}]]*/ '';
+    const restoredSystemTypes = /*[[${blueprintInput.systemTypes}]]*/ [];
+    const restoredRelatedDomains = /*[[${blueprintInput.relatedDomains}]]*/ [];
     const systemTypePresets = {
         'internal-application-portal': preset(['経費精算', '休暇申請', '社員情報管理', '承認ワークフロー', '通知管理'], '', '申請者、承認者、管理者、経理担当、AIアシスタント', '社内SSO', '社内申請ポータルとして、経費精算、休暇申請、社員情報管理を対象にする。更新・承認・却下は人間確認と監査ログを前提にする。', ['申請者', '承認者', '管理者', '経理担当', 'AIアシスタント'], ['検索', '一覧', '詳細取得', '登録', '更新', '承認', '却下', '通知'], ['検索', '一覧', '詳細参照', '要約', '下書き作成', '更新案の作成'], ['AIは承認を直接実行しない', 'AIは却下を直接実行しない', 'AIは権限変更を直接実行しない'], ['検索', '一覧', '詳細取得', '要約'], ['登録', '更新', '通知'], ['更新', '承認', '却下'], ['登録', '更新', '承認', '却下', '通知']),
         'sales-commerce': preset(['注文管理', '商品管理', '在庫管理', '請求管理', '決済管理', '配送管理'], '購入者, 出荷担当', '購入者、営業担当、出荷担当、管理者、AIアシスタント', 'OAuth2 / OIDC', 'EC / 販売管理として、注文管理、商品管理、在庫管理を対象にする。削除・外部送信は人間確認を前提にする。', ['営業担当', '管理者', 'AIアシスタント'], ['検索', '一覧', '詳細取得', '登録', '更新', '削除', '通知'], ['検索', '一覧', '詳細参照', '要約', '下書き作成'], ['AIは削除を直接実行しない', 'AIは外部送信を直接実行しない'], ['検索', '一覧', '詳細取得', '要約'], ['登録', '更新', '削除', '通知'], ['削除', '外部送信'], ['登録', '更新', '削除', '通知']),
@@ -417,27 +423,71 @@
         return raw.split(/[、,\n]/).map(value => value.trim()).filter(value => value.length > 0);
     }
 
+    function textareaValues(id) {
+        return document.getElementById(id).value
+            .split('\n')
+            .map(value => value.trim().replace(/^-+\s*/, ''))
+            .filter(value => value.length > 0);
+    }
+
+    function checkboxCandidateValues(target) {
+        return Array.from(document.querySelectorAll('input[data-target="' + target + '"]')).map(input => input.value);
+    }
+
+    function syncOperationTextareaPreservingFreeForm(target) {
+        const candidateValues = checkboxCandidateValues(target);
+        const freeFormValues = textareaValues(target).filter(value => !candidateValues.includes(value));
+        document.getElementById(target).value = bulletList(uniqueValues(checkedValues(target).concat(freeFormValues)));
+    }
+
+    function restoreGeneratedInputState() {
+        setChecked('systemTypePresets', restoredSystemTypes);
+        setChecked('domainCatalog', restoredRelatedDomains);
+        setChecked('userTypes', textareaValues('userTypes'));
+        setChecked('requiredOperations', textareaValues('requiredOperations'));
+        setChecked('allowedAiOperations', textareaValues('allowedAiOperations'));
+        setChecked('readOnlyOperations', textareaValues('readOnlyOperations'));
+        setChecked('writeOperations', textareaValues('writeOperations'));
+        setChecked('approvalRequiredOperations', textareaValues('approvalRequiredOperations'));
+        setChecked('auditLogRequiredOperations', textareaValues('auditLogRequiredOperations'));
+        const requirements = document.getElementById('businessRequirements').value;
+        const aiForbiddenNotes = Array.from(document.querySelectorAll('input[data-target="businessRequirements"]'))
+            .map(input => input.value)
+            .filter(value => requirements.includes(value));
+        setChecked('businessRequirements', aiForbiddenNotes);
+        if (document.getElementById('structuredSupplement').value.trim().length === 0 && requirements.trim().length > 0) {
+            document.getElementById('structuredSupplement').value = requirements.trim();
+        }
+        syncInputModelFields();
+    }
+
     function syncStructuredInputs() {
         const userTypes = checkedValues('userTypes').concat(splitCustomValues(document.getElementById('customUserTypes').value));
         const aiForbiddenNotes = checkedValues('businessRequirements');
         const supplement = document.getElementById('structuredSupplement').value.trim();
         const requirements = [];
-        if (sampleBusinessRequirements && sampleBusinessRequirements.trim().length > 0 && document.getElementById('targetDomain').value === '注文管理 / 在庫管理 / 商品管理') {
+        if (sampleBusinessRequirements
+                && sampleBusinessRequirements.trim().length > 0
+                && document.getElementById('targetDomain').value === '注文管理 / 在庫管理 / 商品管理'
+                && !supplement.includes(sampleBusinessRequirements.trim())) {
             requirements.push(sampleBusinessRequirements.trim());
         }
         if (supplement.length > 0) {
             requirements.push(supplement);
         }
         if (aiForbiddenNotes.length > 0) {
-            requirements.push(aiForbiddenNotes.join('\n'));
+            const additionalNotes = aiForbiddenNotes.filter(note => !supplement.includes(note));
+            if (additionalNotes.length > 0) {
+                requirements.push(additionalNotes.join('\n'));
+            }
         }
         if (requirements.length === 0) {
             requirements.push('選択された構造化要素に基づき、API/MCP設計候補を生成する。');
         }
         document.getElementById('businessRequirements').value = requirements.join('\n\n');
         document.getElementById('userTypes').value = bulletList(userTypes);
-        document.getElementById('requiredOperations').value = bulletList(checkedValues('requiredOperations'));
-        document.getElementById('allowedAiOperations').value = bulletList(checkedValues('allowedAiOperations'));
+        syncOperationTextareaPreservingFreeForm('requiredOperations');
+        syncOperationTextareaPreservingFreeForm('allowedAiOperations');
         document.getElementById('readOnlyOperations').value = bulletList(checkedValues('readOnlyOperations'));
         document.getElementById('writeOperations').value = bulletList(checkedValues('writeOperations'));
         document.getElementById('approvalRequiredOperations').value = bulletList(checkedValues('approvalRequiredOperations'));
@@ -532,6 +582,7 @@
         syncStructuredInputs();
         syncInputModelFields();
     });
+    restoreGeneratedInputState();
 </script>
 </body>
 </html>

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -231,6 +232,111 @@ class BlueprintControllerTest {
         mockMvc.perform(get("/blueprint/preview"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void previewShowsDownloadAndReturnToStoredInputLinks() throws Exception {
+        BlueprintResult mockResult = new BlueprintResult();
+        mockResult.setBlueprintMarkdown("# API MCP Blueprint");
+
+        mockMvc.perform(get("/blueprint/preview")
+                        .sessionAttr("blueprintResult", mockResult))
+                .andExpect(status().isOk())
+                .andExpect(view().name("blueprint-preview"))
+                .andExpect(content().string(containsString("Markdown設計書ダウンロード")))
+                .andExpect(content().string(containsString("/blueprint/download")))
+                .andExpect(content().string(containsString("設定を修正して再生成")))
+                .andExpect(content().string(containsString("/blueprint/edit")));
+    }
+
+    @Test
+    void editFormKeepsManualInputAfterPreviewFlow() throws Exception {
+        BlueprintResult mockResult = new BlueprintResult();
+        mockResult.setInputSummary("summary");
+        mockResult.setBlueprintMarkdown("# API MCP Blueprint");
+        when(generationService.generate(any())).thenReturn(mockResult);
+
+        MockHttpSession session = new MockHttpSession();
+        mockMvc.perform(post("/blueprint/generate")
+                        .session(session)
+                        .param("businessRequirements", "顧客検索と問い合わせ回答を行う")
+                        .param("targetDomain", "顧客管理 / 問い合わせ管理")
+                        .param("systemTypes", "customer-crm")
+                        .param("primaryDomain", "顧客管理")
+                        .param("relatedDomains", "顧客管理", "問い合わせ管理")
+                        .param("userTypes", "- 営業担当\n- AIアシスタント")
+                        .param("requiredOperations", "- 顧客検索\n- 問い合わせ詳細取得")
+                        .param("allowedAiOperations", "- 顧客検索\n- 問い合わせ要約")
+                        .param("approvalRequiredOperations", "- 更新")
+                        .param("auditLogRequiredOperations", "- 更新")
+                        .param("authenticationMethod", "OAuth2 / OIDC")
+                        .param("targetUsers", "営業担当、AIアシスタント")
+                        .param("outputLanguage", "English"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("result"));
+
+        mockMvc.perform(get("/blueprint/preview").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("設定を修正して再生成")));
+
+        mockMvc.perform(get("/blueprint/edit").session(session))
+                .andExpect(status().isOk())
+                .andExpect(view().name("index"))
+                .andExpect(content().string(containsString("顧客検索と問い合わせ回答を行う")))
+                .andExpect(content().string(containsString("顧客管理 / 問い合わせ管理")))
+                .andExpect(content().string(containsString("customer-crm")))
+                .andExpect(content().string(containsString("問い合わせ管理")))
+                .andExpect(content().string(containsString("顧客検索")))
+                .andExpect(content().string(containsString("問い合わせ要約")))
+                .andExpect(content().string(containsString("English")));
+    }
+
+    @Test
+    void editFormPreservesFreeFormOperationsOnResubmission() throws Exception {
+        BlueprintResult firstResult = new BlueprintResult();
+        firstResult.setInputSummary("summary");
+        firstResult.setBlueprintMarkdown("# API MCP Blueprint");
+        when(generationService.generate(any())).thenReturn(firstResult);
+
+        MockHttpSession session = new MockHttpSession();
+        mockMvc.perform(post("/blueprint/generate")
+                        .session(session)
+                        .param("businessRequirements", "顧客検索と問い合わせ回答を行う")
+                        .param("targetDomain", "顧客管理 / 問い合わせ管理")
+                        .param("userTypes", "- 営業担当\n- AIアシスタント")
+                        .param("requiredOperations", "- 検索\n- 顧客検索\n- 問い合わせ詳細取得")
+                        .param("allowedAiOperations", "- 詳細参照\n- 問い合わせ詳細取得\n- 問い合わせ要約"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("result"));
+
+        mockMvc.perform(get("/blueprint/edit").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("function syncOperationTextareaPreservingFreeForm(target)")))
+                .andExpect(content().string(containsString("syncOperationTextareaPreservingFreeForm('requiredOperations')")))
+                .andExpect(content().string(containsString("syncOperationTextareaPreservingFreeForm('allowedAiOperations')")))
+                .andExpect(content().string(containsString("顧客検索")))
+                .andExpect(content().string(containsString("問い合わせ詳細取得")))
+                .andExpect(content().string(containsString("問い合わせ要約")));
+
+        mockMvc.perform(post("/blueprint/generate")
+                        .session(session)
+                        .param("businessRequirements", "顧客検索と問い合わせ回答を行う")
+                        .param("targetDomain", "顧客管理 / 問い合わせ管理")
+                        .param("userTypes", "- 営業担当\n- AIアシスタント")
+                        .param("requiredOperations", "- 検索\n- 顧客検索\n- 問い合わせ詳細取得")
+                        .param("allowedAiOperations", "- 詳細参照\n- 問い合わせ詳細取得\n- 問い合わせ要約"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("result"));
+
+        ArgumentCaptor<BlueprintInput> captor = ArgumentCaptor.forClass(BlueprintInput.class);
+        verify(generationService, org.mockito.Mockito.times(2)).generate(captor.capture());
+        BlueprintInput resubmittedInput = captor.getAllValues().get(1);
+        assertThat(resubmittedInput.getRequiredOperations())
+                .contains("顧客検索")
+                .contains("問い合わせ詳細取得");
+        assertThat(resubmittedInput.getAllowedAiOperations())
+                .contains("問い合わせ詳細取得")
+                .contains("問い合わせ要約");
     }
 
     @Test

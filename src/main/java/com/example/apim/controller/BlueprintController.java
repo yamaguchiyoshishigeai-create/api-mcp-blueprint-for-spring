@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
-@SessionAttributes("blueprintResult")
+@SessionAttributes({"blueprintResult", "blueprintInput"})
 public class BlueprintController {
 
     private static final MediaType TEXT_MARKDOWN_UTF8 = new MediaType("text", "markdown", StandardCharsets.UTF_8);
@@ -41,6 +41,15 @@ public class BlueprintController {
 
     @GetMapping("/")
     public String showForm(Model model) {
+        return showInputForm(model);
+    }
+
+    @GetMapping("/blueprint/edit")
+    public String editForm(Model model) {
+        return showInputForm(model);
+    }
+
+    private String showInputForm(Model model) {
         model.addAttribute("sampleBusinessRequirements", sampleBusinessRequirements());
         return "index";
     }

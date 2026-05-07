@@ -8,9 +8,17 @@
 <body>
 <main class="container">
     <h1>Markdown設計書プレビュー</h1>
+    <nav class="links">
+        <a href="/blueprint/download">Markdown設計書ダウンロード</a>
+        <a href="/blueprint/edit">設定を修正して再生成</a>
+        <a href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
+    </nav>
     <pre th:text="${blueprintResult.blueprintMarkdown}"></pre>
-    <a href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
-    <a href="/">入力画面へ戻る</a>
+    <nav class="links">
+        <a href="/blueprint/download">Markdown設計書ダウンロード</a>
+        <a href="/blueprint/edit">設定を修正して再生成</a>
+        <a href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
+    </nav>
 </main>
 </body>
 </html>
