@@ -181,8 +181,12 @@ class BlueprintGenerationServiceTest {
                 .contains("関連ドメイン参照API(在庫管理):");
         assertThat(result.getImplementationInstructions())
                 .contains("### ドメイン実装境界")
-                .contains("関連ドメインは参照・連携境界として扱う")
-                .contains("- 対象システム種別: EC / 販売管理 / 資産・備品管理");
+                .contains("関連ドメインは参照・連携境界として扱い")
+                .contains("- 対象システム種別: EC / 販売管理 / 資産・備品管理")
+                .contains("searchOrders")
+                .contains("searchInventoryReferences")
+                .contains("## 8. API/MCP対応方針")
+                .doesNotContain("APIM for Spring のMVPを段階実装する");
     }
 
     @Test
