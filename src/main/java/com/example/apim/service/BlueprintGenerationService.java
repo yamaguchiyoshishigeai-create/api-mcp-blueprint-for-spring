@@ -73,7 +73,9 @@ public class BlueprintGenerationService {
             result.setControllerSkeleton(controllerSkeletonGenerator.generate(normalizedInput, domainNameNormalizer, result.getApiEndpoints()));
         }
 
-        McpDesignGenerator.McpDesignResult mcp = mcpDesignGenerator.generate(domainClass, domainPath, operations, result.getApiEndpoints());
+        McpDesignGenerator.McpDesignResult mcp = normalizedInput.relatedDomains().isEmpty()
+                ? mcpDesignGenerator.generate(domainClass, domainPath, operations, result.getApiEndpoints())
+                : mcpDesignGenerator.generate(normalizedInput, domainNameNormalizer, operations, result.getApiEndpoints());
         result.setMcpTools(mcp.tools());
         result.setMcpResources(mcp.resources());
         result.setMcpPrompts(mcp.prompts());

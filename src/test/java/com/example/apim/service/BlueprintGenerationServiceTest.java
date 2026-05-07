@@ -136,6 +136,27 @@ class BlueprintGenerationServiceTest {
                 && e.domainName().equals("商品管理"));
         assertThat(result.getApiEndpoints()).noneMatch(e -> e.path().equals("/api/inventory")
                 && e.httpMethod().equals("POST"));
+        assertThat(result.getMcpTools()).anyMatch(t -> t.name().equals("searchOrders")
+                && t.purpose().contains("主ドメインtool(注文管理)"));
+        assertThat(result.getMcpTools()).anyMatch(t -> t.name().equals("searchInventoryReferences")
+                && t.purpose().contains("関連ドメイン参照tool(在庫管理)")
+                && t.operationType().equals("read"));
+        assertThat(result.getMcpTools()).noneMatch(t -> t.relatedApi().startsWith("/api/inventory")
+                && t.operationType().equals("write"));
+        assertThat(result.getMcpResources()).anyMatch(r -> r.name().equals("orders-catalog")
+                && r.purpose().contains("主ドメインresource(注文管理)"));
+        assertThat(result.getMcpResources()).anyMatch(r -> r.name().equals("products-reference-catalog")
+                && r.purpose().contains("関連ドメインresource(商品管理)")
+                && r.scope().equals("read-only"));
+        assertThat(result.getMcpPrompts()).anyMatch(p -> p.name().equals("analyze-orders-cross-domain-requirements")
+                && p.promptTemplate().contains("禁止事項")
+                && p.promptTemplate().contains("人間確認条件"));
+        assertThat(result.getApiMcpMappings()).anyMatch(m -> m.apiPath().equals("/api/orders")
+                && m.toolName().equals("searchOrders")
+                && m.notes().contains("主ドメインAPI(注文管理)"));
+        assertThat(result.getApiMcpMappings()).anyMatch(m -> m.apiPath().equals("/api/inventory")
+                && m.toolName().equals("searchInventoryReferences")
+                && m.notes().contains("関連ドメイン参照API(在庫管理)"));
         assertThat(result.getApiEndpoints()).noneMatch(e -> e.path().contains("/api/domain-items"));
         assertThat(result.getDtoCandidates()).anyMatch(d -> d.getName().equals("OrderSearchRequest"));
         assertThat(result.getDtoCandidates()).anyMatch(d -> d.getName().equals("InventoryReferenceSearchRequest"));
