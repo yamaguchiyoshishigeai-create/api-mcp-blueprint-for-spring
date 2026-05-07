@@ -99,6 +99,36 @@ pre {
   align-items: center;
   gap: 14px;
   margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.sample-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.sample-card {
+  border: 1px solid #ccd6e8;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.sample-card h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.sample-card p {
+  margin: 0 0 10px;
+  color: #536071;
+  font-size: 13px;
+}
+
+.sample-card button {
+  width: 100%;
 }
 
 .form-section {
