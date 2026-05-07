@@ -8,30 +8,33 @@
 <body>
 <main class="container">
     <h1>API + MCP Blueprint Compiler for Spring</h1>
-    <p>選択された構造化要素から、API設計とMCP設計の候補を生成します。</p>
+    <p>業務要件から、Spring REST API設計とMCP tools/resources/prompts設計候補を同時生成するWeb MVPです。</p>
 
     <section class="notice">
-        <h2>初期MVPの位置づけ</h2>
-        <p>APIM for Spring は、自由文を意味理解するAIではなく、選択された業務ドメイン・利用者・操作種別から Spring REST API / MCP設計候補を組み立てる静的ルールベースMVPです。</p>
-        <h2>初期MVPで生成するもの</h2>
+        <h2>初回訪問者向け体験</h2>
+        <p>APIM for Spring は、選択された業務ドメイン・利用者・操作種別から、API設計書、MCP tools/resources/prompts、API/MCP対応表、AI実装指示書を生成します。生成物は実装前レビューや、Codex等の実装支援AIへの入力として使えます。</p>
+        <h2>このMVPで生成するもの</h2>
         <ul>
-            <li>API設計候補</li>
+            <li>API設計書 / REST API設計候補</li>
             <li>MCP tools / resources / prompts 候補</li>
             <li>API/MCP対応表</li>
             <li>セキュリティ・承認・監査ログ注意点</li>
             <li>Markdown設計書 / AI実装指示書</li>
         </ul>
-        <h2>初期MVPで生成しないもの</h2>
+        <h2>このMVPで生成しないもの</h2>
         <ul>
             <li>自由文からの業務ルール自動抽出</li>
             <li>完全動作するMCPサーバー</li>
-            <li>DB永続化</li>
+            <li>DB永続化やマイグレーション</li>
+            <li>認証・認可の本格実装</li>
             <li>外部LLM API連携</li>
+            <li>本番デプロイ作業やRender公開作業</li>
         </ul>
     </section>
 
     <section class="toolbar">
-        <button type="button" onclick="fillSample()">サンプル入力を挿入</button>
+        <button type="button" onclick="fillSample()">注文管理サンプルを挿入</button>
+        <button type="button" onclick="clearSample()">自由入力へ戻す</button>
         <a href="/help">ヘルプ</a>
     </section>
 
@@ -397,7 +400,7 @@
         const aiForbiddenNotes = checkedValues('businessRequirements');
         const supplement = document.getElementById('structuredSupplement').value.trim();
         const requirements = [];
-        if (sampleBusinessRequirements && sampleBusinessRequirements.trim().length > 0 && document.getElementById('targetDomain').value === '顧客管理') {
+        if (sampleBusinessRequirements && sampleBusinessRequirements.trim().length > 0 && document.getElementById('targetDomain').value === '注文管理 / 在庫管理 / 商品管理') {
             requirements.push(sampleBusinessRequirements.trim());
         }
         if (supplement.length > 0) {
@@ -417,6 +420,9 @@
         document.getElementById('writeOperations').value = bulletList(checkedValues('writeOperations'));
         document.getElementById('approvalRequiredOperations').value = bulletList(checkedValues('approvalRequiredOperations'));
         document.getElementById('auditLogRequiredOperations').value = bulletList(checkedValues('auditLogRequiredOperations'));
+        if (document.getElementById('targetDomain').value === '注文管理 / 在庫管理 / 商品管理') {
+            applyFirstVisitorSampleTextFields();
+        }
     }
 
     function syncInputModelFields() {
@@ -443,23 +449,58 @@
     }
 
     function fillSample() {
-        setChecked('systemTypePresets', ['customer-crm']);
-        setChecked('domainCatalog', ['顧客管理']);
+        setChecked('systemTypePresets', ['sales-commerce']);
+        setChecked('domainCatalog', ['注文管理', '在庫管理', '商品管理']);
         syncSelectedDomainsToTarget();
-        document.getElementById('customUserTypes').value = '';
-        document.getElementById('structuredSupplement').value = '顧客情報の更新はAIが直接実行せず、変更案を作成して人間承認後に反映する。';
+        document.getElementById('customUserTypes').value = 'EC運営担当, 倉庫担当';
+        document.getElementById('structuredSupplement').value = '対象システム種別はEC / 販売管理。主ドメインは注文管理、関連ドメインは在庫管理 / 商品管理。注文ステータス更新、注文キャンセル、返金処理、外部通知送信は人間承認後に実行する。';
         document.getElementById('authenticationMethod').value = 'Spring Security + セッション認証';
-        document.getElementById('targetUsers').value = '営業担当、管理者、AIアシスタント';
+        document.getElementById('targetUsers').value = 'EC運営担当、倉庫担当、管理者、AIアシスタント';
         document.getElementById('outputLanguage').value = '日本語';
-        setChecked('userTypes', ['営業担当', '管理者', 'AIアシスタント']);
-        setChecked('requiredOperations', ['検索', '詳細取得', '登録', '更新', '要約']);
+        setChecked('userTypes', ['管理者', 'AIアシスタント']);
+        setChecked('requiredOperations', ['検索', '詳細取得', '更新', '承認', '要約', '通知']);
         setChecked('allowedAiOperations', ['検索', '詳細参照', '要約', '更新案の作成']);
         setChecked('readOnlyOperations', ['検索', '詳細取得', '要約']);
-        setChecked('writeOperations', ['登録', '更新']);
-        setChecked('approvalRequiredOperations', ['更新', '削除']);
-        setChecked('auditLogRequiredOperations', ['登録', '更新', '削除']);
-        setChecked('businessRequirements', ['AIは削除を直接実行しない']);
+        setChecked('writeOperations', ['更新', '通知']);
+        setChecked('approvalRequiredOperations', ['更新', '通知']);
+        setChecked('auditLogRequiredOperations', ['更新', '通知', '承認']);
+        setChecked('businessRequirements', ['AIは外部送信を直接実行しない']);
         syncStructuredInputs();
+        syncInputModelFields();
+    }
+
+    function applyFirstVisitorSampleTextFields() {
+        document.getElementById('requiredOperations').value = bulletList(['注文検索', '注文詳細取得', '注文ステータス更新', '在庫確認', '商品情報参照', '出荷前チェック', '承認依頼']);
+        document.getElementById('allowedAiOperations').value = bulletList(['注文検索', '注文詳細参照', '在庫確認', '商品情報参照', '出荷前チェック結果の要約', '注文変更案の作成']);
+        document.getElementById('approvalRequiredOperations').value = bulletList(['注文ステータス更新', '注文キャンセル', '返金処理', '外部通知送信']);
+        document.getElementById('auditLogRequiredOperations').value = bulletList(['注文ステータス更新', '注文キャンセル', '返金処理', 'AIによる変更案作成', '承認依頼']);
+    }
+
+    function clearSample() {
+        setChecked('systemTypePresets', []);
+        setChecked('domainCatalog', []);
+        setChecked('userTypes', []);
+        setChecked('requiredOperations', []);
+        setChecked('allowedAiOperations', []);
+        setChecked('readOnlyOperations', []);
+        setChecked('writeOperations', []);
+        setChecked('approvalRequiredOperations', []);
+        setChecked('auditLogRequiredOperations', []);
+        setChecked('businessRequirements', []);
+        document.getElementById('targetDomain').value = '';
+        document.getElementById('customUserTypes').value = '';
+        document.getElementById('structuredSupplement').value = '';
+        document.getElementById('authenticationMethod').value = '';
+        document.getElementById('targetUsers').value = '';
+        document.getElementById('outputLanguage').value = '日本語';
+        document.getElementById('businessRequirements').value = '';
+        document.getElementById('userTypes').value = '';
+        document.getElementById('requiredOperations').value = '';
+        document.getElementById('allowedAiOperations').value = '';
+        document.getElementById('readOnlyOperations').value = '';
+        document.getElementById('writeOperations').value = '';
+        document.getElementById('approvalRequiredOperations').value = '';
+        document.getElementById('auditLogRequiredOperations').value = '';
         syncInputModelFields();
     }
 

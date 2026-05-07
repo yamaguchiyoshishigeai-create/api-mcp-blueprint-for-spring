@@ -18,6 +18,24 @@
     <p th:text="${blueprintResult.inputSummary}"></p>
     <p th:text="${blueprintResult.apiDesignSummary}"></p>
 
+    <section class="notice">
+        <h2>出力物の見方</h2>
+        <ul>
+            <li>API設計書は、人間による設計レビューやdocs転記に使います。</li>
+            <li>MCP tools/resources/promptsは、AIエージェントへ公開する操作・参照範囲・定型指示の設計候補です。</li>
+            <li>API/MCP対応表は、人間向けAPIとAI向け操作入口の対応を確認するための表です。</li>
+            <li>AI実装指示書は、Codex等の実装支援AIへ渡す入力として使えます。</li>
+        </ul>
+        <h2>このMVPで生成しないもの</h2>
+        <ul>
+            <li>完全動作するMCPサーバー</li>
+            <li>DB永続化やマイグレーション</li>
+            <li>認証・認可の本格実装</li>
+            <li>外部LLM API連携</li>
+            <li>本番デプロイ作業やRender公開作業</li>
+        </ul>
+    </section>
+
     <h2>RESTエンドポイント一覧</h2>
     <table>
         <thead>
