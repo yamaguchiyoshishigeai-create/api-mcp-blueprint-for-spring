@@ -38,7 +38,12 @@ class ImplementationInstructionGeneratorTest {
                 .contains("## 10. 実装しないこと")
                 .contains("## 11. テスト観点")
                 .contains("## 12. 後続AIへの注意事項")
+                .contains("MCP tools/resources/prompts候補をもとに、実装可能な範囲でMCPサーバーまたはMCP連携層の実装を検討する")
+                .contains("transport、認証・認可、承認、人間確認、監査ログ、テスト方式が未定義の場合は、設計補完またはTODOとして明示する")
+                .contains("MCPサーバーまたはMCP連携層を実装する場合は、不足前提をTODOとして明示し、未実装の機能を実装済みと記述しない")
                 .doesNotContain("APIM for Spring のMVPを段階実装する")
+                .doesNotContain("- APIM for Spring本体の改修")
+                .doesNotContain("完全動作するMCPサーバーは実装しない")
                 .doesNotContain("- 入力フォーム")
                 .doesNotContain("- API/MCP候補生成")
                 .doesNotContain("- 結果表示とプレビュー")
@@ -69,7 +74,8 @@ class ImplementationInstructionGeneratorTest {
                 .contains("| /api/orders/{id}/status | proposeOrderUpdate |")
                 .contains("[承認] 注文ステータス更新は人間承認後に実行する")
                 .contains("[監査ログ] AIによる変更案作成と承認結果を記録する")
-                .contains("完全動作するMCPサーバーは実装しない");
+                .contains("MCP tools/resources/prompts候補をもとに、実装可能な範囲でMCPサーバーまたはMCP連携層の実装を検討する")
+                .contains("transport、認証・認可、承認、人間確認、監査ログ、テスト方式が未定義の場合は、設計補完またはTODOとして明示する");
     }
 
     @Test

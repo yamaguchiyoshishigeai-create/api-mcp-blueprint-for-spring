@@ -99,11 +99,16 @@ class BlueprintGenerationRegressionTest {
                 .contains("## 9. 認証・認可・承認・人間確認・監査ログ方針")
                 .contains("## 10. 実装しないこと")
                 .contains("## 11. テスト観点")
+                .contains("## 12. 後続AIへの注意事項")
                 .contains("対象業務アプリケーションを実装するための実装支援AI向け指示")
-                .contains("完全動作するMCPサーバーは実装しない")
+                .contains("MCP tools/resources/prompts候補をもとに、実装可能な範囲でMCPサーバーまたはMCP連携層の実装を検討する")
+                .contains("transport、認証・認可、承認、人間確認、監査ログ、テスト方式が未定義の場合は、設計補完またはTODOとして明示する")
+                .contains("MCPサーバーまたはMCP連携層を実装する場合は、不足前提をTODOとして明示し、未実装の機能を実装済みと記述しない")
                 .contains("外部LLM API連携")
                 .contains("DB永続化")
                 .contains("APIM for Spring本体の改修指示ではない")
+                .doesNotContain("- APIM for Spring本体の改修")
+                .doesNotContain("完全動作するMCPサーバーは実装しない")
                 .doesNotContain("APIM for Spring のMVPを段階実装する");
     }
 

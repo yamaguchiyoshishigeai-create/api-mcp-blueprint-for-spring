@@ -135,6 +135,8 @@ public class ImplementationInstructionGenerator {
     private void appendMcpCandidates(StringBuilder sb, BlueprintResult result) {
         sb.append("## 7. 実装するMCP tools/resources/prompts\n")
                 .append("MCP候補はAIエージェントに公開する操作入口、参照範囲、定型指示として実装判断する。\n\n")
+                .append("MCP tools/resources/prompts候補をもとに、実装可能な範囲でMCPサーバーまたはMCP連携層の実装を検討する。\n")
+                .append("transport、認証・認可、承認、人間確認、監査ログ、テスト方式が未定義の場合は、設計補完またはTODOとして明示する。\n\n")
                 .append("### MCP tools\n")
                 .append("| Tool | Purpose | Arguments | Return | Related API | Policy | Approval | Audit |\n")
                 .append("|---|---|---|---|---|---|---|---|\n");
@@ -200,8 +202,6 @@ public class ImplementationInstructionGenerator {
 
     private void appendOutOfScope(StringBuilder sb) {
         sb.append("## 10. 実装しないこと\n")
-                .append("- APIM for Spring本体の改修\n")
-                .append("- 完全動作するMCPサーバーは実装しない\n")
                 .append("- 外部LLM API連携\n")
                 .append("- DB永続化やマイグレーションの詳細化\n")
                 .append("- 認証・認可の本格実装。ただし、認証・認可・承認・監査ログの方針とテスト観点は残す\n")
@@ -226,6 +226,7 @@ public class ImplementationInstructionGenerator {
                 .append("- 生成済み候補は確定仕様ではなく、人間レビュー前提の初期設計として扱う\n")
                 .append("- AI許可操作を超える自動実行を追加しない\n")
                 .append("- 承認必須操作、監査ログ必須操作、禁止操作を省略しない\n")
+                .append("- MCPサーバーまたはMCP連携層を実装する場合は、不足前提をTODOとして明示し、未実装の機能を実装済みと記述しない\n")
                 .append("- 機密情報、個人情報、認証情報をログや応答へ過剰出力しない\n");
     }
 
