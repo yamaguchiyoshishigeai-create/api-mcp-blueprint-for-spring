@@ -161,7 +161,7 @@ public class BlueprintInput {
     }
 
     public void setApprovalRequiredOperations(String approvalRequiredOperations) {
-        this.apvalRequiredOperations = normalizeOperationText(approvalRequiredOperations);
+        this.approvalRequiredOperations = normalizeOperationText(approvalRequiredOperations);
     }
 
     public String getAuditLogRequiredOperations() {
