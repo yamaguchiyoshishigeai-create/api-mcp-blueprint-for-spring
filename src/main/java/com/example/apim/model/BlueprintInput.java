@@ -3,29 +3,9 @@ package com.example.apim.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class BlueprintInput {
-
-    private static final Set<String> GENERIC_OPERATION_VALUES =
-            Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(
-                    "\u691c\u7d22",
-                    "\u4e00\u89a7",
-                    "\u8a73\u7d30\u53d6\u5f97",
-                    "\u8a73\u7d30\u53c2\u7167",
-                    "\u767b\u9332",
-                    "\u66f4\u65b0",
-                    "\u524a\u9664",
-                    "\u901a\u77e5",
-                    "\u4e0b\u66f8\u304d\u4f5c\u6210",
-                    "\u66f4\u65b0\u6848\u306e\u4f5c\u6210",
-                    "\u6a29\u9650\u5909\u66f4",
-                    "\u5916\u90e8\u9001\u4fe1"
-            )));
 
     @NotBlank
     @Size(max = 10000)
@@ -129,7 +109,7 @@ public class BlueprintInput {
     }
 
     public void setRequiredOperations(String requiredOperations) {
-        this.requiredOperations = normalizeOperationText(requiredOperations);
+        this.requiredOperations = valueOrEmpty(requiredOperations);
     }
 
     public String getAllowedAiOperations() {
@@ -137,7 +117,7 @@ public class BlueprintInput {
     }
 
     public void setAllowedAiOperations(String allowedAiOperations) {
-        this.allowedAiOperations = normalizeOperationText(allowedAiOperations);
+        this.allowedAiOperations = valueOrEmpty(allowedAiOperations);
     }
 
     public String getReadOnlyOperations() {
@@ -145,7 +125,7 @@ public class BlueprintInput {
     }
 
     public void setReadOnlyOperations(String readOnlyOperations) {
-        this.readOnlyOperations = normalizeOperationText(readOnlyOperations);
+        this.readOnlyOperations = valueOrEmpty(readOnlyOperations);
     }
 
     public String getWriteOperations() {
@@ -153,7 +133,7 @@ public class BlueprintInput {
     }
 
     public void setWriteOperations(String writeOperations) {
-        this.writeOperations = normalizeOperationText(writeOperations);
+        this.writeOperations = valueOrEmpty(writeOperations);
     }
 
     public String getApprovalRequiredOperations() {
@@ -161,7 +141,7 @@ public class BlueprintInput {
     }
 
     public void setApprovalRequiredOperations(String approvalRequiredOperations) {
-        this.approvalRequiredOperations = normalizeOperationText(approvalRequiredOperations);
+        this.approvalRequiredOperations = valueOrEmpty(approvalRequiredOperations);
     }
 
     public String getAuditLogRequiredOperations() {
@@ -169,7 +149,7 @@ public class BlueprintInput {
     }
 
     public void setAuditLogRequiredOperations(String auditLogRequiredOperations) {
-        this.auditLogRequiredOperations = normalizeOperationText(auditLogRequiredOperations);
+        this.auditLogRequiredOperations = valueOrEmpty(auditLogRequiredOperations);
     }
 
     public String getAuthenticationMethod() {
@@ -198,58 +178,6 @@ public class BlueprintInput {
 
     private String valueOrEmpty(String value) {
         return value == null ? "" : value;
-    }
-
-    private String normalizeOperationText(String value) {
-        String safeValue = valueOrEmpty(value);
-        List<String> operations = parseOperationLines(safeValue);
-        boolean hasSpecificOperation = false;
-
-        for (String operation : operations) {
-            if (!GENERIC_OPERATION_VALUES.contains(operation)) {
-                hasSpecificOperation = true;
-                break;
-            }
-        }
-
-        if (!hasSpecificOperation) {
-            return safeValue;
-        }
-
-        List<String> normalizedOperations = new ArrayList<>();
-        for (String operation : operations) {
-            if (!GENERIC_OPERATION_VALUES.contains(operation)) {
-                normalizedOperations.add(operation);
-            }
-        }
-
-        return bulletList(normalizedOperations);
-    }
-
-    private List<String> parseOperationLines(String value) {
-        List<String> operations = new ArrayList<>();
-
-        for (String line : value.split("\\R")) {
-            String operation = line.trim().replaceFirst("^-+\\s*", "").trim();
-            if (!operation.isEmpty()) {
-                operations.add(operation);
-            }
-        }
-
-        return new ArrayList<>(new LinkedHashSet<>(operations));
-    }
-
-    private String bulletList(List<String> values) {
-        StringBuilder builder = new StringBuilder();
-
-        for (String value : values) {
-            if (builder.length() > 0) {
-                builder.append('\n');
-            }
-            builder.append("- ").append(value);
-        }
-
-        return builder.toString();
     }
 
     private List<String> valuesOrEmpty(List<String> values) {
