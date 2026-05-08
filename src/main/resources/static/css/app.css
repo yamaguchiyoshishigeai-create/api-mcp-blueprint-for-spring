@@ -114,6 +114,8 @@ pre {
   border-radius: 8px;
   background: #ffffff;
   padding: 12px;
+  display: flex;
+  flex-direction: column;
 }
 
 .sample-card h3 {
@@ -129,6 +131,7 @@ pre {
 
 .sample-card button {
   width: 100%;
+  margin-top: auto;
 }
 
 .form-section {
