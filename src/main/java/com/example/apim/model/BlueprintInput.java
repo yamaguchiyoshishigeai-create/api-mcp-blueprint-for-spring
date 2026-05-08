@@ -20,9 +20,6 @@ public class BlueprintInput {
                     "\u767b\u9332",
                     "\u66f4\u65b0",
                     "\u524a\u9664",
-                    "\u627f\u8a8d",
-                    "\u5374\u4e0b",
-                    "\u8981\u7d04",
                     "\u901a\u77e5",
                     "\u4e0b\u66f8\u304d\u4f5c\u6210",
                     "\u66f4\u65b0\u6848\u306e\u4f5c\u6210",
@@ -164,7 +161,7 @@ public class BlueprintInput {
     }
 
     public void setApprovalRequiredOperations(String approvalRequiredOperations) {
-        this.approvalRequiredOperations = normalizeOperationText(approvalRequiredOperations);
+        this.apvalRequiredOperations = normalizeOperationText(approvalRequiredOperations);
     }
 
     public String getAuditLogRequiredOperations() {
