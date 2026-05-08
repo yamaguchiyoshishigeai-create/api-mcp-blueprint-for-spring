@@ -190,6 +190,65 @@ class BlueprintGenerationServiceTest {
     }
 
     @Test
+    void supportInquirySampleGeneratesDistinctApiMcpAndImplementationInstructions() {
+        BlueprintInput input = new BlueprintInput();
+        input.setBusinessRequirements("""
+                問い合わせ・サポート管理として、問い合わせ受付、分類、FAQ検索、AI要約、返信下書き作成を扱う。
+                回答確定送信と重要問い合わせの状態変更は人間確認後に実行する。
+                """);
+        input.setTargetDomain("問い合わせ管理 / FAQ管理 / ナレッジ検索・要約 / 顧客管理 / 通知管理");
+        input.setSystemTypes(java.util.List.of("support-management", "knowledge-platform"));
+        input.setPrimaryDomain("問い合わせ管理");
+        input.setRelatedDomains(java.util.List.of("問い合わせ管理", "FAQ管理", "ナレッジ検索・要約", "顧客管理", "通知管理"));
+        input.setUserTypes("- サポート担当\n- 品質管理担当\n- 管理者\n- AIアシスタント");
+        input.setRequiredOperations("""
+                - 問い合わせ検索
+                - 問い合わせ詳細取得
+                - 問い合わせ受付登録
+                - 問い合わせ分類
+                - FAQ検索
+                - 問い合わせ要約
+                - 返信下書き作成
+                - 回答確定通知
+                """);
+        input.setAllowedAiOperations("""
+                - 問い合わせ検索
+                - 問い合わせ詳細参照
+                - FAQ検索
+                - 問い合わせ要約
+                - 返信下書き作成
+                """);
+        input.setWriteOperations("- 問い合わせ受付登録\n- 問い合わせ分類更新\n- 回答確定通知");
+        input.setApprovalRequiredOperations("- 回答確定送信\n- 重要問い合わせの状態変更\n- 顧客情報更新");
+        input.setAuditLogRequiredOperations("- 問い合わせ分類更新\n- AIによる問い合わせ要約\n- 返信下書き作成\n- 回答確定送信");
+        input.setAuthenticationMethod("OAuth2 / OIDC");
+        input.setTargetUsers("サポート担当、品質管理担当、管理者、AIアシスタント");
+        input.setOutputLanguage("日本語");
+
+        var result = newService().generate(input);
+
+        assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/inquiries") && e.httpMethod().equals("GET"));
+        assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/inquiries/{id}/summary"));
+        assertThat(result.getApiEndpoints()).anyMatch(e -> e.path().equals("/api/faqs")
+                && e.domainRole().equals("関連ドメイン参照API"));
+        assertThat(result.getMcpTools()).anyMatch(t -> t.name().equals("searchInquiries"));
+        assertThat(result.getMcpTools()).anyMatch(t -> t.name().equals("getFaqReferenceDetail"));
+        assertThat(result.getMcpResources()).anyMatch(r -> r.name().equals("inquiries-catalog"));
+        assertThat(result.getMcpPrompts()).anyMatch(p -> p.name().equals("analyze-inquiries-cross-domain-requirements"));
+        assertThat(result.getApiMcpMappings()).anyMatch(m -> m.apiPath().equals("/api/inquiries")
+                && m.toolName().equals("searchInquiries"));
+        assertThat(result.getImplementationInstructions())
+                .contains("- 対象システム種別: support-management / knowledge-platform")
+                .contains("- 主ドメイン: 問い合わせ管理")
+                .contains("searchInquiries")
+                .contains("searchFaqReferences")
+                .contains("回答確定送信");
+        assertThat(result.getBlueprintMarkdown())
+                .contains("- 主ドメイン: 問い合わせ管理")
+                .contains("関連ドメイン参照API(FAQ管理):");
+    }
+
+    @Test
     void legacyTargetDomainOnlyKeepsSingleDomainApiDesignCandidates() {
         BlueprintInput input = new BlueprintInput();
         input.setBusinessRequirements("顧客情報を検索して詳細参照する。");

@@ -54,7 +54,7 @@ public class BlueprintInput {
     @Size(max = 500)
     private String targetUsers = "";
 
-    private String outputLanguage = "日本語";
+    private String outputLanguage = "\u65e5\u672c\u8a9e";
 
     public String getBusinessRequirements() {
         return businessRequirements;
@@ -184,10 +184,12 @@ public class BlueprintInput {
         if (values == null) {
             return new ArrayList<>();
         }
+
         List<String> safeValues = new ArrayList<>(values.size());
         for (String value : values) {
             safeValues.add(valueOrEmpty(value));
         }
+
         return safeValues;
     }
 }

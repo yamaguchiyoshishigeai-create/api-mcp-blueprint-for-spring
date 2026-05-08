@@ -49,13 +49,24 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("まだコードを書く前に、必要なAPI、AIエージェント向け操作、承認・監査観点")))
                 .andExpect(content().string(containsString("どのような入力からAPI設計書、MCP設計候補、API/MCP対応表、AI実装指示書が得られるか")))
                 .andExpect(content().string(containsString("はじめて試す場合の3ステップ")))
-                .andExpect(content().string(containsString("注文管理 / 在庫管理 / 商品管理を題材にしたサンプル業務要件をフォームへ自動入力")))
+                .andExpect(content().string(containsString("自分の業務に近いものを選んでフォームへ自動入力")))
                 .andExpect(content().string(containsString("サンプル投入だけでは生成は実行されません")))
                 .andExpect(content().string(containsString("設計候補を生成する」を押すと生成結果へ進みます")))
                 .andExpect(content().string(containsString("開発前に、どのAPIが必要かを整理できます")))
                 .andExpect(content().string(containsString("AIアシスタントに許可する操作と禁止する操作を分けて考えられます")))
                 .andExpect(content().string(containsString("生成されたAI実装指示書をCodex等へ渡し、実装着手の材料にできます")))
-                .andExpect(content().string(containsString("注文管理サンプルを挿入")))
+                .andExpect(content().string(containsString("注文・在庫管理サンプル")))
+                .andExpect(content().string(containsString("EC、販売管理、在庫引当、出荷前チェックを題材にします")))
+                .andExpect(content().string(containsString("社内申請・承認ワークフローサンプル")))
+                .andExpect(content().string(containsString("申請、承認、差戻し、人間確認、監査ログを題材にします")))
+                .andExpect(content().string(containsString("問い合わせ・サポート管理サンプル")))
+                .andExpect(content().string(containsString("FAQ検索、問い合わせ分類、AI要約、返信下書きを題材にします")))
+                .andExpect(content().string(containsString("契約・請求管理サンプル")))
+                .andExpect(content().string(containsString("契約承認、外部通知、請求・入金状態、業務リスク管理を題材にします")))
+                .andExpect(content().string(containsString("fillSample('order-inventory')")))
+                .andExpect(content().string(containsString("fillSample('internal-approval')")))
+                .andExpect(content().string(containsString("fillSample('support-inquiry')")))
+                .andExpect(content().string(containsString("fillSample('contract-billing')")))
                 .andExpect(content().string(containsString("自由入力へ戻す")))
                 .andExpect(content().string(containsString("完全動作するMCPサーバー")))
                 .andExpect(content().string(containsString("DB永続化やマイグレーション")));
@@ -169,6 +180,66 @@ class BlueprintControllerTest {
         assertThat(input.getAllowedAiOperations()).contains("注文変更案の作成");
         assertThat(input.getApprovalRequiredOperations()).contains("返金処理", "外部通知送信");
         assertThat(input.getAuditLogRequiredOperations()).contains("AIによる変更案作成");
+    }
+
+    @Test
+    void postGenerateWithSupportSampleInputReturnsResult() throws Exception {
+        BlueprintResult mockResult = new BlueprintResult();
+        mockResult.setInputSummary("summary");
+        when(generationService.generate(any())).thenReturn(mockResult);
+
+        mockMvc.perform(post("/blueprint/generate")
+                        .param("businessRequirements", """
+                                問い合わせ・サポート管理として、問い合わせ受付、分類、FAQ検索、AI要約、返信下書き作成を扱う。
+                                回答確定送信と重要問い合わせの状態変更は人間確認後に実行する。
+                                """)
+                        .param("targetDomain", "問い合わせ管理 / FAQ管理 / ナレッジ検索・要約 / 顧客管理 / 通知管理")
+                        .param("systemTypes", "support-management", "knowledge-platform")
+                        .param("primaryDomain", "問い合わせ管理")
+                        .param("relatedDomains", "問い合わせ管理", "FAQ管理", "ナレッジ検索・要約", "顧客管理", "通知管理")
+                        .param("userTypes", "- 管理者\n- AIアシスタント\n- サポート担当\n- 品質管理担当")
+                        .param("requiredOperations", """
+                                - 問い合わせ検索
+                                - 問い合わせ詳細取得
+                                - FAQ検索
+                                - 問い合わせ要約
+                                - 返信下書き作成
+                                - 回答確定通知
+                                """)
+                        .param("allowedAiOperations", """
+                                - 問い合わせ検索
+                                - 問い合わせ詳細参照
+                                - FAQ検索
+                                - 問い合わせ要約
+                                - 返信下書き作成
+                                """)
+                        .param("approvalRequiredOperations", """
+                                - 回答確定送信
+                                - 重要問い合わせの状態変更
+                                - 顧客情報更新
+                                """)
+                        .param("auditLogRequiredOperations", """
+                                - AIによる問い合わせ要約
+                                - 返信下書き作成
+                                - 回答確定送信
+                                """)
+                        .param("authenticationMethod", "OAuth2 / OIDC")
+                        .param("targetUsers", "サポート担当、品質管理担当、管理者、AIアシスタント")
+                        .param("outputLanguage", "日本語"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("result"))
+                .andExpect(model().attributeExists("blueprintResult"));
+
+        ArgumentCaptor<BlueprintInput> captor = ArgumentCaptor.forClass(BlueprintInput.class);
+        verify(generationService).generate(captor.capture());
+        BlueprintInput input = captor.getValue();
+        assertThat(input.getSystemTypes()).containsExactly("support-management", "knowledge-platform");
+        assertThat(input.getPrimaryDomain()).isEqualTo("問い合わせ管理");
+        assertThat(input.getRelatedDomains()).containsExactly("問い合わせ管理", "FAQ管理", "ナレッジ検索・要約", "顧客管理", "通知管理");
+        assertThat(input.getRequiredOperations()).contains("FAQ検索", "返信下書き作成");
+        assertThat(input.getAllowedAiOperations()).contains("問い合わせ要約");
+        assertThat(input.getApprovalRequiredOperations()).contains("回答確定送信");
+        assertThat(input.getAuditLogRequiredOperations()).contains("AIによる問い合わせ要約");
     }
 
     @Test
