@@ -181,3 +181,12 @@ Windowsローカル環境で以下を確認済みです。
 - Target Framework: Spring Boot / Spring Framework
 - Primary Runtime: Java 17
 - Build Tool: Maven / Maven Wrapper
+
+
+## 共通運用ルール正本
+
+共通運用ルールの正本は `yamaguchiyoshishigeai-create/chatgpt-ops-rules` です。
+
+本リポジトリでは、APIM固有の業務仕様、実装仕様、環境依存手順、Render公開準備、設計生成系としての製品前提を管理します。
+
+共通運用ルールの参照方針は `docs/00_プロジェクト管理/05_横断運用規程/chatgpt-ops-rules中枢参照方針.md` を参照してください。

@@ -23,3 +23,14 @@
 - `main` への直接pushを行わない。
 - `main` へのmergeを行わない。
 - 秘密情報（token/secret）を出力・コミットしない。
+
+
+## chatgpt-ops-rules 中枢参照
+
+共通運用ルールの正本は `yamaguchiyoshishigeai-create/chatgpt-ops-rules` とする。
+
+作業開始時は、APIM側文書だけでなく、先に `chatgpt-ops-rules` の `PROJECT_START_PROMPT.md` と横断運用規程入口を確認する。
+
+APIM側には、APIM固有の業務仕様、実装仕様、環境依存手順、Render公開準備、設計生成系としての製品前提を残す。
+
+共通運用ルールとAPIM側文書に矛盾がある場合、共通運用ルールは `chatgpt-ops-rules` を優先する。ただし、APIM固有仕様はAPIM側文書を優先する。
