@@ -19,6 +19,16 @@ CodexExec-*.out
 CodexExec-*.err
 .chatexec2/
 
+# ChatExec2 local execution artifacts
+ChatExec2_*.result
+ChatExec2_*.summary.md
+ChatExec2_*.log
+ChatExec2_*.out
+ChatExec2_*.err
+
+# Codex task-local transient artifacts
+CodexExec_*.result
+
 # Local APIM execution results
 APIM-*.result
 APIM-*-springboot.out
