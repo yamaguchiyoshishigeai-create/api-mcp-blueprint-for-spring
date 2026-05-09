@@ -1,5 +1,7 @@
 APIM for Spring本体の改修指示ではない
 APIM for Spring のMVPを段階実装する
+APIM for Spring の初期MVP向け設計成果物。
+初期MVPで実装しないこと
 - APIM for Spring本体の改修
 完全動作するMCPサーバーは実装しない
 - 入力フォーム

@@ -86,11 +86,17 @@ class BlueprintGenerationRegressionTest {
                 .contains("## 8. MCP tools一覧")
                 .contains("## 12. 権限・承認・監査ログ設計")
                 .contains("## 13. セキュリティ注意点")
-                .contains("## 14. 初期MVPで実装しないこと")
-                .contains("完全動作するMCPサーバー")
+                .contains("## 14. 後続フェーズで具体化する事項")
+                .contains("後続フェーズで要件、運用条件、セキュリティ方針に応じて具体化する。")
+                .contains("実装禁止事項ではなく、追加設計・実装判断が必要な事項として扱う。")
+                .contains("MCPサーバーとしての実行形態")
                 .contains("外部LLM API連携")
                 .contains("DB永続化")
-                .contains("OpenAPI完全生成");
+                .contains("OpenAPI定義の生成・公開範囲")
+                .doesNotContain("## 14. 初期MVPで実装しないこと")
+                .doesNotContain("完全動作するMCPサーバー")
+                .doesNotContain("OpenAPI完全生成")
+                .doesNotContain("APIM for Spring の初期MVP向け設計成果物。");
 
         assertThat(result.getImplementationInstructions())
                 .contains("## 1. 実装目的")

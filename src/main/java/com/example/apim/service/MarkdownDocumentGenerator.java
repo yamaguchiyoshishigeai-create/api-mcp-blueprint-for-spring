@@ -14,7 +14,7 @@ public class MarkdownDocumentGenerator {
         BlueprintInput input = normalizedInput.originalInput();
         StringBuilder sb = new StringBuilder();
         sb.append("# api-mcp-blueprint.md\n\n");
-        appendTitle(sb);
+        appendTitle(sb, input, normalizedInput);
         appendInputSummary(sb, input, normalizedInput);
         appendApiDesignSummary(sb, result);
         appendEndpoints(sb, result);
@@ -30,9 +30,9 @@ public class MarkdownDocumentGenerator {
         return sb.toString();
     }
 
-    private void appendTitle(StringBuilder sb) {
+    private void appendTitle(StringBuilder sb, BlueprintInput input, NormalizedBlueprintInput normalizedInput) {
         sb.append("## 1. 設計対象概要\n")
-                .append("APIM for Spring の初期MVP向け設計成果物。\n\n")
+                .append(buildOverviewSummary(input, normalizedInput)).append("\n\n")
                 .append("## 2. 入力要件サマリー\n");
     }
 
@@ -134,12 +134,14 @@ public class MarkdownDocumentGenerator {
     }
 
     private void appendOutOfScope(StringBuilder sb) {
-        sb.append("## 14. 初期MVPで実装しないこと\n")
-                .append("- 完全動作するMCPサーバー\n")
+        sb.append("## 14. 後続フェーズで具体化する事項\n")
+                .append("以下は初期設計時点で実装有無・方式を確定せず、後続フェーズで要件、運用条件、セキュリティ方針に応じて具体化する。\n")
+                .append("この設計書を後続AIへ渡す場合も、これらを実装禁止事項ではなく、追加設計・実装判断が必要な事項として扱う。\n")
+                .append("- MCPサーバーとしての実行形態\n")
                 .append("- 外部LLM API連携\n")
                 .append("- DB永続化\n")
-                .append("- 認証認可の本格実装\n")
-                .append("- OpenAPI完全生成\n\n");
+                .append("- 認証認可方式\n")
+                .append("- OpenAPI定義の生成・公開範囲\n\n");
     }
 
     private void appendNextSteps(StringBuilder sb) {
@@ -156,5 +158,40 @@ public class MarkdownDocumentGenerator {
 
     private String valueOrDefault(String value, String defaultValue) {
         return value == null || value.isBlank() ? defaultValue : value;
+    }
+
+    private String buildOverviewSummary(BlueprintInput input, NormalizedBlueprintInput normalizedInput) {
+        String systemTypeText = joinOrDefault(normalizedInput.systemTypes(), "業務システム");
+        String primaryDomainText = valueOrDefault(normalizedInput.primaryDomain(), "対象ドメイン");
+        String relatedDomainText = normalizedInput.relatedDomains().isEmpty()
+                ? ""
+                : "（関連ドメイン: " + String.join(" / ", normalizedInput.relatedDomains()) + "）";
+        String operations = normalizeOperationsForOverview(input.getRequiredOperations());
+        String operationClause = operations.isEmpty()
+                ? ""
+                : "必要な操作として" + operations + "を想定し、";
+        return "本設計書は、入力要件に基づき、" + systemTypeText + "の" + primaryDomainText
+                + relatedDomainText + "を対象に、" + operationClause
+                + "API、MCP tools、resources、prompts、権限・承認・監査設計を整理した設計成果物である。";
+    }
+
+    private String normalizeOperationsForOverview(String requiredOperations) {
+        if (requiredOperations == null || requiredOperations.isBlank()) {
+            return "";
+        }
+        java.util.List<String> operations = new java.util.ArrayList<>();
+        for (String line : requiredOperations.split("\\R")) {
+            String normalized = line.trim();
+            if (normalized.startsWith("- ")) {
+                normalized = normalized.substring(2).trim();
+            }
+            if (!normalized.isBlank()) {
+                operations.add(normalized);
+            }
+        }
+        if (operations.isEmpty()) {
+            return requiredOperations.trim();
+        }
+        return String.join("、", operations);
     }
 }
