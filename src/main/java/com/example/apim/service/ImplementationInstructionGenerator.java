@@ -200,12 +200,14 @@ public class ImplementationInstructionGenerator {
     }
 
     private void appendOutOfScope(StringBuilder sb) {
-        sb.append("## 10. 実装しないこと\n")
-                .append("- 外部LLM API連携\n")
-                .append("- DB永続化やマイグレーションの詳細化\n")
-                .append("- 認証・認可の本格実装。ただし、認証・認可・承認・監査ログの方針とテスト観点は残す\n")
-                .append("- OpenAPI完全生成\n")
-                .append("- 生成対象アプリの本番デプロイ作業\n\n");
+        sb.append("## 10. 後続フェーズで具体化する事項\n")
+                .append("以下は本指示書の初期実装指示時点で実装有無や方式を固定せず、後続フェーズで要件、運用条件、セキュリティ方針、公開方針に応じて具体化する事項である。\n")
+                .append("このAI実装指示書を後続AIへ渡す場合も、これらを実装禁止事項ではなく、追加設計・実装判断が必要な事項として扱う。\n")
+                .append("- 外部LLM API連携方式\n")
+                .append("- DB永続化およびマイグレーション方式\n")
+                .append("- 認証・認可方式の本格化（認証・認可・承認・監査ログの方針とテスト観点は維持する）\n")
+                .append("- OpenAPI定義の生成・公開範囲\n")
+                .append("- 生成対象アプリのデプロイ方式（本番運用、CI/CD設計、秘密情報管理を含む）\n\n");
     }
 
     private void appendTestViewpoints(StringBuilder sb) {

@@ -2,6 +2,9 @@ APIM for Spring本体の改修指示ではない
 APIM for Spring のMVPを段階実装する
 APIM for Spring の初期MVP向け設計成果物。
 初期MVPで実装しないこと
+## 10. 実装しないこと
+認証・認可の本格実装。ただし、認証・認可・承認・監査ログの方針とテスト観点は残す
+OpenAPI完全生成
 - APIM for Spring本体の改修
 完全動作するMCPサーバーは実装しない
 - 入力フォーム
