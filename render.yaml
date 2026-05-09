@@ -4,5 +4,6 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
+    dockerContext: .
     healthCheckPath: /
-    autoDeploy: false
+    autoDeployTrigger: off
