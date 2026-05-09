@@ -106,7 +106,7 @@ class BlueprintGenerationRegressionTest {
                 .contains("MCPサーバーまたはMCP連携層を実装する場合は、不足前提をTODOとして明示し、未実装の機能を実装済みと記述しない")
                 .contains("外部LLM API連携")
                 .contains("DB永続化")
-                .contains("APIM for Spring本体の改修指示ではない")
+                .doesNotContain("APIM for Spring本体の改修指示ではない")
                 .doesNotContain("- APIM for Spring本体の改修")
                 .doesNotContain("完全動作するMCPサーバーは実装しない")
                 .doesNotContain("APIM for Spring のMVPを段階実装する");
