@@ -44,7 +44,7 @@ APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体�
 - DB永続化
 - 認証認可の本格実装
 - OpenAPI完全生成
-- Docker / 本番デプロイ構成
+- 本番運用レベルの監視・アラート設計
 
 ## docs参照導線
 
@@ -54,6 +54,7 @@ APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体�
 - 基本設計: `docs/30_基本設計/基本設計.md`
 - 詳細設計: `docs/40_詳細設計/詳細設計.md`
 - 改善タスク一覧: `docs/00_プロジェクト管理/02_改善タスク管理/改善タスク課題一覧.md`
+- Render公開準備: `docs/50_実装/Render公開準備.md`
 
 ## 開発運用基盤
 
@@ -62,6 +63,7 @@ APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体�
 - PRテンプレート: `.github/PULL_REQUEST_TEMPLATE.md`
 - 最低限チェック: `.github/workflows/template-checks.yml`, `scripts/*.py`
 - Maven Wrapper: `mvnw`, `mvnw.cmd`, `.mvn/wrapper/maven-wrapper.properties`
+- Render公開準備: `Dockerfile`, `render.yaml`, `src/main/resources/application.properties`
 
 ## 作業分担
 
@@ -96,6 +98,38 @@ macOS/Linuxでも同様に、`./mvnw spring-boot:run` または `./mvnw package`
 2026-05-03に、リポジトリを `C:\academia\src\api-mcp-blueprint-for-spring` 配下へ移動した状態で再検証した結果、`mvnw.cmd spring-boot:run`、main class明示版、fork=false指定版のいずれも `Tomcat started on port 8080` / `Started ApimApplication` まで到達しました。
 
 このため、TSK-008は現行環境では再現しないものとして解決済みです。旧事象は、旧OneDrive配下パス、当時のPowerShell引数指定、または当時のローカル環境条件に起因していた可能性があります。
+
+## Render公開準備
+
+APIM for Spring は Render の Docker Web Service として公開できるように、以下の設定を用意しています。
+
+| ファイル | 役割 |
+|---|---|
+| `Dockerfile` | Maven Wrapperでjarをbuildし、Java 17 runtimeでSpring Bootを起動する |
+| `render.yaml` | Render BlueprintからWeb Serviceを作成する |
+| `src/main/resources/application.properties` | `server.port=${PORT:8080}` によりRenderの `PORT` 環境変数へ追従する |
+
+Render Blueprintを利用する場合は、Render Dashboardから本リポジトリを接続し、`render.yaml` をもとにWeb Serviceを作成します。
+
+主な設定値は以下です。
+
+- Runtime: Docker
+- Dockerfile Path: `./Dockerfile`
+- Health Check Path: `/`
+- Auto Deploy: off
+- Java: 17
+- Build: Maven Wrapper
+
+公開後は、Renderが発行したURLで以下を確認します。
+
+1. `/` で初回体験ルートの入力画面が表示されること。
+2. サンプル業務パターンから設計生成結果画面へ遷移できること。
+3. Markdown設計書プレビューを開けること。
+4. AI実装指示書プレビューを開けること。
+5. 設計書とAI実装指示書をダウンロードできること。
+6. `/help` を開けること。
+
+詳細は `docs/50_実装/Render公開準備.md` を参照してください。
 
 ## テスト実行
 
