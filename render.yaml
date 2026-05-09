@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: apim-for-spring
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    autoDeployTrigger: off
