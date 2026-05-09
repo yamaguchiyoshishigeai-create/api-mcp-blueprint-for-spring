@@ -55,6 +55,8 @@ APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体�
 - 詳細設計: `docs/40_詳細設計/詳細設計.md`
 - 改善タスク一覧: `docs/00_プロジェクト管理/02_改善タスク管理/改善タスク課題一覧.md`
 - Render公開準備: `docs/50_実装/Render公開準備.md`
+- Render公開前チェックリスト: `docs/50_実装/Render公開前チェックリスト.md`
+- Render公開後確認記録: `docs/50_実装/Render公開後確認記録.md`
 
 ## 開発運用基盤
 
@@ -69,7 +71,8 @@ APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体�
 
 - 指示書作成: ChatGPT（会話内）
 - 初期リポジトリ生成: Codex
-- PR確認・merge判断: ユーザー
+- 通常PRのPR確認・CI確認・merge判断: ChatGPT(リポジトリ編集)
+- 外部サービス操作・公開判断: ユーザー(人)
 
 ## Web MVP 起動方法
 
@@ -119,6 +122,8 @@ Render Blueprintを利用する場合は、Render Dashboardから本リポジト
 - Auto Deploy: off
 - Java: 17
 - Build: Maven Wrapper
+
+公開前は `docs/50_実装/Render公開前チェックリスト.md` を確認し、公開後は `docs/50_実装/Render公開後確認記録.md` に確認結果を記録します。
 
 公開後は、Renderが発行したURLで以下を確認します。
 

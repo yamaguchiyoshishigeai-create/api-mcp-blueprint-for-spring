@@ -6,6 +6,8 @@
 
 TSK-041では、Renderに登録・公開できる前提を整えることを目的とする。Render上での実サービス作成、URL確定、公開判断はユーザー(人)が行う。
 
+公開作業へ進む前には `Render公開前チェックリスト.md` を確認し、公開後は `Render公開後確認記録.md` に疎通確認結果と公開判断を記録する。
+
 ---
 
 ## 2. 前提
@@ -65,7 +67,21 @@ RenderのDocker Web Serviceでは、Dockerfileの `ENTRYPOINT` が起動コマ�
 
 ---
 
-## 6. 疎通確認観点
+## 6. 公開前チェック
+
+Render公開前には、以下を確認する。
+
+- 最新main、Open PR、CI、local sync、worktree cleanなどの公開前提。
+- Dockerfile、render.yaml、application.propertiesなどのRender設定。
+- APIMが設計生成支援ツールであり、診断系や完全アプリ生成系ではないこと。
+- 初回体験ルート、サンプル業務パターン、Markdownプレビュー、AI実装指示書プレビュー、ダウンロード導線、help画面の確認観点。
+- 禁止語リスト、生成物横断ガード、Regression Evidence Matrixなどの回帰防止観点。
+
+詳細は `Render公開前チェックリスト.md` を参照する。
+
+---
+
+## 7. 疎通確認観点
 
 Renderへdeploy後、以下を確認する。
 
@@ -78,9 +94,11 @@ Renderへdeploy後、以下を確認する。
 7. 設計書とAI実装指示書をダウンロードできること。
 8. `/help` を開けること。
 
+公開後の確認結果は `Render公開後確認記録.md` へ記録する。
+
 ---
 
-## 7. 公開前注意事項
+## 8. 公開前注意事項
 
 以下はTSK-041の対象外とする。
 
@@ -94,7 +112,15 @@ Renderへdeploy後、以下を確認する。
 
 ---
 
-## 8. 完了条件
+## 9. 関連文書
+
+- `Render公開前チェックリスト.md`
+- `Render公開後確認記録.md`
+- `README.md`
+
+---
+
+## 10. 完了条件
 
 - Render用のbuild/start設定がリポジトリ上に存在すること。
 - Spring BootがRenderの `PORT` 環境変数に追従できること。
