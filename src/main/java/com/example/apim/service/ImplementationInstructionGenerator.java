@@ -45,8 +45,7 @@ public class ImplementationInstructionGenerator {
         sb.append("# implementation-instructions.md\n\n")
                 .append("## 1. 実装目的\n")
                 .append("この指示書は、生成されたAPI/MCP設計候補をもとに、対象業務アプリケーションを実装するための実装支援AI向け指示である。\n")
-                .append("入力された業務要件、対象ドメイン、必要操作、AI許可操作、セキュリティ注意点を実装材料として扱う。\n")
-                .append("APIM for Spring本体の改修指示ではない。\n\n");
+                .append("入力された業務要件、対象ドメイン、必要操作、AI許可操作、セキュリティ注意点を実装材料として扱う。\n\n");
     }
 
     private void appendTargetSystem(StringBuilder sb, BlueprintInput input, NormalizedBlueprintInput normalizedInput) {
