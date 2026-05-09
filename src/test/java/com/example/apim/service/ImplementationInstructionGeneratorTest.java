@@ -25,7 +25,6 @@ class ImplementationInstructionGeneratorTest {
 
         assertThat(markdown)
                 .contains("対象業務アプリケーションを実装するための実装支援AI向け指示")
-                .contains("APIM for Spring本体の改修指示ではない")
                 .contains("## 1. 実装目的")
                 .contains("## 2. 実装対象システム")
                 .contains("## 3. 入力業務要件の要約")
@@ -41,6 +40,7 @@ class ImplementationInstructionGeneratorTest {
                 .contains("MCP tools/resources/prompts候補をもとに、実装可能な範囲でMCPサーバーまたはMCP連携層の実装を検討する")
                 .contains("transport、認証・認可、承認、人間確認、監査ログ、テスト方式が未定義の場合は、設計補完またはTODOとして明示する")
                 .contains("MCPサーバーまたはMCP連携層を実装する場合は、不足前提をTODOとして明示し、未実装の機能を実装済みと記述しない")
+                .doesNotContain("APIM for Spring本体の改修指示ではない")
                 .doesNotContain("APIM for Spring のMVPを段階実装する")
                 .doesNotContain("- APIM for Spring本体の改修")
                 .doesNotContain("完全動作するMCPサーバーは実装しない")
