@@ -70,6 +70,19 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("ファイルアップロードで取り込む")))
                 .andExpect(content().string(containsString("貼り付けで取り込む")))
                 .andExpect(content().string(containsString("両方を順番に行う必要はありません")))
+                .andExpect(content().string(containsString("代表的なサンプル例文を入力できます")))
+                .andExpect(content().string(containsString("注文・在庫管理")))
+                .andExpect(content().string(containsString("社内申請・承認")))
+                .andExpect(content().string(containsString("問い合わせ管理")))
+                .andExpect(content().string(containsString("契約・請求管理")))
+                .andExpect(content().string(containsString("予約・施設管理")))
+                .andExpect(content().string(containsString("人事オンボーディング")))
+                .andExpect(content().string(containsString("保守・障害対応")))
+                .andExpect(content().string(containsString("営業案件管理")))
+                .andExpect(content().string(containsString("ナレッジ検索")))
+                .andExpect(content().string(containsString("購買・稟議管理")))
+                .andExpect(content().string(containsString("insertFreeTextSample")))
+                .andExpect(content().string(containsString("data-sample")))
                 .andExpect(content().string(containsString("64KB以下")));
     }
 

@@ -87,6 +87,19 @@
         <h2>1. 自由文からプロンプトを生成</h2>
         <form method="post" th:action="@{/external-ai-bridge/prompt}" th:object="${externalAiBridgeRequest}">
             <label>自由文業務要件</label>
+            <div class="sample-buttons" aria-label="自由文業務要件のサンプル例文">
+                <p class="form-help">代表的なサンプル例文を入力できます。ボタンを押すと下の自由文業務要件欄へ反映されます。</p>
+                <button type="button" class="secondary sample-button" data-sample="ECサイトで、営業担当が商品在庫を検索し、注文状況を確認できる。AIには在庫照会、注文要約、出荷予定の確認を許可し、在庫数の更新は管理者承認後に反映したい。監査ログには検索条件、参照対象、承認者、更新前後の値を残したい。" onclick="insertFreeTextSample(this.dataset.sample)">注文・在庫管理</button>
+                <button type="button" class="secondary sample-button" data-sample="社員が経費申請を登録し、上長が承認または差戻しできる。AIには申請内容の要約、規程違反候補の指摘、差戻し理由の下書きを許可する。承認、差戻し、金額変更は人間操作のみとし、全操作を監査ログに残したい。" onclick="insertFreeTextSample(this.dataset.sample)">社内申請・承認</button>
+                <button type="button" class="secondary sample-button" data-sample="カスタマーサポート担当が問い合わせを検索し、過去対応履歴とFAQ候補を確認できる。AIには問い合わせ分類、FAQ候補提示、返信文案作成を許可し、実際の返信送信は担当者確認後にしたい。顧客情報の参照権限と監査ログが必要。" onclick="insertFreeTextSample(this.dataset.sample)">問い合わせ管理</button>
+                <button type="button" class="secondary sample-button" data-sample="契約担当者が契約一覧、請求状況、入金状況を確認できる。AIには契約リスクの要約、請求遅延候補の抽出、通知文案作成を許可する。契約条件変更、請求確定、入金消込は人間承認後に反映したい。" onclick="insertFreeTextSample(this.dataset.sample)">契約・請求管理</button>
+                <button type="button" class="secondary sample-button" data-sample="施設管理者が会議室や設備の予約状況を検索し、空き枠を確認できる。AIには利用目的に応じた候補枠提示、重複予約の検知、予約変更案の提示を許可する。予約確定とキャンセルは利用者または管理者の明示操作に限定したい。" onclick="insertFreeTextSample(this.dataset.sample)">予約・施設管理</button>
+                <button type="button" class="secondary sample-button" data-sample="人事担当が入社予定者の手続き状況を確認し、必要書類、アカウント発行、研修受講状況を管理できる。AIには未完了タスクの要約、リマインド文案作成、担当部署への確認事項整理を許可する。個人情報アクセスは権限別に制御したい。" onclick="insertFreeTextSample(this.dataset.sample)">人事オンボーディング</button>
+                <button type="button" class="secondary sample-button" data-sample="運用担当が障害チケット、監視アラート、対応履歴を検索できる。AIには影響範囲の要約、類似障害の検索、一次対応手順の提示を許可する。復旧操作や設定変更は人間承認後に実行し、作業ログと承認記録を残したい。" onclick="insertFreeTextSample(this.dataset.sample)">保守・障害対応</button>
+                <button type="button" class="secondary sample-button" data-sample="営業担当が顧客、商談、見積状況を検索し、次回アクションを確認できる。AIには商談履歴の要約、失注リスク候補の提示、フォローアップ文案作成を許可する。見積金額や受注確度の変更は担当者確認後に反映したい。" onclick="insertFreeTextSample(this.dataset.sample)">営業案件管理</button>
+                <button type="button" class="secondary sample-button" data-sample="社内利用者が業務マニュアル、FAQ、過去事例を横断検索できる。AIには検索結果の要約、関連文書候補の提示、回答案作成を許可する。機密区分に応じた閲覧制御を行い、誰がどの文書を参照したか監査ログに残したい。" onclick="insertFreeTextSample(this.dataset.sample)">ナレッジ検索</button>
+                <button type="button" class="secondary sample-button" data-sample="購買担当が購入依頼、見積比較、稟議状況を確認できる。AIには見積差分の要約、承認ルート候補、リスクコメント案の作成を許可する。発注確定、承認、差戻しは人間操作に限定し、承認履歴を保持したい。" onclick="insertFreeTextSample(this.dataset.sample)">購買・稟議管理</button>
+            </div>
             <textarea th:field="*{freeText}" rows="10" placeholder="例: 営業担当が顧客情報を検索し、問い合わせ履歴を確認できる。AIには検索と要約を許可し、更新は人間承認後に反映したい。"></textarea>
             <p class="error" th:if="${#fields.hasErrors('freeText')}" th:errors="*{freeText}"></p>
             <button type="submit">外部AI投入用プロンプトを生成する</button>
@@ -131,6 +144,15 @@
         const showPaste = mode === 'paste';
         pastePanel.hidden = !showPaste;
         filePanel.hidden = showPaste;
+    }
+
+    function insertFreeTextSample(sampleText) {
+        const textarea = document.querySelector('textarea[name="freeText"], #freeText');
+        if (!textarea) {
+            return;
+        }
+        textarea.value = sampleText;
+        textarea.focus();
     }
 </script>
 </body>
