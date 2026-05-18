@@ -62,7 +62,7 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("外部AI API連携ではありません")))
                 .andExpect(content().string(containsString("解析対象データ")))
                 .andExpect(content().string(containsString("APIM取り込み用JSON")))
-                .andExpect(content().string(containsString("従来のチェック式入力へ進む")))
+                .andExpect(content().string(containsString("チェック式入力へ進む")))
                 .andExpect(content().string(containsString("value=\"file\" checked")))
                 .andExpect(content().string(containsString("onchange=\"switchJsonInputMode(\'file\')\"")))
                 .andExpect(content().string(containsString("value=\"paste\" onchange")))

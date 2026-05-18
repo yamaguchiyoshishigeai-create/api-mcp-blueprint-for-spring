@@ -46,7 +46,7 @@ class BlueprintControllerTest {
         mockMvc.perform(get("/blueprint/form"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("チェック式入力フォーム")))
-                .andExpect(content().string(containsString("従来のチェック式フォームで、業務要件、対象ドメイン、利用者、操作、AI許可操作、承認条件、監査ログ条件を直接調整するページ")))
+                .andExpect(content().string(containsString("チェック式フォームで、業務要件、対象ドメイン、利用者、操作、AI許可操作、承認条件、監査ログ条件を直接調整するページ")))
                 .andExpect(content().string(containsString("サンプル業務パターンやチェック項目から、API設計とMCP設計候補に必要な条件を手動で整理できます")))
                 .andExpect(content().string(containsString("自由文から始めたい場合は、標準入口の外部AIプロンプトブリッジへ戻ってください")))
                 .andExpect(content().string(containsString("はじめて試す場合の3ステップ")))
