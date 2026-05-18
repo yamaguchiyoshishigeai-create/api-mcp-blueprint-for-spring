@@ -229,6 +229,21 @@ legend {
     font-weight: 700;
 }
 .button-link:hover { background: #1d43ad; }
-.input-mode-toggle { margin: 1rem 0; }
-.input-mode-toggle label { display: inline-flex; align-items: center; gap: 0.4rem; margin-right: 1.25rem; font-weight: 700; }
+.input-mode-toggle {
+  margin: 1rem 0;
+}
+
+.input-mode-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.35rem 0;
+  font-weight: 700;
+}
+
+.input-mode-toggle input[type="radio"] {
+  width: auto;
+  margin: 0;
+}
+
 .json-input-panel[hidden] { display: none; }

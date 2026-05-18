@@ -99,25 +99,25 @@
 
         <fieldset class="input-mode-toggle">
             <legend>JSON入力方法</legend>
-            <label><input type="radio" name="jsonInputMode" value="paste" checked onchange="switchJsonInputMode('paste')">貼り付けで取り込む</label>
-            <label><input type="radio" name="jsonInputMode" value="file" onchange="switchJsonInputMode('file')">ファイルアップロードで取り込む</label>
+            <label><input type="radio" name="jsonInputMode" value="file" checked onchange="switchJsonInputMode(\'file\')">ファイルアップロードで取り込む</label>
+            <label><input type="radio" name="jsonInputMode" value="paste" onchange="switchJsonInputMode(\'paste\')">貼り付けで取り込む</label>
         </fieldset>
 
-        <div id="jsonPastePanel" class="json-input-panel">
-            <form method="post" th:action="@{/external-ai-bridge/import-text}">
-                <p class="form-help">外部AIが返したJSON本文だけを貼り付けてください。HTMLやJavaScriptを貼り付けても、画面には未エスケープ出力しません。</p>
-                <label>APIM取り込み用JSON</label>
-                <textarea name="jsonText" rows="14" placeholder="APIM取り込み用JSON本文だけを貼り付けてください。schemaVersion は apim-blueprint-input/v1 です。"></textarea>
-                <button type="submit">JSONを検証して確認画面へ進む</button>
-            </form>
-        </div>
-
-        <div id="jsonFilePanel" class="json-input-panel" hidden>
+        <div id="jsonFilePanel" class="json-input-panel">
             <form method="post" th:action="@{/external-ai-bridge/import-file}" enctype="multipart/form-data">
                 <p class="form-help">推奨ファイル名は apim-blueprint-input.json です。.json のみ、64KB以下を受け付けます。</p>
                 <label>APIM取り込み用JSONファイル</label>
                 <input type="file" name="jsonFile" accept=".json,application/json">
                 <button type="submit">JSONファイルを検証して確認画面へ進む</button>
+            </form>
+        </div>
+
+        <div id="jsonPastePanel" class="json-input-panel" hidden>
+            <form method="post" th:action="@{/external-ai-bridge/import-text}">
+                <p class="form-help">外部AIが返したJSON本文だけを貼り付けてください。HTMLやJavaScriptを貼り付けても、画面には未エスケープ出力しません。</p>
+                <label>APIM取り込み用JSON</label>
+                <textarea name="jsonText" rows="14" placeholder="APIM取り込み用JSON本文だけを貼り付けてください。schemaVersion は apim-blueprint-input/v1 です。"></textarea>
+                <button type="submit">JSONを検証して確認画面へ進む</button>
             </form>
         </div>
     </section>
