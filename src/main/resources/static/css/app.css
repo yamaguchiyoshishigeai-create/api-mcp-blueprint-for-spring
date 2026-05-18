@@ -280,3 +280,47 @@ button.secondary.sample-button {
 .clear-sample-button {
   margin-left: auto;
 }
+
+.free-text-clear-toolbar {
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.copy-feedback-bubble {
+  display: inline-block;
+  position: relative;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  font-size: 0.9rem;
+}
+
+.copy-feedback-bubble[hidden] {
+  display: none;
+}
+
+.copy-feedback-bubble::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  bottom: -0.35rem;
+  width: 0.65rem;
+  height: 0.65rem;
+  background: inherit;
+  border-right: 1px solid #a7f3d0;
+  border-bottom: 1px solid #a7f3d0;
+  transform: rotate(45deg);
+}
+
+.copy-feedback-error {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.copy-feedback-error::after {
+  border-right-color: #fecaca;
+  border-bottom-color: #fecaca;
+}
