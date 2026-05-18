@@ -88,7 +88,8 @@
         <form method="post" th:action="@{/external-ai-bridge/prompt}" th:object="${externalAiBridgeRequest}">
             <label>自由文業務要件</label>
             <div class="sample-buttons" aria-label="自由文業務要件のサンプル例文">
-                <p class="form-help">代表的なサンプル例文を入力できます。ボタンを押すと下の自由文業務要件欄へ反映されます。</p>
+                <p class="form-help">代表的なサンプル例文を入力できます。複数のボタンを押すと、既存の自由文に自然につながる形で追記されます。</p>
+                <button type="button" class="secondary sample-button clear-sample-button" onclick="clearFreeText()">自由文を一括消去</button>
                 <button type="button" class="secondary sample-button" data-sample="ECサイトで、営業担当が商品在庫を検索し、注文状況を確認できる。AIには在庫照会、注文要約、出荷予定の確認を許可し、在庫数の更新は管理者承認後に反映したい。監査ログには検索条件、参照対象、承認者、更新前後の値を残したい。" onclick="insertFreeTextSample(this.dataset.sample)">注文・在庫管理</button>
                 <button type="button" class="secondary sample-button" data-sample="社員が経費申請を登録し、上長が承認または差戻しできる。AIには申請内容の要約、規程違反候補の指摘、差戻し理由の下書きを許可する。承認、差戻し、金額変更は人間操作のみとし、全操作を監査ログに残したい。" onclick="insertFreeTextSample(this.dataset.sample)">社内申請・承認</button>
                 <button type="button" class="secondary sample-button" data-sample="カスタマーサポート担当が問い合わせを検索し、過去対応履歴とFAQ候補を確認できる。AIには問い合わせ分類、FAQ候補提示、返信文案作成を許可し、実際の返信送信は担当者確認後にしたい。顧客情報の参照権限と監査ログが必要。" onclick="insertFreeTextSample(this.dataset.sample)">問い合わせ管理</button>
@@ -116,7 +117,29 @@
         if (!textarea) {
             return;
         }
-        textarea.value = sampleText;
+
+        const currentText = textarea.value.trim();
+        const nextText = (sampleText || '').trim();
+        if (!nextText) {
+            return;
+        }
+
+        if (!currentText) {
+            textarea.value = nextText;
+        } else if (!currentText.includes(nextText)) {
+            const normalizedCurrent = currentText.replace(/[。．.\s]+$/, '');
+            textarea.value = normalizedCurrent + '。また、' + nextText;
+        }
+
+        textarea.focus();
+    }
+
+    function clearFreeText() {
+        const textarea = document.querySelector('textarea[name="freeText"], #freeText');
+        if (!textarea) {
+            return;
+        }
+        textarea.value = '';
         textarea.focus();
     }
 </script>
