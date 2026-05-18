@@ -218,3 +218,17 @@ legend {
   font-family: Consolas, "Courier New", monospace;
   white-space: pre;
 }
+
+.button-link {
+    display: inline-block;
+    padding: 0.75rem 1.2rem;
+    border-radius: 0.45rem;
+    background: #2554d9;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+}
+.button-link:hover { background: #1d43ad; }
+.input-mode-toggle { margin: 1rem 0; }
+.input-mode-toggle label { display: inline-flex; align-items: center; gap: 0.4rem; margin-right: 1.25rem; font-weight: 700; }
+.json-input-panel[hidden] { display: none; }
