@@ -45,9 +45,10 @@ class BlueprintControllerTest {
     void checklistFormShowsFirstVisitorGuideAndSampleRoute() throws Exception {
         mockMvc.perform(get("/blueprint/form"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("業務要件からAPI設計とMCP設計候補を同時に作る設計支援ツール")))
-                .andExpect(content().string(containsString("まだコードを書く前に、必要なAPI、AIエージェント向け操作、承認・監査観点")))
-                .andExpect(content().string(containsString("どのような入力からAPI設計書、MCP設計候補、API/MCP対応表、AI実装指示書が得られるか")))
+                .andExpect(content().string(containsString("チェック式入力フォーム")))
+                .andExpect(content().string(containsString("従来のチェック式フォームで、業務要件、対象ドメイン、利用者、操作、AI許可操作、承認条件、監査ログ条件を直接調整するページ")))
+                .andExpect(content().string(containsString("サンプル業務パターンやチェック項目から、API設計とMCP設計候補に必要な条件を手動で整理できます")))
+                .andExpect(content().string(containsString("自由文から始めたい場合は、標準入口の外部AIプロンプトブリッジへ戻ってください")))
                 .andExpect(content().string(containsString("はじめて試す場合の3ステップ")))
                 .andExpect(content().string(containsString("自分の業務に近いものを選んでフォームへ自動入力")))
                 .andExpect(content().string(containsString("サンプル投入だけでは生成は実行されません")))
@@ -67,9 +68,7 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("fillSample('internal-approval')")))
                 .andExpect(content().string(containsString("fillSample('support-inquiry')")))
                 .andExpect(content().string(containsString("fillSample('contract-billing')")))
-                .andExpect(content().string(containsString("自由文入力へ戻る")))
-                .andExpect(content().string(containsString("完全動作するMCPサーバー")))
-                .andExpect(content().string(containsString("DB永続化やマイグレーション")));
+                .andExpect(content().string(containsString("自由文入力へ戻る")));
     }
 
     @Test
