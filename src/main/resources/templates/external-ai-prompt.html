@@ -12,18 +12,105 @@
     <section class="notice">
         <h2>次の操作</h2>
         <p>以下のMarkdownをChatGPT等の外部AIへ手動投入してください。APIMは外部AIへ自動送信せず、APIキーも保存しません。</p>
-        <p>外部AIが返したJSONは、APIMへ貼り付けまたはアップロードし、必ずユーザーが確認してから最終成果物生成へ進みます。</p>
+        <p>外部AIが返したJSONは、このページ下部の「APIM取り込み用JSONを読み込む」から、貼り付けまたはアップロードで取り込めます。</p>
     </section>
 
     <div class="toolbar">
         <a href="/external-ai-bridge/prompt/download">Markdownダウンロード</a>
-        <a href="/external-ai-bridge">JSON取り込みへ戻る</a>
+        <button type="button" class="secondary" onclick="copyGeneratedPrompt()">生成プロンプトを一括コピー</button>
+        <a href="/external-ai-bridge">自由文入力トップへ戻る</a>
     </div>
+    <p id="copyStatus" class="form-help" aria-live="polite"></p>
 
     <section class="form-section">
         <h2>生成プロンプト</h2>
-        <textarea class="prompt-preview" readonly rows="28" th:text="${externalAiPrompt}"></textarea>
+        <textarea id="externalAiPromptText" class="prompt-preview" readonly rows="28" th:text="${externalAiPrompt}"></textarea>
+    </section>
+
+    <section class="form-section">
+        <h2>2. APIM取り込み用JSONを読み込む</h2>
+        <p class="form-help">外部AIが返したJSONは、貼り付けまたはファイルアップロードのどちらか一方で取り込めます。両方を順番に行う必要はありません。</p>
+
+        <fieldset class="input-mode-toggle">
+            <legend>JSON入力方法</legend>
+            <label><input type="radio" name="jsonInputMode" value="file" checked onchange="switchJsonInputMode('file')">ファイルアップロードで取り込む</label>
+            <label><input type="radio" name="jsonInputMode" value="paste" onchange="switchJsonInputMode('paste')">貼り付けで取り込む</label>
+        </fieldset>
+
+        <div id="jsonFilePanel" class="json-input-panel">
+            <form method="post" th:action="@{/external-ai-bridge/import-file}" enctype="multipart/form-data">
+                <p class="form-help">推奨ファイル名は apim-blueprint-input.json です。.json のみ、64KB以下を受け付けます。</p>
+                <label>APIM取り込み用JSONファイル</label>
+                <input type="file" name="jsonFile" accept=".json,application/json">
+                <button type="submit">JSONファイルを検証して確認画面へ進む</button>
+            </form>
+        </div>
+
+        <div id="jsonPastePanel" class="json-input-panel" hidden>
+            <form method="post" th:action="@{/external-ai-bridge/import-text}">
+                <p class="form-help">外部AIが返したJSON本文だけを貼り付けてください。HTMLやJavaScriptを貼り付けても、画面には未エスケープ出力しません。</p>
+                <label>APIM取り込み用JSON</label>
+                <textarea name="jsonText" rows="14" placeholder="APIM取り込み用JSON本文だけを貼り付けてください。schemaVersion は apim-blueprint-input/v1 です。"></textarea>
+                <button type="submit">JSONを検証して確認画面へ進む</button>
+            </form>
+        </div>
     </section>
 </main>
+<script>
+    function switchJsonInputMode(mode) {
+        const pastePanel = document.getElementById(\'jsonPastePanel\');
+        const filePanel = document.getElementById(\'jsonFilePanel\');
+        const showPaste = mode === \'paste\';
+        pastePanel.hidden = !showPaste;
+        pastePanel.setAttribute(\'aria-hidden\', String(!showPaste));
+        filePanel.hidden = showPaste;
+        filePanel.setAttribute('aria-hidden', String(showPaste));
+    }
+
+    document.addEventListener(\'DOMContentLoaded\', function () {
+        const checkedMode = document.querySelector('input[name="jsonInputMode"]:checked');
+        switchJsonInputMode(checkedMode ? checkedMode.value : \'file\');
+    });
+
+    function copyGeneratedPrompt() {
+        const promptText = document.getElementById(\'externalAiPromptText\');
+        const copyStatus = document.getElementById(\'copyStatus\');
+        if (!promptText) {
+            return;
+        }
+        const text = promptText.value;
+        const showCopied = function () {
+            if (copyStatus) {
+                copyStatus.textContent = \'生成プロンプトをコピーしました。\';
+            }
+        };
+        const showFailed = function () {
+            if (copyStatus) {
+                copyStatus.textContent = \'コピーできませんでした。手動で選択してコピーしてください。\';
+            }
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(showCopied).catch(function () {
+                promptText.focus();
+                promptText.select();
+                try {
+                    document.execCommand(\'copy\');
+                    showCopied();
+                } catch (error) {
+                    showFailed();
+                }
+            });
+            return;
+        }
+        promptText.focus();
+        promptText.select();
+        try {
+            document.execCommand(\'copy\');
+            showCopied();
+        } catch (error) {
+            showFailed();
+        }
+    }
+</script>
 </body>
 </html>

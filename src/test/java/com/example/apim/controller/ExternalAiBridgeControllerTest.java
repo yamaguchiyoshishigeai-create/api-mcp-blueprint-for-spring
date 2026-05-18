@@ -100,6 +100,16 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(view().name("external-ai-prompt"))
                 .andExpect(model().attribute("externalAiPrompt", "generated markdown prompt"))
                 .andExpect(content().string(containsString("Markdownダウンロード")))
+                .andExpect(content().string(containsString("生成プロンプトを一括コピー")))
+                .andExpect(content().string(containsString("自由文入力トップへ戻る")))
+                .andExpect(content().string(containsString("externalAiPromptText")))
+                .andExpect(content().string(containsString("copyGeneratedPrompt")))
+                .andExpect(content().string(containsString("navigator.clipboard.writeText")))
+                .andExpect(content().string(containsString("2. APIM取り込み用JSONを読み込む")))
+                .andExpect(content().string(containsString("ファイルアップロードで取り込む")))
+                .andExpect(content().string(containsString("貼り付けで取り込む")))
+                .andExpect(content().string(containsString("switchJsonInputMode")))
+                .andExpect(content().string(containsString("DOMContentLoaded")))
                 .andExpect(content().string(containsString("generated markdown prompt")));
 
         verify(bridgeService).generatePrompt("顧客検索を行いたい");
