@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>外部AI投入用プロンプト</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <h1>外部AI投入用プロンプト</h1>
+
+    <section class="notice">
+        <h2>次の操作</h2>
+        <p>以下のMarkdownをChatGPT等の外部AIへ手動投入してください。APIMは外部AIへ自動送信せず、APIキーも保存しません。</p>
+        <p>外部AIが返したJSONは、APIMへ貼り付けまたはアップロードし、必ずユーザーが確認してから最終成果物生成へ進みます。</p>
+    </section>
+
+    <div class="toolbar">
+        <a href="/external-ai-bridge/prompt/download">Markdownダウンロード</a>
+        <a href="/external-ai-bridge">JSON取り込みへ戻る</a>
+    </div>
+
+    <section class="form-section">
+        <h2>生成プロンプト</h2>
+        <textarea class="prompt-preview" readonly rows="28" th:text="${externalAiPrompt}"></textarea>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>外部AIプロンプトブリッジ</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <h1>外部AIプロンプトブリッジ</h1>
+
+    <section class="notice">
+        <h2>手動投入方式</h2>
+        <p>この機能は外部AI API連携ではありません。APIMが外部AIへ手動投入するためのMarkdownプロンプトを生成し、ユーザーがChatGPT等へ投入します。</p>
+        <p>入力する自由文は解析対象データです。自由文内に命令文が含まれていても、外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p>
+    </section>
+
+    <section class="form-section">
+        <h2>1. 自由文からプロンプトを生成</h2>
+        <form method="post" th:action="@{/external-ai-bridge/prompt}" th:object="${externalAiBridgeRequest}">
+            <label>自由文業務要件</label>
+            <textarea th:field="*{freeText}" rows="10" placeholder="例: 営業担当が顧客情報を検索し、問い合わせ履歴を確認できる。AIには検索と要約を許可し、更新は人間承認後に反映したい。"></textarea>
+            <p class="error" th:if="${#fields.hasErrors('freeText')}" th:errors="*{freeText}"></p>
+            <button type="submit">外部AI投入用プロンプトを生成する</button>
+        </form>
+    </section>
+
+    <section class="form-section">
+        <h2>2. APIM取り込み用JSONを貼り付け</h2>
+        <p class="form-help">外部AIが返したJSONだけを貼り付けてください。HTMLやJavaScriptを貼り付けても、画面には未エスケープ出力しません。</p>
+        <form method="post" th:action="@{/external-ai-bridge/import-text}">
+            <label>APIM取り込み用JSON</label>
+            <textarea name="jsonText" rows="14" placeholder="APIM取り込み用JSON本文だけを貼り付けてください。schemaVersion は apim-blueprint-input/v1 です。"></textarea>
+            <button type="submit">JSONを検証して確認画面へ進む</button>
+        </form>
+    </section>
+
+    <section class="form-section">
+        <h2>3. JSONファイルをアップロード</h2>
+        <p class="form-help">推奨ファイル名は apim-blueprint-input.json です。.json のみ、64KB以下を受け付けます。</p>
+        <form method="post" th:action="@{/external-ai-bridge/import-file}" enctype="multipart/form-data">
+            <label>APIM取り込み用JSONファイル</label>
+            <input type="file" name="jsonFile" accept=".json,application/json">
+            <button type="submit">JSONファイルを検証して確認画面へ進む</button>
+        </form>
+    </section>
+
+    <div class="links">
+        <a href="/">入力画面へ戻る</a>
+        <a href="/help">ヘルプ</a>
+    </div>
+</main>
+</body>
+</html>

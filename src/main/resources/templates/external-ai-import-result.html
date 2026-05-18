@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>APIM取り込みJSON検証結果</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <h1>APIM取り込みJSON検証結果</h1>
+
+    <section class="notice">
+        <h2>確認必須</h2>
+        <p>外部AIが生成したJSONは、APIM側で検証したうえで既存フォーム状態へ反映します。最終成果物生成へ進む前に、必ず内容を確認・修正してください。</p>
+    </section>
+
+    <section class="form-section" th:if="${not #lists.isEmpty(importResult.errors)}">
+        <h2>エラー</h2>
+        <ul>
+            <li class="error" th:each="error : ${importResult.errors}" th:text="${error}"></li>
+        </ul>
+    </section>
+
+    <section class="form-section" th:if="${not #lists.isEmpty(importResult.warnings)}">
+        <h2>警告</h2>
+        <ul>
+            <li class="warning" th:each="warning : ${importResult.warnings}" th:text="${warning}"></li>
+        </ul>
+    </section>
+
+    <section class="form-section" th:if="${importResult.valid && !importResult.canGenerate}">
+        <h2>生成不可</h2>
+        <p th:text="${importResult.reason}"></p>
+        <h3>不足情報</h3>
+        <ul>
+            <li th:each="item : ${importResult.missingInformation}" th:text="${item}"></li>
+        </ul>
+    </section>
+
+    <form th:if="${importResult.valid && importResult.canGenerate}" method="post"
+          th:action="@{/blueprint/generate}" th:object="${blueprintInput}">
+        <section class="form-section">
+            <h2>反映内容の確認・修正</h2>
+            <p class="form-help">この画面は確認画面です。必要に応じて修正してから、現行APIMの生成ロジックへ進んでください。</p>
+
+            <label>業務要件（必須）</label>
+            <textarea th:field="*{businessRequirements}" rows="7"></textarea>
+
+            <label>対象ドメイン（必須）</label>
+            <input type="text" th:field="*{targetDomain}">
+            <input type="hidden" th:field="*{primaryDomain}">
+            <input th:each="relatedDomain : *{relatedDomains}" type="hidden" name="relatedDomains" th:value="${relatedDomain}">
+            <input th:each="systemType : *{systemTypes}" type="hidden" name="systemTypes" th:value="${systemType}">
+
+            <label>ユーザー種別（必須）</label>
+            <textarea th:field="*{userTypes}" rows="4"></textarea>
+
+            <label>必要な操作（必須）</label>
+            <textarea th:field="*{requiredOperations}" rows="5"></textarea>
+
+            <label>AIアシスタントに許可したい操作（必須）</label>
+            <textarea th:field="*{allowedAiOperations}" rows="5"></textarea>
+
+            <label>読み取り専用操作</label>
+            <textarea th:field="*{readOnlyOperations}" rows="3"></textarea>
+
+            <label>書き込み許可操作</label>
+            <textarea th:field="*{writeOperations}" rows="3"></textarea>
+
+            <label>承認必須操作</label>
+            <textarea th:field="*{approvalRequiredOperations}" rows="3"></textarea>
+
+            <label>監査ログが必要な操作</label>
+            <textarea th:field="*{auditLogRequiredOperations}" rows="3"></textarea>
+
+            <label>想定認証方式</label>
+            <input type="text" th:field="*{authenticationMethod}">
+
+            <label>想定利用者</label>
+            <input type="text" th:field="*{targetUsers}">
+
+            <label>出力言語</label>
+            <select th:field="*{outputLanguage}">
+                <option value="日本語">日本語</option>
+                <option value="English">English</option>
+            </select>
+
+            <button type="submit">確認した内容で設計候補を生成する</button>
+        </section>
+    </form>
+
+    <div class="links">
+        <a href="/external-ai-bridge">外部AIブリッジへ戻る</a>
+        <a href="/">入力画面へ戻る</a>
+    </div>
+</main>
+</body>
+</html>

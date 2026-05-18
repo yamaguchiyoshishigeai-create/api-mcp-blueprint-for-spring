@@ -204,6 +204,7 @@ legend {
   display: flex;
   gap: 12px;
   margin-top: 18px;
+  flex-wrap: wrap;
 }
 
 .card {
@@ -211,4 +212,9 @@ legend {
   border-radius: 6px;
   padding: 8px 12px;
   margin-bottom: 8px;
+}
+
+.prompt-preview {
+  font-family: Consolas, "Courier New", monospace;
+  white-space: pre;
 }

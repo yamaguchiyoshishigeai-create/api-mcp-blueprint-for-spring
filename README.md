@@ -94,6 +94,14 @@ Windows PowerShellでは、以下のいずれかの方式で起動できます�
 
 macOS/Linuxでも同様に、`./mvnw spring-boot:run` または `./mvnw package` 後のjar起動を利用できます。
 
+## 外部AIプロンプトブリッジ
+
+`/external-ai-bridge` では、自由文からChatGPT等へ手動投入するためのMarkdownプロンプトを生成できます。この機能は外部AI API連携ではなく、APIキー入力・保存、外部AIへの自動送信、外部AI結果の自動取得は行いません。
+
+利用手順は、APIMでプロンプトを生成し、ユーザーが外部AIへ手動投入し、外部AIが返した `apim-blueprint-input/v1` JSONをAPIMへ貼り付けまたはアップロードする流れです。APIMはJSON構文、schemaVersion、`judgement.canGenerate`、`normalizedInput` の必須項目を検証し、既存入力フォーム状態へ反映します。
+
+JSON反映後は確認画面を挟み、ユーザーが内容を確認・修正してから最終成果物生成へ進みます。危険操作や書き込み操作は、人間承認・監査ログ対象として扱う前提を維持してください。
+
 ### TSK-008 再検証結果
 
 旧環境では、Windowsローカル環境で `mvnw.cmd spring-boot:run` 実行時に main class を検出できない事象を確認していました。
