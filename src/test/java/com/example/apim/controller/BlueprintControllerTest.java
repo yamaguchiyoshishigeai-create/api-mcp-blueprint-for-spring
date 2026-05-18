@@ -35,15 +35,15 @@ class BlueprintControllerTest {
     private BlueprintGenerationService generationService;
 
     @Test
-    void getRootReturns200() throws Exception {
+    void getRootRedirectsToExternalAiBridge() throws Exception {
         mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("index"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/external-ai-bridge"));
     }
 
     @Test
-    void getRootShowsFirstVisitorGuideAndSampleRoute() throws Exception {
-        mockMvc.perform(get("/"))
+    void checklistFormShowsFirstVisitorGuideAndSampleRoute() throws Exception {
+        mockMvc.perform(get("/blueprint/form"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("業務要件からAPI設計とMCP設計候補を同時に作る設計支援ツール")))
                 .andExpect(content().string(containsString("まだコードを書く前に、必要なAPI、AIエージェント向け操作、承認・監査観点")))
@@ -67,7 +67,7 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("fillSample('internal-approval')")))
                 .andExpect(content().string(containsString("fillSample('support-inquiry')")))
                 .andExpect(content().string(containsString("fillSample('contract-billing')")))
-                .andExpect(content().string(containsString("自由入力へ戻す")))
+                .andExpect(content().string(containsString("自由文入力へ戻る")))
                 .andExpect(content().string(containsString("完全動作するMCPサーバー")))
                 .andExpect(content().string(containsString("DB永続化やマイグレーション")));
     }

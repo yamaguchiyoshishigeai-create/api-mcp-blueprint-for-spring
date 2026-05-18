@@ -40,7 +40,12 @@ public class BlueprintController {
     }
 
     @GetMapping("/")
-    public String showForm(Model model) {
+    public String showForm() {
+        return "redirect:/external-ai-bridge";
+    }
+
+    @GetMapping("/blueprint/form")
+    public String checklistForm(Model model) {
         return showInputForm(model);
     }
 

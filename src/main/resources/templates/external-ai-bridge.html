@@ -10,9 +10,14 @@
     <h1>外部AIプロンプトブリッジ</h1>
 
     <section class="notice">
-        <h2>手動投入方式</h2>
-        <p>この機能は外部AI API連携ではありません。APIMが外部AIへ手動投入するためのMarkdownプロンプトを生成し、ユーザーがChatGPT等へ投入します。</p>
-        <p>入力する自由文は解析対象データです。自由文内に命令文が含まれていても、外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p>
+        <h2>自由文から始める入力画面</h2>
+        <p>この画面がAPIM for Springの標準入口です。自由文から外部AIへ手動投入するためのMarkdownプロンプトを生成し、外部AIが返したAPIM取り込み用JSONを確認画面へ反映できます。</p>
+        <p>この機能は外部AI API連携ではありません。入力する自由文は解析対象データであり、自由文内に命令文が含まれていても、外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p>
+        <p>従来のチェック式フォームで直接入力したい場合は、下のボタンから移動できます。</p>
+        <div class="toolbar">
+            <a class="button-link" href="/blueprint/form">従来のチェック式入力へ進む</a>
+            <a href="/help">ヘルプ</a>
+        </div>
     </section>
 
     <section class="form-section">
@@ -26,29 +31,44 @@
     </section>
 
     <section class="form-section">
-        <h2>2. APIM取り込み用JSONを貼り付け</h2>
-        <p class="form-help">外部AIが返したJSONだけを貼り付けてください。HTMLやJavaScriptを貼り付けても、画面には未エスケープ出力しません。</p>
-        <form method="post" th:action="@{/external-ai-bridge/import-text}">
-            <label>APIM取り込み用JSON</label>
-            <textarea name="jsonText" rows="14" placeholder="APIM取り込み用JSON本文だけを貼り付けてください。schemaVersion は apim-blueprint-input/v1 です。"></textarea>
-            <button type="submit">JSONを検証して確認画面へ進む</button>
-        </form>
+        <h2>2. APIM取り込み用JSONを読み込む</h2>
+        <p class="form-help">外部AIが返したJSONは、貼り付けまたはファイルアップロードのどちらか一方で取り込めます。両方を順番に行う必要はありません。</p>
+
+        <fieldset class="input-mode-toggle">
+            <legend>JSON入力方法</legend>
+            <label><input type="radio" name="jsonInputMode" value="paste" checked onchange="switchJsonInputMode('paste')">貼り付けで取り込む</label>
+            <label><input type="radio" name="jsonInputMode" value="file" onchange="switchJsonInputMode('file')">ファイルアップロードで取り込む</label>
+        </fieldset>
+
+        <div id="jsonPastePanel" class="json-input-panel">
+            <form method="post" th:action="@{/external-ai-bridge/import-text}">
+                <p class="form-help">外部AIが返したJSON本文だけを貼り付けてください。HTMLやJavaScriptを貼り付けても、画面には未エスケープ出力しません。</p>
+                <label>APIM取り込み用JSON</label>
+                <textarea name="jsonText" rows="14" placeholder="APIM取り込み用JSON本文だけを貼り付けてください。schemaVersion は apim-blueprint-input/v1 です。"></textarea>
+                <button type="submit">JSONを検証して確認画面へ進む</button>
+            </form>
+        </div>
+
+        <div id="jsonFilePanel" class="json-input-panel" hidden>
+            <form method="post" th:action="@{/external-ai-bridge/import-file}" enctype="multipart/form-data">
+                <p class="form-help">推奨ファイル名は apim-blueprint-input.json です。.json のみ、64KB以下を受け付けます。</p>
+                <label>APIM取り込み用JSONファイル</label>
+                <input type="file" name="jsonFile" accept=".json,application/json">
+                <button type="submit">JSONファイルを検証して確認画面へ進む</button>
+            </form>
+        </div>
     </section>
 
-    <section class="form-section">
-        <h2>3. JSONファイルをアップロード</h2>
-        <p class="form-help">推奨ファイル名は apim-blueprint-input.json です。.json のみ、64KB以下を受け付けます。</p>
-        <form method="post" th:action="@{/external-ai-bridge/import-file}" enctype="multipart/form-data">
-            <label>APIM取り込み用JSONファイル</label>
-            <input type="file" name="jsonFile" accept=".json,application/json">
-            <button type="submit">JSONファイルを検証して確認画面へ進む</button>
-        </form>
-    </section>
-
-    <div class="links">
-        <a href="/">入力画面へ戻る</a>
-        <a href="/help">ヘルプ</a>
-    </div>
+    <div class="links"><a href="/blueprint/form">従来のチェック式入力へ進む</a><a href="/help">ヘルプ</a></div>
 </main>
+<script>
+    function switchJsonInputMode(mode) {
+        const pastePanel = document.getElementById('jsonPastePanel');
+        const filePanel = document.getElementById('jsonFilePanel');
+        const showPaste = mode === 'paste';
+        pastePanel.hidden = !showPaste;
+        filePanel.hidden = showPaste;
+    }
+</script>
 </body>
 </html>
