@@ -30,7 +30,7 @@
         <p class="form-help">外部AIが返したJSONだけを貼り付けてください。HTMLやJavaScriptを貼り付けても、画面には未エスケープ出力しません。</p>
         <form method="post" th:action="@{/external-ai-bridge/import-text}">
             <label>APIM取り込み用JSON</label>
-            <textarea name="jsonText" rows="14" placeholder='{"schemaVersion":"apim-blueprint-input/v1","judgement":{"canGenerate":true,"reason":"","missingInformation":[]},"normalizedInput":{...}}'></textarea>
+            <textarea name="jsonText" rows="14" placeholder="APIM取り込み用JSON本文だけを貼り付けてください。schemaVersion は apim-blueprint-input/v1 です。"></textarea>
             <button type="submit">JSONを検証して確認画面へ進む</button>
         </form>
     </section>
