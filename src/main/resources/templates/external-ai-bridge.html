@@ -112,8 +112,8 @@
 
         <fieldset class="input-mode-toggle">
             <legend>JSON入力方法</legend>
-            <label><input type="radio" name="jsonInputMode" value="file" checked onchange="switchJsonInputMode(\'file\')">ファイルアップロードで取り込む</label>
-            <label><input type="radio" name="jsonInputMode" value="paste" onchange="switchJsonInputMode(\'paste\')">貼り付けで取り込む</label>
+            <label><input type="radio" name="jsonInputMode" value="file" checked onchange="switchJsonInputMode('file')">ファイルアップロードで取り込む</label>
+            <label><input type="radio" name="jsonInputMode" value="paste" onchange="switchJsonInputMode('paste')">貼り付けで取り込む</label>
         </fieldset>
 
         <div id="jsonFilePanel" class="json-input-panel">
@@ -143,8 +143,15 @@
         const filePanel = document.getElementById('jsonFilePanel');
         const showPaste = mode === 'paste';
         pastePanel.hidden = !showPaste;
+        pastePanel.setAttribute('aria-hidden', String(!showPaste));
         filePanel.hidden = showPaste;
+        filePanel.setAttribute('aria-hidden', String(showPaste));
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkedMode = document.querySelector('input[name="jsonInputMode"]:checked');
+        switchJsonInputMode(checkedMode ? checkedMode.value : 'file');
+    });
 
     function insertFreeTextSample(sampleText) {
         const textarea = document.querySelector('textarea[name="freeText"], #freeText');
