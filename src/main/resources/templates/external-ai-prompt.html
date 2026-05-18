@@ -17,14 +17,16 @@
 
     <div class="toolbar">
         <a href="/external-ai-bridge/prompt/download">Markdownダウンロード</a>
-        <button type="button" class="secondary" onclick="copyGeneratedPrompt()">生成プロンプトを一括コピー</button>
         <a href="/external-ai-bridge">自由文入力トップへ戻る</a>
     </div>
-    <p id="copyStatus" class="form-help" aria-live="polite"></p>
+    <p id="copyStatus" class="form-help copy-status" aria-live="polite"></p>
 
     <section class="form-section">
         <h2>生成プロンプト</h2>
         <textarea id="externalAiPromptText" class="prompt-preview" readonly rows="28" th:text="${externalAiPrompt}"></textarea>
+        <div class="toolbar prompt-copy-toolbar">
+            <button type="button" class="secondary" onclick="copyGeneratedPrompt()">生成プロンプトを一括コピー</button>
+        </div>
     </section>
 
     <section class="form-section">
@@ -58,43 +60,45 @@
 </main>
 <script>
     function switchJsonInputMode(mode) {
-        const pastePanel = document.getElementById(\'jsonPastePanel\');
-        const filePanel = document.getElementById(\'jsonFilePanel\');
-        const showPaste = mode === \'paste\';
+        const pastePanel = document.getElementById('jsonPastePanel');
+        const filePanel = document.getElementById('jsonFilePanel');
+        const showPaste = mode === 'paste';
         pastePanel.hidden = !showPaste;
-        pastePanel.setAttribute(\'aria-hidden\', String(!showPaste));
+        pastePanel.setAttribute('aria-hidden', String(!showPaste));
         filePanel.hidden = showPaste;
         filePanel.setAttribute('aria-hidden', String(showPaste));
     }
 
-    document.addEventListener(\'DOMContentLoaded\', function () {
+    document.addEventListener('DOMContentLoaded', function () {
         const checkedMode = document.querySelector('input[name="jsonInputMode"]:checked');
-        switchJsonInputMode(checkedMode ? checkedMode.value : \'file\');
+        switchJsonInputMode(checkedMode ? checkedMode.value : 'file');
     });
 
     function copyGeneratedPrompt() {
-        const promptText = document.getElementById(\'externalAiPromptText\');
-        const copyStatus = document.getElementById(\'copyStatus\');
+        const promptText = document.getElementById('externalAiPromptText');
+        const copyStatus = document.getElementById('copyStatus');
         if (!promptText) {
             return;
         }
-        const text = promptText.value;
+
+        const text = promptText.value || promptText.textContent || promptText.innerText || '';
         const showCopied = function () {
             if (copyStatus) {
-                copyStatus.textContent = \'生成プロンプトをコピーしました。\';
+                copyStatus.textContent = '生成プロンプトをコピーしました。';
             }
         };
         const showFailed = function () {
             if (copyStatus) {
-                copyStatus.textContent = \'コピーできませんでした。手動で選択してコピーしてください。\';
+                copyStatus.textContent = 'コピーできませんでした。手動で選択してコピーしてください。';
             }
         };
+
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(showCopied).catch(function () {
                 promptText.focus();
                 promptText.select();
                 try {
-                    document.execCommand(\'copy\');
+                    document.execCommand('copy');
                     showCopied();
                 } catch (error) {
                     showFailed();
@@ -102,10 +106,11 @@
             });
             return;
         }
+
         promptText.focus();
         promptText.select();
         try {
-            document.execCommand(\'copy\');
+            document.execCommand('copy');
             showCopied();
         } catch (error) {
             showFailed();

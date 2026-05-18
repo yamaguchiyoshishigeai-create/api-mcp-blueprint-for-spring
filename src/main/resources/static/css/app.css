@@ -267,3 +267,12 @@ button.secondary.sample-button {
   color: #1e3a8a;
   border: 1px solid #bfdbfe;
 }
+
+.prompt-copy-toolbar {
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.copy-status {
+  min-height: 1.2rem;
+}
