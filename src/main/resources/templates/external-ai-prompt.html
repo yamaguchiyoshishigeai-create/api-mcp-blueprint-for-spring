@@ -19,12 +19,11 @@
         <a href="/external-ai-bridge/prompt/download">Markdownダウンロード</a>
         <a href="/external-ai-bridge">自由文入力トップへ戻る</a>
     </div>
-    <p id="copyStatus" class="form-help copy-status" aria-live="polite"></p>
-
     <section class="form-section">
         <h2>生成プロンプト</h2>
         <textarea id="externalAiPromptText" class="prompt-preview" readonly rows="28" th:text="${externalAiPrompt}"></textarea>
         <div class="toolbar prompt-copy-toolbar">
+            <span id="copyStatus" class="copy-feedback-bubble" aria-live="polite" hidden></span>
             <button type="button" class="secondary" onclick="copyGeneratedPrompt()">生成プロンプトを一括コピー</button>
         </div>
     </section>
@@ -82,15 +81,27 @@
         }
 
         const text = promptText.value || promptText.textContent || promptText.innerText || '';
-        const showCopied = function () {
-            if (copyStatus) {
-                copyStatus.textContent = '生成プロンプトをコピーしました。';
+        let copyFeedbackTimer = null;
+        const showCopyFeedback = function (message, isError) {
+            if (!copyStatus) {
+                return;
             }
+            copyStatus.textContent = message;
+            copyStatus.hidden = false;
+            copyStatus.classList.toggle('copy-feedback-error', Boolean(isError));
+            if (copyFeedbackTimer) {
+                window.clearTimeout(copyFeedbackTimer);
+            }
+            copyFeedbackTimer = window.setTimeout(function () {
+                copyStatus.hidden = true;
+                copyStatus.classList.remove('copy-feedback-error');
+            }, 2500);
+        };
+        const showCopied = function () {
+            showCopyFeedback('コピーされました', false);
         };
         const showFailed = function () {
-            if (copyStatus) {
-                copyStatus.textContent = 'コピーできませんでした。手動で選択してコピーしてください。';
-            }
+            showCopyFeedback('コピーできませんでした。手動で選択してコピーしてください。', true);
         };
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
