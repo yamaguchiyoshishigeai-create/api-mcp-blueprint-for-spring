@@ -63,8 +63,12 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("解析対象データ")))
                 .andExpect(content().string(containsString("APIM取り込み用JSON")))
                 .andExpect(content().string(containsString("従来のチェック式入力へ進む")))
-                .andExpect(content().string(containsString("貼り付けで取り込む")))
+                .andExpect(content().string(containsString("value=\"file\" checked")))
+                .andExpect(content().string(containsString("value=\"paste\" onchange")))
+                .andExpect(content().string(containsString("id=\"jsonFilePanel\" class=\"json-input-panel\"")))
+                .andExpect(content().string(containsString("id=\"jsonPastePanel\" class=\"json-input-panel\" hidden")))
                 .andExpect(content().string(containsString("ファイルアップロードで取り込む")))
+                .andExpect(content().string(containsString("貼り付けで取り込む")))
                 .andExpect(content().string(containsString("両方を順番に行う必要はありません")))
                 .andExpect(content().string(containsString("64KB以下")));
     }
