@@ -61,13 +61,18 @@ public class BlueprintGenerationService {
         BlueprintResult result = new BlueprintResult();
         result.setInputSummary(buildInputSummary(input, normalizedInput));
         result.setApiDesignSummary("業務要件からREST API候補とMCP設計候補を生成した。");
-        if (normalizedInput.relatedDomains().isEmpty()) {
+        if (input.hasV2BusinessOperationModel()) {
+            result.setApiEndpoints(apiDesignGenerator.generateFromV2(input, domainNameNormalizer));
+        } else if (normalizedInput.relatedDomains().isEmpty()) {
             result.setApiEndpoints(apiDesignGenerator.generate(domainPath, domainClass, operations, actors));
         } else {
             result.setApiEndpoints(apiDesignGenerator.generate(normalizedInput, domainNameNormalizer, operations, actors));
         }
         result.setDtoCandidates(dtoCandidateGenerator.generate(domainClass, result.getApiEndpoints()));
-        if (normalizedInput.relatedDomains().isEmpty()) {
+        if (input.hasV2BusinessOperationModel()) {
+            result.setControllerSkeleton(controllerSkeletonGenerator.generateAggregate(
+                    "BusinessObjectApiController", result.getApiEndpoints()));
+        } else if (normalizedInput.relatedDomains().isEmpty()) {
             result.setControllerSkeleton(controllerSkeletonGenerator.generate(domainClass, domainPath, result.getApiEndpoints()));
         } else {
             result.setControllerSkeleton(controllerSkeletonGenerator.generate(normalizedInput, domainNameNormalizer, result.getApiEndpoints()));

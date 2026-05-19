@@ -467,7 +467,59 @@ public class ExternalAiPromptBridgeService {
         input.setAuthenticationMethod(textValue(securityPolicy.get("defaultAuthentication")));
         input.setTargetUsers(String.join("、", v2Names(actors)));
         input.setOutputLanguage(mapOutputLanguage(textValue(businessContext.get("language"))));
+        input.setV2BusinessObjects(v2BusinessObjects(businessObjects));
+        input.setV2Actors(v2Actors(actors));
+        input.setV2Operations(v2Operations(operations));
         return input;
+    }
+
+    private List<BlueprintInput.V2BusinessObject> v2BusinessObjects(JsonNode objects) {
+        List<BlueprintInput.V2BusinessObject> values = new ArrayList<>();
+        for (JsonNode object : objects) {
+            values.add(new BlueprintInput.V2BusinessObject(
+                    textValue(object.get("id")),
+                    textValue(object.get("name")),
+                    textValue(object.get("domainId")),
+                    textValue(object.get("sensitivity")),
+                    textArrayValue(object.get("dataCategories"))
+            ));
+        }
+        return List.copyOf(values);
+    }
+
+    private List<BlueprintInput.V2Actor> v2Actors(JsonNode actors) {
+        List<BlueprintInput.V2Actor> values = new ArrayList<>();
+        for (JsonNode actor : actors) {
+            values.add(new BlueprintInput.V2Actor(
+                    textValue(actor.get("id")),
+                    textValue(actor.get("name")),
+                    textValue(actor.get("actorType"))
+            ));
+        }
+        return List.copyOf(values);
+    }
+
+    private List<BlueprintInput.V2Operation> v2Operations(JsonNode operations) {
+        List<BlueprintInput.V2Operation> values = new ArrayList<>();
+        for (JsonNode operation : operations) {
+            values.add(new BlueprintInput.V2Operation(
+                    textValue(operation.get("id")),
+                    textValue(operation.get("label")),
+                    textValue(operation.get("description")),
+                    textArrayValue(operation.get("actorIds")),
+                    textArrayValue(operation.get("objectIds")),
+                    textValue(operation.get("intent")),
+                    textValue(operation.get("executionMode")),
+                    textValue(operation.get("aiPermission")),
+                    v2BooleanValue(operation.get("approvalRequired")),
+                    textValue(operation.get("auditLogRequired")),
+                    textValue(operation.get("riskLevel")),
+                    v2BooleanValue(operation.get("externalAction")),
+                    v2BooleanValue(operation.get("stateChanging")),
+                    textValue(operation.get("outputType"))
+            ));
+        }
+        return List.copyOf(values);
     }
 
     private JsonNode v2RequiredObject(JsonNode parent, String fieldName, String path, List<String> errors) {
@@ -842,6 +894,20 @@ public class ExternalAiPromptBridgeService {
         }
         if (required && values.isEmpty()) {
             errors.add(path + " は1件以上必要です。");
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> textArrayValue(JsonNode node) {
+        if (node == null || !node.isArray()) {
+            return List.of();
+        }
+        List<String> values = new ArrayList<>();
+        for (JsonNode valueNode : node) {
+            String value = textValue(valueNode);
+            if (!value.isBlank()) {
+                values.add(value);
+            }
         }
         return List.copyOf(values);
     }

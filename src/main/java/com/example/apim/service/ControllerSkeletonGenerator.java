@@ -26,6 +26,14 @@ public class ControllerSkeletonGenerator {
         return new ControllerSkeleton(controllerName, buildControllerSource(controllerName, domainPath, endpoints, List.of()));
     }
 
+    public ControllerSkeleton generateAggregate(String controllerName, List<ApiEndpointCandidate> endpoints) {
+        String safeControllerName = controllerName == null || controllerName.isBlank()
+                ? "BusinessObjectApiController"
+                : controllerName;
+        return new ControllerSkeleton(safeControllerName,
+                buildControllerSource(safeControllerName, "", endpoints == null ? List.of() : endpoints, List.of()));
+    }
+
     public ControllerSkeleton generate(
             NormalizedBlueprintInput normalizedInput,
             DomainNameNormalizer domainNameNormalizer,
@@ -51,7 +59,11 @@ public class ControllerSkeletonGenerator {
         sb.append("package com.example.generated.controller;\n\n");
         sb.append("import org.springframework.web.bind.annotation.*;\n\n");
         sb.append("@RestController\n");
-        sb.append("@RequestMapping(\"/api/").append(domainPath).append("\")\n");
+        sb.append("@RequestMapping(\"/api");
+        if (domainPath != null && !domainPath.isBlank()) {
+            sb.append("/").append(domainPath);
+        }
+        sb.append("\")\n");
         sb.append("public class ").append(controllerName).append(" {\n\n");
         for (String relatedControllerCandidate : relatedControllerCandidates) {
             sb.append("    // 関連ドメイン参照Controller候補: ")
@@ -118,6 +130,12 @@ public class ControllerSkeletonGenerator {
     }
 
     private String resolveLocalPath(String fullPath, String domainPath) {
+        if (domainPath == null || domainPath.isBlank()) {
+            if (fullPath == null || fullPath.isBlank()) {
+                return "";
+            }
+            return fullPath.startsWith("/api") ? fullPath.substring(4) : fullPath;
+        }
         String prefix = "/api/" + domainPath;
         if (fullPath.startsWith(prefix)) {
             String local = fullPath.substring(prefix.length());

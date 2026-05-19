@@ -25,26 +25,37 @@ public class DtoCandidateGenerator {
             switch (endpoint.httpMethod()) {
                 case "GET" -> {
                     if (endpoint.path().endsWith("}")) {
-                        addIfMissing(dtos, domainClass + "Response", "詳細取得レスポンス", defaultResponseFields());
+                        addIfMissing(dtos, responseDto(endpoint, domainClass + "Response"), "詳細取得レスポンス",
+                                defaultResponseFields());
                     } else {
-                        addIfMissing(dtos, domainClass + "SearchRequest", "検索条件", defaultSearchFields());
-                        addIfMissing(dtos, domainClass + "SummaryResponse", "一覧レスポンス", defaultSummaryFields());
+                        addIfMissing(dtos, requestDto(endpoint, domainClass + "SearchRequest"), "検索条件",
+                                defaultSearchFields());
+                        addIfMissing(dtos, responseDto(endpoint, domainClass + "SummaryResponse"), "一覧レスポンス",
+                                defaultSummaryFields());
                     }
                 }
                 case "POST" -> {
                     if (endpoint.path().contains("approval-requests")) {
-                        addIfMissing(dtos, domainClass + "ApprovalRequest", "承認依頼DTO", defaultApprovalFields());
-                        addIfMissing(dtos, "ApprovalResponse", "承認結果DTO", approvalResponseFields());
+                        addIfMissing(dtos, requestDto(endpoint, domainClass + "ApprovalRequest"), "承認依頼DTO",
+                                defaultApprovalFields());
+                        addIfMissing(dtos, responseDto(endpoint, "ApprovalResponse"), "承認結果DTO",
+                                approvalResponseFields());
                     } else if (endpoint.path().contains("notifications")) {
-                        addIfMissing(dtos, "NotificationRequest", "通知要求DTO", notificationFields());
+                        addIfMissing(dtos, requestDto(endpoint, "NotificationRequest"), "通知要求DTO",
+                                notificationFields());
                     } else if (endpoint.path().contains("permissions")) {
-                        addIfMissing(dtos, "PermissionChangeRequest", "権限変更DTO", permissionFields());
+                        addIfMissing(dtos, requestDto(endpoint, "PermissionChangeRequest"), "権限変更DTO",
+                                permissionFields());
                     } else {
-                        addIfMissing(dtos, domainClass + "CreateRequest", "作成要求DTO", defaultCreateFields());
+                        addIfMissing(dtos, requestDto(endpoint, domainClass + "CreateRequest"), "作成要求DTO",
+                                defaultCreateFields());
+                        addIfMissing(dtos, responseDto(endpoint, ""), "作成レスポンス", defaultResponseFields());
                     }
                 }
-                case "PUT" -> addIfMissing(dtos, domainClass + "UpdateRequest", "更新要求DTO", defaultUpdateFields());
-                case "DELETE" -> addIfMissing(dtos, "ApprovalResponse", "承認結果DTO", approvalResponseFields());
+                case "PUT" -> addIfMissing(dtos, requestDto(endpoint, domainClass + "UpdateRequest"), "更新要求DTO",
+                        defaultUpdateFields());
+                case "DELETE" -> addIfMissing(dtos, responseDto(endpoint, "ApprovalResponse"), "承認結果DTO",
+                        approvalResponseFields());
                 default -> {
                 }
             }
@@ -72,6 +83,14 @@ public class DtoCandidateGenerator {
             return;
         }
         dtos.put(name, new DtoCandidate(name, purpose, fields));
+    }
+
+    private String requestDto(ApiEndpointCandidate endpoint, String fallback) {
+        return endpoint.requestDto() == null || endpoint.requestDto().isBlank() ? fallback : endpoint.requestDto();
+    }
+
+    private String responseDto(ApiEndpointCandidate endpoint, String fallback) {
+        return endpoint.responseDto() == null || endpoint.responseDto().isBlank() ? fallback : endpoint.responseDto();
     }
 
     private List<DtoFieldCandidate> defaultSearchFields() {
