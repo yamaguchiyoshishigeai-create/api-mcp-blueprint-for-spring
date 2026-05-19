@@ -66,7 +66,7 @@ public class MarkdownDocumentGenerator {
     }
 
     private void appendDomains(StringBuilder sb, BlueprintInput input, NormalizedBlueprintInput normalizedInput) {
-        sb.append("### 3.1 業務領域\n\n");
+        sb.append("### 3.1 業務領域 (domains)\n\n");
         if (!input.getV2Domains().isEmpty()) {
             sb.append("| ID | Name | Role | Description |\n")
                     .append("|---|---|---|---|\n");
@@ -86,7 +86,7 @@ public class MarkdownDocumentGenerator {
     }
 
     private void appendBusinessObjects(StringBuilder sb, BlueprintInput input) {
-        sb.append("### 3.2 業務オブジェクト\n\n");
+        sb.append("### 3.2 業務オブジェクト (businessObjects)\n\n");
         if (input.getV2BusinessObjects().isEmpty()) {
             sb.append("- v2業務オブジェクトは未指定。旧入力では対象ドメインと操作からAPI候補を生成する。\n\n");
             return;
@@ -106,7 +106,7 @@ public class MarkdownDocumentGenerator {
     }
 
     private void appendActors(StringBuilder sb, BlueprintInput input) {
-        sb.append("### 3.3 利用者・ロール\n\n");
+        sb.append("### 3.3 利用者・ロール (actors)\n\n");
         if (!input.getV2Actors().isEmpty()) {
             sb.append("| ID | Name | Type |\n")
                     .append("|---|---|---|\n");
@@ -126,7 +126,7 @@ public class MarkdownDocumentGenerator {
     }
 
     private void appendOperations(StringBuilder sb, BlueprintInput input) {
-        sb.append("### 3.4 業務操作一覧\n\n");
+        sb.append("### 3.4 業務操作一覧 (operations)\n\n");
         if (input.getV2Operations().isEmpty()) {
             for (String operation : lines(input.getRequiredOperations())) {
                 sb.append("- ").append(operation).append('\n');
@@ -158,7 +158,7 @@ public class MarkdownDocumentGenerator {
     }
 
     private void appendRelationships(StringBuilder sb, BlueprintInput input) {
-        sb.append("### 3.5 関係性\n\n");
+        sb.append("### 3.5 関係性 (relationships)\n\n");
         if (input.getV2Relationships().isEmpty()) {
             sb.append("- v2関係性は未指定。\n\n");
             return;
@@ -234,7 +234,7 @@ public class MarkdownDocumentGenerator {
     }
 
     private void appendAmbiguities(StringBuilder sb, BlueprintInput input) {
-        sb.append("## 5. 曖昧点・確認事項\n\n");
+        sb.append("## 5. 曖昧点・確認事項 (ambiguities)\n\n");
         if (input.getV2Ambiguities().isEmpty()) {
             sb.append("- v2曖昧点は未指定。後続設計で承認者、外部送信、確定処理の境界を確認する。\n\n");
             return;

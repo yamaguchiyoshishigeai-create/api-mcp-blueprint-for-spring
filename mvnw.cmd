@@ -9,5 +9,5 @@ if not exist "%WRAPPER_PS1%" (
   exit /b 1
 )
 
-powershell -NoProfile -File "%WRAPPER_PS1%" %*
+powershell -NoProfile -ExecutionPolicy Bypass -File "%WRAPPER_PS1%" %*
 exit /b %ERRORLEVEL%

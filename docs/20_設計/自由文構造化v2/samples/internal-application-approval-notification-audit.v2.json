@@ -1,0 +1,256 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.86,
+    "reason": "社内申請、承認、通知、監査の業務領域と操作境界を抽出できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "社内申請、承認、通知、監査を横断して、申請状況確認と承認依頼を支援する。",
+    "summary": "申請者、承認者、監査担当が申請、承認依頼、通知、監査ログを扱う。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "社内申請から承認、通知、監査ログ確認までを扱う。"
+  },
+  "domains": [
+    {
+      "id": "internal_application",
+      "name": "社内申請ワークフロー",
+      "role": "primary",
+      "description": "社内申請の受付、参照、差戻しを扱う。"
+    },
+    {
+      "id": "approval_workflow",
+      "name": "承認ワークフロー",
+      "role": "primary",
+      "description": "承認依頼、承認、却下を扱う。"
+    },
+    {
+      "id": "notification_management",
+      "name": "通知管理",
+      "role": "supporting",
+      "description": "承認結果や差戻し通知を扱う。"
+    },
+    {
+      "id": "audit_log_management",
+      "name": "監査ログ管理",
+      "role": "cross_cutting",
+      "description": "承認、通知、権限操作の監査証跡を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "application",
+      "name": "申請",
+      "domainId": "internal_application",
+      "description": "申請内容、状態、添付情報を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": ["employee_related", "application"]
+    },
+    {
+      "id": "approval_request",
+      "name": "承認依頼",
+      "domainId": "approval_workflow",
+      "description": "承認者への依頼と承認状態を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": ["approval"]
+    },
+    {
+      "id": "notification",
+      "name": "通知",
+      "domainId": "notification_management",
+      "description": "承認結果や差戻し連絡を扱う。",
+      "sensitivity": "internal",
+      "dataCategories": ["notification"]
+    },
+    {
+      "id": "audit_log",
+      "name": "監査ログ",
+      "domainId": "audit_log_management",
+      "description": "承認、却下、通知送信の記録を扱う。",
+      "sensitivity": "restricted",
+      "dataCategories": ["audit"]
+    }
+  ],
+  "actors": [
+    {
+      "id": "applicant",
+      "name": "申請者",
+      "description": "社内申請を起票する。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "承認者",
+      "description": "申請を承認または却下する。",
+      "actorType": "approver"
+    },
+    {
+      "id": "auditor",
+      "name": "監査担当",
+      "description": "承認証跡を確認する。",
+      "actorType": "human_user"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_applications",
+      "label": "申請検索",
+      "description": "申請を検索する。",
+      "actorIds": ["applicant", "approver"],
+      "objectIds": ["application"],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_application",
+      "label": "申請内容要約",
+      "description": "申請内容を要約する。",
+      "actorIds": ["approver"],
+      "objectIds": ["application"],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "request_application_approval",
+      "label": "承認依頼作成",
+      "description": "申請の承認依頼を作成する。",
+      "actorIds": ["applicant", "approver"],
+      "objectIds": ["approval_request", "application"],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "draft_approval_notification",
+      "label": "承認結果通知文案作成",
+      "description": "承認結果通知の文案を作成する。",
+      "actorIds": ["approver"],
+      "objectIds": ["notification", "application"],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_approval_notification_send",
+      "label": "承認結果通知送信依頼",
+      "description": "承認結果通知の外部送信を依頼する。",
+      "actorIds": ["approver"],
+      "objectIds": ["notification", "application"],
+      "intent": "external_action",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": true,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "search_audit_logs",
+      "label": "監査ログ確認",
+      "description": "承認と通知の監査ログを確認する。",
+      "actorIds": ["auditor"],
+      "objectIds": ["audit_log", "approval_request", "notification"],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed_with_review",
+      "approvalRequired": false,
+      "auditLogRequired": "required",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    }
+  ],
+  "operationGroups": [
+    {
+      "id": "application_approval_flow",
+      "name": "申請承認フロー",
+      "operationIds": ["request_application_approval", "draft_approval_notification", "request_approval_notification_send"],
+      "description": "申請承認と通知の境界を扱う。"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "application_has_approval_request",
+      "fromObjectId": "application",
+      "toObjectId": "approval_request",
+      "type": "has_one",
+      "description": "申請は承認依頼に紐づく。"
+    },
+    {
+      "id": "approval_request_has_notification",
+      "fromObjectId": "approval_request",
+      "toObjectId": "notification",
+      "type": "triggers",
+      "description": "承認結果は通知を発生させる。"
+    },
+    {
+      "id": "approval_request_recorded_as_audit_log",
+      "fromObjectId": "approval_request",
+      "toObjectId": "audit_log",
+      "type": "recorded_as",
+      "description": "承認操作は監査ログへ記録される。"
+    }
+  ],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "required",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "承認、通知送信、監査ログ参照は権限境界を分離する。",
+      "通知送信はAI直接実行不可とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "notification_recipients_unspecified",
+      "type": "external_action_unclear",
+      "message": "承認結果通知の宛先範囲が明示されていません。",
+      "affectedOperationIds": ["request_approval_notification_send"],
+      "defaultHandling": "通知送信依頼として承認必須にする。",
+      "severity": "medium"
+    }
+  ]
+}

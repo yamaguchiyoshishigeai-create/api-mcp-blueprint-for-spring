@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.85,
+    "reason": "変更提案と実更新の境界を分離できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "顧客情報と契約条件の変更提案をAIが作成し、実更新は承認後に扱う。",
+    "summary": "営業担当が変更提案を作成し、管理者が実更新を承認する。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "AIによる変更提案と人間承認後の実更新を扱う。"
+  },
+  "domains": [
+    {
+      "id": "customer_management",
+      "name": "顧客管理",
+      "role": "primary",
+      "description": "顧客属性と連絡先を扱う。"
+    },
+    {
+      "id": "contract_management",
+      "name": "契約管理",
+      "role": "primary",
+      "description": "契約条件と契約変更を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "customer",
+      "name": "顧客",
+      "domainId": "customer_management",
+      "description": "顧客属性、担当者、連絡先。",
+      "sensitivity": "confidential",
+      "dataCategories": ["customer_related"]
+    },
+    {
+      "id": "contract",
+      "name": "契約",
+      "domainId": "contract_management",
+      "description": "契約条件、契約期間、請求条件。",
+      "sensitivity": "restricted",
+      "dataCategories": ["contract", "financial"]
+    }
+  ],
+  "actors": [
+    {
+      "id": "sales_rep",
+      "name": "営業担当",
+      "description": "顧客と契約条件の変更提案を作成する。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "admin",
+      "name": "管理者",
+      "description": "実更新を承認する。",
+      "actorType": "approver"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_customers",
+      "label": "顧客検索",
+      "description": "顧客を検索する。",
+      "actorIds": ["sales_rep"],
+      "objectIds": ["customer"],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "required",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "propose_customer_update",
+      "label": "顧客情報変更提案",
+      "description": "顧客情報の変更提案を作成する。",
+      "actorIds": ["sales_rep"],
+      "objectIds": ["customer"],
+      "intent": "proposal",
+      "executionMode": "proposal_only",
+      "aiPermission": "allowed_with_review",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "change_proposal"
+    },
+    {
+      "id": "request_customer_actual_update",
+      "label": "顧客情報実更新依頼",
+      "description": "顧客情報の実更新を依頼する。",
+      "actorIds": ["sales_rep", "admin"],
+      "objectIds": ["customer"],
+      "intent": "write",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "propose_contract_condition_update",
+      "label": "契約条件変更提案",
+      "description": "契約条件の変更提案を作成する。",
+      "actorIds": ["sales_rep"],
+      "objectIds": ["contract"],
+      "intent": "proposal",
+      "executionMode": "proposal_only",
+      "aiPermission": "allowed_with_review",
+      "approvalRequired": false,
+      "auditLogRequired": "required",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "change_proposal"
+    },
+    {
+      "id": "request_contract_actual_update",
+      "label": "契約条件実更新依頼",
+      "description": "契約条件の実更新を依頼する。",
+      "actorIds": ["sales_rep", "admin"],
+      "objectIds": ["contract"],
+      "intent": "write",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [
+    {
+      "id": "proposal_to_update_boundary",
+      "name": "提案と実更新の境界",
+      "operationIds": ["propose_customer_update", "request_customer_actual_update", "propose_contract_condition_update", "request_contract_actual_update"],
+      "description": "AI提案と承認後実更新を分離する。"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "customer_has_contract",
+      "fromObjectId": "customer",
+      "toObjectId": "contract",
+      "type": "has_many",
+      "description": "顧客は契約を持つ。"
+    }
+  ],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "顧客情報と契約条件の実更新は承認必須、監査ログ必須とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "update_field_scope_unspecified",
+      "type": "proposal_vs_write_boundary",
+      "message": "実更新対象項目の範囲が明示されていません。",
+      "affectedOperationIds": ["request_customer_actual_update", "request_contract_actual_update"],
+      "defaultHandling": "実更新は承認依頼として扱い、対象項目は後続設計で確定する。",
+      "severity": "medium"
+    }
+  ]
+}
