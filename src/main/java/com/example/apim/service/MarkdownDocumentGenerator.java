@@ -183,7 +183,8 @@ public class MarkdownDocumentGenerator {
                 operation -> "allowed".equals(operation.aiPermission())
                         && !operation.approvalRequired()
                         && !operation.externalAction()
-                        && !operation.stateChanging(),
+                        && !operation.stateChanging()
+                        && !isAiDirectExecutionForbidden(operation),
                 lines(input.getAllowedAiOperations()));
         appendOperationBucket(sb, "### 4.2 人間承認必須操作", input,
                 BlueprintInput.V2Operation::approvalRequired,
@@ -214,6 +215,11 @@ public class MarkdownDocumentGenerator {
                         .append(table(humanBoundary(operation))).append(" |\n");
             }
             sb.append('\n');
+            return;
+        }
+
+        if (!input.getV2Operations().isEmpty()) {
+            sb.append("- 該当なし\n\n");
             return;
         }
 

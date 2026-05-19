@@ -236,6 +236,42 @@ class MarkdownDocumentGeneratorTest {
                 .contains("Human Confirmation Boundary");
     }
 
+    @Test
+    void highAndCriticalAllowedOperationsAreNotDuplicatedAsAiSupported() {
+        MarkdownDocumentGenerator generator = new MarkdownDocumentGenerator();
+        BlueprintInput input = new BlueprintInput();
+        input.setTargetDomain("審査管理");
+        input.setPrimaryDomain("審査管理");
+        input.setUserTypes("審査担当");
+        input.setRequiredOperations("- 高リスク候補判定\n- 重大リスク候補判定");
+        input.setAllowedAiOperations("- 高リスク候補判定\n- 重大リスク候補判定");
+        input.setV2Operations(List.of(
+                new BlueprintInput.V2Operation("detect_high_risk_candidate", "高リスク候補判定", "",
+                        List.of("reviewer"), List.of("review_case"), "ai_analysis", "ai_assisted",
+                        "allowed", false, "recommended", "high", false, false, "candidate_list"),
+                new BlueprintInput.V2Operation("detect_critical_risk_candidate", "重大リスク候補判定", "",
+                        List.of("reviewer"), List.of("review_case"), "ai_analysis", "ai_assisted",
+                        "allowed", false, "recommended", "critical", false, false, "candidate_list")
+        ));
+
+        BlueprintResult result = new BlueprintResult();
+        result.setControllerSkeleton(new ControllerSkeleton("ReviewController", "@RestController"));
+
+        String markdown = generator.generate(input, result);
+        String aiSupportedSection = section(markdown, "### 4.1 AI支援可能操作", "### 4.2 人間承認必須操作");
+        String aiForbiddenSection = section(markdown, "### 4.4 AI直接実行不可操作", "## 5. 曖昧点・確認事項");
+
+        assertThat(aiSupportedSection)
+                .doesNotContain("高リスク候補判定")
+                .doesNotContain("重大リスク候補判定");
+        assertThat(aiForbiddenSection)
+                .contains("高リスク候補判定")
+                .contains("重大リスク候補判定")
+                .contains("AI直接実行不可")
+                .contains("high")
+                .contains("critical");
+    }
+
 
     @Test
     void outOfScopeSectionIsExpressedAsLaterPhaseDecisions() {
@@ -263,5 +299,13 @@ class MarkdownDocumentGeneratorTest {
                 .doesNotContain("- 完全動作するMCPサーバー")
                 .doesNotContain("- 認証認可の本格実装")
                 .doesNotContain("- OpenAPI完全生成");
+    }
+
+    private String section(String markdown, String startHeading, String endHeading) {
+        int start = markdown.indexOf(startHeading);
+        int end = markdown.indexOf(endHeading);
+        assertThat(start).isGreaterThanOrEqualTo(0);
+        assertThat(end).isGreaterThan(start);
+        return markdown.substring(start, end);
     }
 }
