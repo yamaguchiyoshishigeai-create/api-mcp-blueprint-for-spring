@@ -44,6 +44,15 @@ public class MarkdownDocumentGenerator {
                 .append("- 対象ドメイン: ").append(valueOrDefault(normalizedInput.targetDomainText(), input.getTargetDomain())).append("\n")
                 .append("- ユーザー種別: ").append(input.getUserTypes().replace("\n", " / ")).append("\n")
                 .append("- 必要な操作: ").append(input.getRequiredOperations().replace("\n", " / ")).append("\n\n")
+                .append("### v2確認結果からの操作分類\n")
+                .append("- AI許可操作: ").append(multilineOrDefault(input.getAllowedAiOperations(), "未指定")).append("\n")
+                .append("- 読み取り専用操作: ").append(multilineOrDefault(input.getReadOnlyOperations(), "なし")).append("\n")
+                .append("- 書き込み・状態変更操作: ").append(multilineOrDefault(input.getWriteOperations(), "なし")).append("\n")
+                .append("- 承認必須操作: ").append(multilineOrDefault(input.getApprovalRequiredOperations(), "なし")).append("\n")
+                .append("- 監査ログ必須操作: ").append(multilineOrDefault(input.getAuditLogRequiredOperations(), "なし")).append("\n\n")
+                .append("### v2確認結果からの利用者・認証\n")
+                .append("- 想定認証方式: ").append(valueOrDefault(input.getAuthenticationMethod(), "未指定")).append("\n")
+                .append("- 想定利用者: ").append(valueOrDefault(input.getTargetUsers(), "未指定")).append("\n\n")
                 .append("## 3. 想定ユーザー・ロール\n")
                 .append(input.getUserTypes()).append("\n\n");
     }
@@ -158,6 +167,26 @@ public class MarkdownDocumentGenerator {
 
     private String valueOrDefault(String value, String defaultValue) {
         return value == null || value.isBlank() ? defaultValue : value;
+    }
+
+    private String multilineOrDefault(String value, String defaultValue) {
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        java.util.List<String> values = new java.util.ArrayList<>();
+        for (String line : value.split("\\R")) {
+            String normalized = line.trim();
+            if (normalized.startsWith("- ")) {
+                normalized = normalized.substring(2).trim();
+            }
+            if (!normalized.isBlank()) {
+                values.add(normalized);
+            }
+        }
+        if (values.isEmpty()) {
+            return defaultValue;
+        }
+        return String.join(" / ", values);
     }
 
     private String buildOverviewSummary(BlueprintInput input, NormalizedBlueprintInput normalizedInput) {
