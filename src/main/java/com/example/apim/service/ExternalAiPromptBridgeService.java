@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class ExternalAiPromptBridgeService {
 
     public static final String SCHEMA_VERSION = "apim-blueprint-input/v1";
+    public static final String SCHEMA_VERSION_V2 = "apim-blueprint-input/v2";
 
     private static final Set<String> ROOT_FIELDS = Set.of(
             "schemaVersion", "judgement", "normalizedInput", "safetyNotes");
@@ -216,11 +217,20 @@ public class ExternalAiPromptBridgeService {
             return ExternalAiImportResult.invalid(errors, warnings);
         }
 
-        warnUnexpectedFields(root, ROOT_FIELDS, "root", warnings);
-
-        if (!SCHEMA_VERSION.equals(textValue(root.get("schemaVersion")))) {
-            errors.add("schemaVersion は apim-blueprint-input/v1 である必要があります。");
+        String schemaVersion = textValue(root.get("schemaVersion"));
+        if (SCHEMA_VERSION.equals(schemaVersion)) {
+            return importV1(root, errors, warnings);
         }
+        if (SCHEMA_VERSION_V2.equals(schemaVersion)) {
+            return importV2(root, errors, warnings);
+        }
+
+        errors.add("schemaVersion は apim-blueprint-input/v1 または apim-blueprint-input/v2 である必要があります。");
+        return ExternalAiImportResult.invalid(errors, warnings);
+    }
+
+    private ExternalAiImportResult importV1(JsonNode root, List<String> errors, List<String> warnings) {
+        warnUnexpectedFields(root, ROOT_FIELDS, "root", warnings);
 
         JsonNode judgement = root.get("judgement");
         if (judgement == null || !judgement.isObject()) {
@@ -271,6 +281,401 @@ public class ExternalAiPromptBridgeService {
         }
         return ExternalAiImportResult.canGenerate(input, reason, warnings);
     }
+
+    private ExternalAiImportResult importV2(JsonNode root, List<String> errors, List<String> warnings) {
+        JsonNode judgement = v2RequiredObject(root, "judgement", "judgement", errors);
+        if (judgement == null) {
+            return ExternalAiImportResult.invalid(errors, warnings);
+        }
+
+        String state = v2RequiredText(judgement, "state", "judgement.state", errors);
+        JsonNode canGenerateNode = judgement.get("canGenerate");
+        if (canGenerateNode == null || !canGenerateNode.isBoolean()) {
+            errors.add("judgement.canGenerate が存在しない、または真偽値ではありません。");
+        }
+        boolean canGenerate = canGenerateNode != null && canGenerateNode.isBoolean() && canGenerateNode.asBoolean();
+        String reason = textValue(judgement.get("reason"));
+        List<String> missingInformation = stringArrayValue(judgement.get("missingInformation"),
+                "judgement.missingInformation", errors, false);
+        warnings.addAll(stringArrayValue(judgement.get("warnings"), "judgement.warnings", errors, false));
+
+        if (!errors.isEmpty()) {
+            return ExternalAiImportResult.invalid(errors, warnings);
+        }
+
+        if (!"ready_to_generate".equals(state) || !canGenerate) {
+            return ExternalAiImportResult.cannotGenerate(reason, missingInformation, warnings);
+        }
+
+        JsonNode businessContext = v2RequiredObject(root, "businessContext", "businessContext", errors);
+        JsonNode domains = v2RequiredArray(root, "domains", "domains", errors);
+        JsonNode businessObjects = v2RequiredArray(root, "businessObjects", "businessObjects", errors);
+        JsonNode actors = v2RequiredArray(root, "actors", "actors", errors);
+        JsonNode operations = v2RequiredArray(root, "operations", "operations", errors);
+        JsonNode operationGroups = v2OptionalArray(root, "operationGroups", "operationGroups", errors);
+        JsonNode relationships = v2OptionalArray(root, "relationships", "relationships", errors);
+        JsonNode securityPolicy = v2RequiredObject(root, "securityPolicy", "securityPolicy", errors);
+        JsonNode ambiguities = v2OptionalArray(root, "ambiguities", "ambiguities", errors);
+
+        if (!errors.isEmpty()) {
+            return ExternalAiImportResult.invalid(errors, warnings);
+        }
+
+        BlueprintInput input = mapV2Input(businessContext, domains, businessObjects, actors, operations,
+                operationGroups, relationships, securityPolicy, ambiguities, errors, warnings);
+        if (!errors.isEmpty()) {
+            return ExternalAiImportResult.invalid(errors, warnings);
+        }
+        return ExternalAiImportResult.canGenerate(input, reason, warnings);
+    }
+
+    private BlueprintInput mapV2Input(JsonNode businessContext, JsonNode domains, JsonNode businessObjects,
+                                      JsonNode actors, JsonNode operations, JsonNode operationGroups,
+                                      JsonNode relationships, JsonNode securityPolicy, JsonNode ambiguities,
+                                      List<String> errors, List<String> warnings) {
+        Set<String> domainIds = v2CollectDomainIds(domains, errors);
+        Set<String> objectIds = v2CollectBusinessObjectIds(businessObjects, domainIds, errors);
+        Set<String> actorIds = v2CollectActorIds(actors, errors);
+        Set<String> operationIds = v2CollectOperationIds(operations, actorIds, objectIds, errors, warnings);
+        v2ValidateOperationGroups(operationGroups, operationIds, errors);
+        v2ValidateRelationships(relationships, objectIds, errors);
+        v2ValidateAmbiguities(ambiguities, operationIds, errors, warnings);
+
+        BlueprintInput input = new BlueprintInput();
+        List<String> domainNames = v2Names(domains);
+        List<String> primaryDomainNames = v2NamesByRole(domains, "primary");
+        input.setBusinessRequirements(v2CompactJoin(List.of(
+                v2RequiredText(businessContext, "systemPurpose", "businessContext.systemPurpose", errors),
+                v2RequiredText(businessContext, "summary", "businessContext.summary", errors),
+                "抽出業務領域: " + String.join("、", domainNames)
+        )));
+        input.setTargetDomain(String.join(" / ", domainNames));
+        input.setSystemTypes(domainNames);
+        input.setPrimaryDomain(primaryDomainNames.isEmpty() ? input.getTargetDomain() : primaryDomainNames.get(0));
+        input.setRelatedDomains(domainNames);
+        input.setUserTypes(bullets(v2DescribeActors(actors)));
+        input.setRequiredOperations(bullets(v2OperationLabels(operations)));
+        input.setAllowedAiOperations(bullets(v2FilterOperationLabelsByAiPermission(operations)));
+        input.setReadOnlyOperations(bullets(v2FilterOperationLabelsByIntent(operations, Set.of("read", "search"))));
+        input.setWriteOperations(bullets(v2FilterWriteLikeOperationLabels(operations)));
+        input.setApprovalRequiredOperations(bullets(v2FilterOperationLabelsByBoolean(operations,
+                "approvalRequired", true)));
+        input.setAuditLogRequiredOperations(bullets(v2FilterOperationLabelsByText(operations,
+                "auditLogRequired", "required")));
+        input.setAuthenticationMethod(textValue(securityPolicy.get("defaultAuthentication")));
+        input.setTargetUsers(String.join("、", v2Names(actors)));
+        input.setOutputLanguage(mapOutputLanguage(textValue(businessContext.get("language"))));
+        return input;
+    }
+
+    private JsonNode v2RequiredObject(JsonNode parent, String fieldName, String path, List<String> errors) {
+        JsonNode node = parent.get(fieldName);
+        if (node == null || node.isNull() || !node.isObject()) {
+            errors.add(path + " はオブジェクトである必要があります。");
+            return null;
+        }
+        return node;
+    }
+
+    private JsonNode v2RequiredArray(JsonNode parent, String fieldName, String path, List<String> errors) {
+        JsonNode node = parent.get(fieldName);
+        if (node == null || node.isNull() || !node.isArray()) {
+            errors.add(path + " は配列である必要があります。");
+            return null;
+        }
+        if (node.isEmpty()) {
+            errors.add(path + " は1件以上必要です。");
+        }
+        return node;
+    }
+
+    private JsonNode v2OptionalArray(JsonNode parent, String fieldName, String path, List<String> errors) {
+        JsonNode node = parent.get(fieldName);
+        if (node == null || node.isNull()) {
+            return null;
+        }
+        if (!node.isArray()) {
+            errors.add(path + " は配列である必要があります。");
+            return null;
+        }
+        return node;
+    }
+
+    private String v2RequiredText(JsonNode parent, String fieldName, String path, List<String> errors) {
+        String value = textValue(parent.get(fieldName));
+        if (value.isBlank()) {
+            errors.add(path + " は必須です。");
+        }
+        return value;
+    }
+
+    private Set<String> v2CollectDomainIds(JsonNode domains, List<String> errors) {
+        Set<String> ids = new java.util.HashSet<>();
+        for (int i = 0; i < domains.size(); i++) {
+            JsonNode domain = domains.get(i);
+            String id = v2RequiredText(domain, "id", "domains[" + i + "].id", errors);
+            v2RequiredText(domain, "name", "domains[" + i + "].name", errors);
+            if (!id.isBlank() && !ids.add(id)) {
+                errors.add("domains[" + i + "].id が重複しています: " + id);
+            }
+        }
+        return ids;
+    }
+
+    private Set<String> v2CollectBusinessObjectIds(JsonNode objects, Set<String> domainIds, List<String> errors) {
+        Set<String> ids = new java.util.HashSet<>();
+        for (int i = 0; i < objects.size(); i++) {
+            JsonNode object = objects.get(i);
+            String id = v2RequiredText(object, "id", "businessObjects[" + i + "].id", errors);
+            v2RequiredText(object, "name", "businessObjects[" + i + "].name", errors);
+            String domainId = v2RequiredText(object, "domainId", "businessObjects[" + i + "].domainId", errors);
+            if (!domainId.isBlank() && !domainIds.contains(domainId)) {
+                errors.add("businessObjects[" + i + "].domainId は domains に存在する id を参照する必要があります: "
+                        + domainId);
+            }
+            if (!id.isBlank() && !ids.add(id)) {
+                errors.add("businessObjects[" + i + "].id が重複しています: " + id);
+            }
+        }
+        return ids;
+    }
+
+    private Set<String> v2CollectActorIds(JsonNode actors, List<String> errors) {
+        Set<String> ids = new java.util.HashSet<>();
+        for (int i = 0; i < actors.size(); i++) {
+            JsonNode actor = actors.get(i);
+            String id = v2RequiredText(actor, "id", "actors[" + i + "].id", errors);
+            v2RequiredText(actor, "name", "actors[" + i + "].name", errors);
+            if (!id.isBlank() && !ids.add(id)) {
+                errors.add("actors[" + i + "].id が重複しています: " + id);
+            }
+        }
+        return ids;
+    }
+
+    private Set<String> v2CollectOperationIds(JsonNode operations, Set<String> actorIds, Set<String> objectIds,
+                                              List<String> errors, List<String> warnings) {
+        Set<String> ids = new java.util.HashSet<>();
+        for (int i = 0; i < operations.size(); i++) {
+            JsonNode operation = operations.get(i);
+            String path = "operations[" + i + "]";
+            String id = v2RequiredText(operation, "id", path + ".id", errors);
+            v2RequiredText(operation, "label", path + ".label", errors);
+            v2ValidateReferences(operation.get("actorIds"), actorIds, path + ".actorIds", errors);
+            v2ValidateReferences(operation.get("objectIds"), objectIds, path + ".objectIds", errors);
+            v2ValidateDangerousOperationSafety(operation, path, warnings);
+            if (!id.isBlank() && !ids.add(id)) {
+                errors.add(path + ".id が重複しています: " + id);
+            }
+        }
+        return ids;
+    }
+
+    private void v2ValidateOperationGroups(JsonNode groups, Set<String> operationIds, List<String> errors) {
+        if (groups == null) {
+            return;
+        }
+        for (int i = 0; i < groups.size(); i++) {
+            v2ValidateReferences(groups.get(i).get("operationIds"), operationIds,
+                    "operationGroups[" + i + "].operationIds", errors);
+        }
+    }
+
+    private void v2ValidateRelationships(JsonNode relationships, Set<String> objectIds, List<String> errors) {
+        if (relationships == null) {
+            return;
+        }
+        for (int i = 0; i < relationships.size(); i++) {
+            String fromObjectId = textValue(relationships.get(i).get("fromObjectId"));
+            String toObjectId = textValue(relationships.get(i).get("toObjectId"));
+            if (!fromObjectId.isBlank() && !objectIds.contains(fromObjectId)) {
+                errors.add("relationships[" + i
+                        + "].fromObjectId は businessObjects に存在する id を参照する必要があります: "
+                        + fromObjectId);
+            }
+            if (!toObjectId.isBlank() && !objectIds.contains(toObjectId)) {
+                errors.add("relationships[" + i
+                        + "].toObjectId は businessObjects に存在する id を参照する必要があります: "
+                        + toObjectId);
+            }
+        }
+    }
+
+    private void v2ValidateAmbiguities(JsonNode ambiguities, Set<String> operationIds, List<String> errors,
+                                       List<String> warnings) {
+        if (ambiguities == null) {
+            return;
+        }
+        for (int i = 0; i < ambiguities.size(); i++) {
+            JsonNode ambiguity = ambiguities.get(i);
+            v2ValidateReferences(ambiguity.get("affectedOperationIds"), operationIds,
+                    "ambiguities[" + i + "].affectedOperationIds", errors);
+            String message = textValue(ambiguity.get("message"));
+            if (!message.isBlank()) {
+                warnings.add("確認事項: " + message);
+            }
+        }
+    }
+
+    private void v2ValidateReferences(JsonNode node, Set<String> allowedIds, String path, List<String> errors) {
+        List<String> values = stringArrayValue(node, path, errors, true);
+        for (String value : values) {
+            if (!allowedIds.contains(value)) {
+                errors.add(path + " は存在する id を参照する必要があります: " + value);
+            }
+        }
+    }
+
+    private void v2ValidateDangerousOperationSafety(JsonNode operation, String path, List<String> warnings) {
+        String intent = textValue(operation.get("intent"));
+        String riskLevel = textValue(operation.get("riskLevel"));
+        String audit = textValue(operation.get("auditLogRequired"));
+        String aiPermission = textValue(operation.get("aiPermission"));
+        boolean approvalRequired = v2BooleanValue(operation.get("approvalRequired"));
+        boolean externalAction = v2BooleanValue(operation.get("externalAction"));
+        boolean stateChanging = v2BooleanValue(operation.get("stateChanging"));
+
+        boolean dangerous = externalAction
+                || stateChanging
+                || Set.of("write", "state_transition", "delete", "external_action", "admin").contains(intent)
+                || Set.of("high", "critical").contains(riskLevel);
+        if (!dangerous) {
+            return;
+        }
+        if (!approvalRequired) {
+            warnings.add(path + " は危険操作の可能性がありますが approvalRequired=true ではありません。");
+        }
+        if (!"required".equals(audit)) {
+            warnings.add(path + " は危険操作の可能性がありますが auditLogRequired=required ではありません。");
+        }
+        if ("allowed".equals(aiPermission)) {
+            warnings.add(path + " は危険操作の可能性がありますが aiPermission=allowed になっています。");
+        }
+    }
+
+    private boolean v2BooleanValue(JsonNode node) {
+        return node != null && node.isBoolean() && node.asBoolean();
+    }
+
+    private List<String> v2Names(JsonNode array) {
+        List<String> values = new ArrayList<>();
+        if (array == null || !array.isArray()) {
+            return values;
+        }
+        for (JsonNode item : array) {
+            String name = textValue(item.get("name"));
+            if (!name.isBlank()) {
+                values.add(name);
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2NamesByRole(JsonNode domains, String role) {
+        List<String> values = new ArrayList<>();
+        for (JsonNode domain : domains) {
+            if (role.equals(textValue(domain.get("role")))) {
+                String name = textValue(domain.get("name"));
+                if (!name.isBlank()) {
+                    values.add(name);
+                }
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2DescribeActors(JsonNode actors) {
+        List<String> values = new ArrayList<>();
+        for (JsonNode actor : actors) {
+            String name = textValue(actor.get("name"));
+            String type = textValue(actor.get("actorType"));
+            if (!name.isBlank()) {
+                values.add(type.isBlank() ? name : name + " (" + type + ")");
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2OperationLabels(JsonNode operations) {
+        List<String> values = new ArrayList<>();
+        for (JsonNode operation : operations) {
+            String label = textValue(operation.get("label"));
+            if (!label.isBlank()) {
+                values.add(label);
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2FilterOperationLabelsByAiPermission(JsonNode operations) {
+        List<String> values = new ArrayList<>();
+        for (JsonNode operation : operations) {
+            String permission = textValue(operation.get("aiPermission"));
+            String label = textValue(operation.get("label"));
+            if (!label.isBlank() && Set.of("allowed", "allowed_with_review").contains(permission)) {
+                values.add(label);
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2FilterOperationLabelsByIntent(JsonNode operations, Set<String> intents) {
+        List<String> values = new ArrayList<>();
+        for (JsonNode operation : operations) {
+            String label = textValue(operation.get("label"));
+            if (!label.isBlank() && intents.contains(textValue(operation.get("intent")))) {
+                values.add(label);
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2FilterWriteLikeOperationLabels(JsonNode operations) {
+        List<String> values = new ArrayList<>();
+        for (JsonNode operation : operations) {
+            String intent = textValue(operation.get("intent"));
+            String label = textValue(operation.get("label"));
+            boolean stateChanging = v2BooleanValue(operation.get("stateChanging"));
+            if (!label.isBlank() && (stateChanging || Set.of("proposal", "approval_request", "write",
+                    "state_transition", "delete", "external_action", "admin").contains(intent))) {
+                values.add(label);
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2FilterOperationLabelsByBoolean(JsonNode operations, String fieldName, boolean expected) {
+        List<String> values = new ArrayList<>();
+        for (JsonNode operation : operations) {
+            String label = textValue(operation.get("label"));
+            if (!label.isBlank() && v2BooleanValue(operation.get(fieldName)) == expected) {
+                values.add(label);
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2FilterOperationLabelsByText(JsonNode operations, String fieldName, String expected) {
+        List<String> values = new ArrayList<>();
+        for (JsonNode operation : operations) {
+            String label = textValue(operation.get("label"));
+            if (!label.isBlank() && expected.equals(textValue(operation.get(fieldName)))) {
+                values.add(label);
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private String v2CompactJoin(List<String> values) {
+        List<String> safeValues = new ArrayList<>();
+        for (String value : values) {
+            if (value != null && !value.isBlank()) {
+                safeValues.add(value);
+            }
+        }
+        return String.join(System.lineSeparator(), safeValues);
+    }
+
 
     private BlueprintInput mapNormalizedInput(JsonNode normalizedInput, List<String> errors) {
         BlueprintInput input = new BlueprintInput();
