@@ -196,10 +196,18 @@ class ExternalAiPromptBridgeServiceTest {
         assertThat(result.blueprintInput().getAuthenticationMethod()).isEqualTo("authenticated_user");
         assertThat(result.blueprintInput().getTargetUsers()).contains("営業担当", "契約担当者", "承認者");
         assertThat(result.blueprintInput().getOutputLanguage()).isEqualTo("日本語");
+        assertThat(result.blueprintInput().getV2Domains()).extracting(domain -> domain.name())
+                .containsExactly("営業案件管理", "契約請求管理");
         assertThat(result.blueprintInput().getV2BusinessObjects()).extracting(object -> object.name())
                 .contains("顧客", "商談", "請求");
+        assertThat(result.blueprintInput().getV2Actors()).extracting(actor -> actor.name())
+                .contains("営業担当", "契約担当者", "承認者");
         assertThat(result.blueprintInput().getV2Operations()).extracting(operation -> operation.label())
                 .contains("顧客検索", "商談履歴要約", "請求確定依頼");
+        assertThat(result.blueprintInput().getV2Relationships()).extracting(relationship -> relationship.description())
+                .contains("商談と請求が関連する。");
+        assertThat(result.blueprintInput().getV2Ambiguities()).extracting(ambiguity -> ambiguity.message())
+                .contains("請求確定の承認者ロールが未確定です。");
         assertThat(result.warnings()).contains("確認事項: 請求確定の承認者ロールが未確定です。");
     }
 

@@ -56,11 +56,17 @@ public class BlueprintInput {
 
     private String outputLanguage = "\u65e5\u672c\u8a9e";
 
+    private List<V2Domain> v2Domains = new ArrayList<>();
+
     private List<V2BusinessObject> v2BusinessObjects = new ArrayList<>();
 
     private List<V2Actor> v2Actors = new ArrayList<>();
 
     private List<V2Operation> v2Operations = new ArrayList<>();
+
+    private List<V2Relationship> v2Relationships = new ArrayList<>();
+
+    private List<V2Ambiguity> v2Ambiguities = new ArrayList<>();
 
     public String getBusinessRequirements() {
         return businessRequirements;
@@ -182,6 +188,14 @@ public class BlueprintInput {
         this.outputLanguage = valueOrEmpty(outputLanguage);
     }
 
+    public List<V2Domain> getV2Domains() {
+        return v2Domains;
+    }
+
+    public void setV2Domains(List<V2Domain> v2Domains) {
+        this.v2Domains = v2Domains == null ? new ArrayList<>() : new ArrayList<>(v2Domains);
+    }
+
     public List<V2BusinessObject> getV2BusinessObjects() {
         return v2BusinessObjects;
     }
@@ -206,6 +220,22 @@ public class BlueprintInput {
         this.v2Operations = v2Operations == null ? new ArrayList<>() : new ArrayList<>(v2Operations);
     }
 
+    public List<V2Relationship> getV2Relationships() {
+        return v2Relationships;
+    }
+
+    public void setV2Relationships(List<V2Relationship> v2Relationships) {
+        this.v2Relationships = v2Relationships == null ? new ArrayList<>() : new ArrayList<>(v2Relationships);
+    }
+
+    public List<V2Ambiguity> getV2Ambiguities() {
+        return v2Ambiguities;
+    }
+
+    public void setV2Ambiguities(List<V2Ambiguity> v2Ambiguities) {
+        this.v2Ambiguities = v2Ambiguities == null ? new ArrayList<>() : new ArrayList<>(v2Ambiguities);
+    }
+
     public boolean hasV2BusinessOperationModel() {
         return !v2BusinessObjects.isEmpty() && !v2Operations.isEmpty();
     }
@@ -225,6 +255,20 @@ public class BlueprintInput {
         }
 
         return safeValues;
+    }
+
+    public record V2Domain(
+            String id,
+            String name,
+            String role,
+            String description
+    ) {
+        public V2Domain {
+            id = valueOrEmptyStatic(id);
+            name = valueOrEmptyStatic(name);
+            role = valueOrEmptyStatic(role);
+            description = valueOrEmptyStatic(description);
+        }
     }
 
     public record V2BusinessObject(
@@ -283,6 +327,40 @@ public class BlueprintInput {
             auditLogRequired = valueOrEmptyStatic(auditLogRequired);
             riskLevel = valueOrEmptyStatic(riskLevel);
             outputType = valueOrEmptyStatic(outputType);
+        }
+    }
+
+    public record V2Relationship(
+            String id,
+            String fromObjectId,
+            String toObjectId,
+            String type,
+            String description
+    ) {
+        public V2Relationship {
+            id = valueOrEmptyStatic(id);
+            fromObjectId = valueOrEmptyStatic(fromObjectId);
+            toObjectId = valueOrEmptyStatic(toObjectId);
+            type = valueOrEmptyStatic(type);
+            description = valueOrEmptyStatic(description);
+        }
+    }
+
+    public record V2Ambiguity(
+            String id,
+            String type,
+            String message,
+            List<String> affectedOperationIds,
+            String defaultHandling,
+            String severity
+    ) {
+        public V2Ambiguity {
+            id = valueOrEmptyStatic(id);
+            type = valueOrEmptyStatic(type);
+            message = valueOrEmptyStatic(message);
+            affectedOperationIds = affectedOperationIds == null ? List.of() : List.copyOf(affectedOperationIds);
+            defaultHandling = valueOrEmptyStatic(defaultHandling);
+            severity = valueOrEmptyStatic(severity);
         }
     }
 
