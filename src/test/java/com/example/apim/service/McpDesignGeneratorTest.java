@@ -224,4 +224,112 @@ class McpDesignGeneratorTest {
                         && m.notes().contains("Audit:")
         );
     }
+
+    @Test
+    void generatesSafetyClassifiedToolsFromV2OperationBuckets() {
+        McpDesignGenerator generator = new McpDesignGenerator();
+        DomainNameNormalizer normalizer = new DomainNameNormalizer();
+        BlueprintInput input = new BlueprintInput();
+        input.setTargetDomain("問い合わせ管理");
+        input.setPrimaryDomain("問い合わせ管理");
+        input.setAllowedAiOperations("- 問い合わせ検索\n- 問い合わせ要約\n- 対応候補抽出\n- 返信下書き作成\n- 問い合わせ更新案の作成");
+        input.setReadOnlyOperations("- 問い合わせ詳細参照");
+        input.setWriteOperations("- 回答確定送信\n- 問い合わせ分類更新");
+        input.setApprovalRequiredOperations("- 回答確定送信\n- 重要問い合わせの状態変更");
+        input.setAuditLogRequiredOperations("- 問い合わせ要約\n- 返信下書き作成\n- 回答確定送信");
+        NormalizedBlueprintInput normalizedInput = new NormalizedBlueprintInput(
+                List.of("support-management"),
+                "問い合わせ管理",
+                List.of(),
+                List.of("問い合わせ管理"),
+                "問い合わせ管理",
+                input
+        );
+        List<ApiEndpointCandidate> endpoints = new ApiDesignGenerator().generate(
+                "inquiries",
+                "Inquiry",
+                Set.of(OperationType.SEARCH, OperationType.READ, OperationType.UPDATE, OperationType.SUMMARY,
+                        OperationType.NOTIFICATION),
+                "サポート担当"
+        );
+
+        McpDesignGenerator.McpDesignResult result = generator.generate(
+                input,
+                normalizedInput,
+                normalizer,
+                Set.of(OperationType.SEARCH, OperationType.READ, OperationType.UPDATE, OperationType.SUMMARY,
+                        OperationType.NOTIFICATION),
+                endpoints
+        );
+
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("searchInquiries")
+                && t.operationType().equals("read")
+                && t.aiExecutionPolicy().equals("AI実行可"));
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("summarizeInquiryInteractions")
+                && t.operationType().equals("summary")
+                && t.auditLogRequired().equals("必須"));
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("suggestInquiryCandidates")
+                && t.operationType().equals("candidate")
+                && t.aiExecutionPolicy().contains("候補作成のみ"));
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("createInquiryDraft")
+                && t.operationType().equals("draft")
+                && t.aiExecutionPolicy().contains("下書き作成のみ")
+                && t.auditLogRequired().equals("必須"));
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("proposeInquiryUpdate")
+                && t.operationType().equals("proposal")
+                && t.aiExecutionPolicy().contains("変更提案のみ"));
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("requestInquiriesNotificationApproval")
+                && t.operationType().equals("approval-request")
+                && t.aiExecutionPolicy().contains("AI直接実行不可")
+                && t.approvalRequired().equals("必須")
+                && t.auditLogRequired().equals("必須"));
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("executeInquiryNotificationAfterApproval")
+                && t.operationType().equals("execution")
+                && t.aiExecutionPolicy().contains("AI直接実行不可"));
+        assertThat(result.mappings()).anyMatch(m -> m.toolName().equals("requestInquiriesNotificationApproval")
+                && m.notes().contains("AI:")
+                && m.notes().contains("Approval: 必須")
+                && m.notes().contains("Audit: 必須"));
+    }
+
+    @Test
+    void v2OperationLabelsNeverDriveDomainItemFallbackNames() {
+        McpDesignGenerator generator = new McpDesignGenerator();
+        DomainNameNormalizer normalizer = new DomainNameNormalizer();
+        BlueprintInput input = new BlueprintInput();
+        input.setTargetDomain("備品貸出管理");
+        input.setPrimaryDomain("備品貸出管理");
+        input.setAllowedAiOperations("- 対象を確認\n- 更新案の作成");
+        input.setApprovalRequiredOperations("- 対象を削除\n- 対象を外部送信");
+        input.setAuditLogRequiredOperations("- 対象を削除\n- 対象を外部送信");
+        NormalizedBlueprintInput normalizedInput = new NormalizedBlueprintInput(
+                List.of("asset-management"),
+                "備品貸出管理",
+                List.of(),
+                List.of("備品貸出管理"),
+                "備品貸出管理",
+                input
+        );
+        List<ApiEndpointCandidate> endpoints = new ApiDesignGenerator().generate(
+                "equipment",
+                "Equipment",
+                Set.of(OperationType.READ, OperationType.UPDATE, OperationType.DELETE, OperationType.NOTIFICATION),
+                "管理者"
+        );
+
+        McpDesignGenerator.McpDesignResult result = generator.generate(
+                input,
+                normalizedInput,
+                normalizer,
+                Set.of(OperationType.READ, OperationType.UPDATE, OperationType.DELETE, OperationType.NOTIFICATION),
+                endpoints
+        );
+
+        String generated = String.join("\n",
+                result.tools().stream().flatMap(t -> java.util.stream.Stream.of(t.name(), t.purpose(), t.relatedApi())).toList());
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("getEquipmentDetail"));
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("proposeEquipmentUpdate"));
+        assertThat(result.tools()).anyMatch(t -> t.name().equals("requestEquipmentDeletionApproval"));
+        assertThat(generated).doesNotContain("DomainItem", "domain-items", "executeDomainItem");
+    }
 }

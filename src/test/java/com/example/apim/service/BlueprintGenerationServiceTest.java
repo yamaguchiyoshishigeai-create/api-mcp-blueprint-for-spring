@@ -249,6 +249,51 @@ class BlueprintGenerationServiceTest {
     }
 
     @Test
+    void generationServiceUsesV2SafetyClassifiedMcpToolsAndMappings() {
+        BlueprintInput input = new BlueprintInput();
+        input.setBusinessRequirements("""
+                問い合わせを検索・参照し、AIで返信下書きと更新案を作成する。
+                回答確定送信は承認後に実行し、監査ログを必須にする。
+                """);
+        input.setTargetDomain("問い合わせ管理");
+        input.setPrimaryDomain("問い合わせ管理");
+        input.setUserTypes("- サポート担当\n- 管理者\n- AIアシスタント");
+        input.setRequiredOperations("""
+                - 問い合わせ検索
+                - 問い合わせ詳細取得
+                - 問い合わせ更新
+                - 返信下書き作成
+                - 回答確定送信
+                """);
+        input.setAllowedAiOperations("""
+                - 問い合わせ検索
+                - 問い合わせ詳細参照
+                - 返信下書き作成
+                - 問い合わせ更新案の作成
+                """);
+        input.setWriteOperations("- 回答確定送信\n- 問い合わせ更新");
+        input.setApprovalRequiredOperations("- 回答確定送信");
+        input.setAuditLogRequiredOperations("- 返信下書き作成\n- 回答確定送信");
+
+        var result = newService().generate(input);
+
+        assertThat(result.getMcpTools()).anyMatch(t -> t.name().equals("createInquiryDraft")
+                && t.operationType().equals("draft")
+                && t.auditLogRequired().equals("必須"));
+        assertThat(result.getMcpTools()).anyMatch(t -> t.name().equals("proposeInquiryUpdate")
+                && t.operationType().equals("proposal"));
+        assertThat(result.getMcpTools()).anyMatch(t -> t.name().equals("requestInquiriesNotificationApproval")
+                && t.operationType().equals("approval-request")
+                && t.aiExecutionPolicy().contains("AI直接実行不可")
+                && t.approvalRequired().equals("必須")
+                && t.auditLogRequired().equals("必須"));
+        assertThat(result.getApiMcpMappings()).anyMatch(m -> m.toolName().equals("requestInquiriesNotificationApproval")
+                && m.notes().contains("AI:")
+                && m.notes().contains("Approval: 必須")
+                && m.notes().contains("Audit: 必須"));
+    }
+
+    @Test
     void legacyTargetDomainOnlyKeepsSingleDomainApiDesignCandidates() {
         BlueprintInput input = new BlueprintInput();
         input.setBusinessRequirements("顧客情報を検索して詳細参照する。");

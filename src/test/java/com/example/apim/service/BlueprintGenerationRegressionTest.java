@@ -54,7 +54,7 @@ class BlueprintGenerationRegressionTest {
     }
 
     private void assertNoDomainItemsFallback(BlueprintResult result) {
-        assertThat(majorGeneratedNames(result)).doesNotContain("domain-items", "DomainItem");
+        assertThat(majorGeneratedNames(result)).doesNotContain("domain-items", "DomainItem", "executeDomainItem", "/domain-items");
     }
 
     private String majorGeneratedNames(BlueprintResult result) {
@@ -62,6 +62,8 @@ class BlueprintGenerationRegressionTest {
         names.addAll(result.getApiEndpoints().stream().map(e -> e.path()).toList());
         names.addAll(result.getDtoCandidates().stream().map(d -> d.getName()).toList());
         names.addAll(result.getMcpTools().stream().map(t -> t.name()).toList());
+        names.addAll(result.getMcpTools().stream().map(t -> t.purpose()).toList());
+        names.addAll(result.getMcpTools().stream().map(t -> t.relatedApi()).toList());
         names.addAll(result.getMcpResources().stream().map(r -> r.name()).toList());
         names.addAll(result.getMcpPrompts().stream().map(p -> p.name()).toList());
         names.add(result.getControllerSkeleton().className());
