@@ -120,7 +120,7 @@ class ComplexFreeTextRegressionTest {
 
     @Test
     void supportKnowledgeCustomerNotificationSampleKeepsAllMajorBusinessObjects() throws Exception {
-        BlueprintResult result = generateSample("ambiguous-and-insufficient-input.v2.json");
+        BlueprintResult result = generateSample("inquiry-knowledge-customer-notification.v2.json");
         List<String> paths = endpointPaths(result);
 
         assertThat(paths).contains(

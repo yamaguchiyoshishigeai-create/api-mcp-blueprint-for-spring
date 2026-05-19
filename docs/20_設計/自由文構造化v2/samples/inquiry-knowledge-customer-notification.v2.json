@@ -133,6 +133,26 @@
       "outputType": "list"
     },
     {
+      "id": "search_knowledge_article",
+      "label": "ナレッジ記事検索",
+      "description": "問い合わせ対応に利用するナレッジ記事を検索する。",
+      "actorIds": [
+        "support_staff"
+      ],
+      "objectIds": [
+        "knowledge_article"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
       "id": "summarize_inquiry",
       "label": "問い合わせ要約",
       "description": "問い合わせ要約を行う。",
