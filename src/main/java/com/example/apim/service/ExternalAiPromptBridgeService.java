@@ -326,7 +326,109 @@ public class ExternalAiPromptBridgeService {
         if (!errors.isEmpty()) {
             return ExternalAiImportResult.invalid(errors, warnings);
         }
-        return ExternalAiImportResult.canGenerate(input, reason, warnings);
+        return ExternalAiImportResult.canGenerate(
+                input,
+                reason,
+                warnings,
+                buildV2ExtractionSummary(domains, businessObjects, actors, operations, relationships, ambiguities));
+    }
+
+    private ExternalAiImportResult.ExtractionSummary buildV2ExtractionSummary(JsonNode domains,
+                                                                              JsonNode businessObjects,
+                                                                              JsonNode actors,
+                                                                              JsonNode operations,
+                                                                              JsonNode relationships,
+                                                                              JsonNode ambiguities) {
+        return new ExternalAiImportResult.ExtractionSummary(
+                v2Names(domains),
+                v2BusinessObjectSummaries(businessObjects),
+                v2DescribeActors(actors),
+                v2OperationSummaries(operations),
+                v2RelationshipSummaries(relationships),
+                v2FilterOperationLabelsByBoolean(operations, "approvalRequired", true),
+                v2FilterOperationLabelsByText(operations, "auditLogRequired", "required"),
+                v2AmbiguitySummaries(ambiguities)
+        );
+    }
+
+    private List<String> v2BusinessObjectSummaries(JsonNode objects) {
+        List<String> values = new ArrayList<>();
+        if (objects == null || !objects.isArray()) {
+            return values;
+        }
+        for (JsonNode object : objects) {
+            String name = textValue(object.get("name"));
+            String domainId = textValue(object.get("domainId"));
+            String sensitivity = textValue(object.get("sensitivity"));
+            if (!name.isBlank()) {
+                values.add(name + v2Suffix(List.of(
+                        domainId.isBlank() ? "" : "domainId=" + domainId,
+                        sensitivity.isBlank() ? "" : "sensitivity=" + sensitivity
+                )));
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2OperationSummaries(JsonNode operations) {
+        List<String> values = new ArrayList<>();
+        if (operations == null || !operations.isArray()) {
+            return values;
+        }
+        for (JsonNode operation : operations) {
+            String label = textValue(operation.get("label"));
+            String intent = textValue(operation.get("intent"));
+            String mode = textValue(operation.get("executionMode"));
+            String risk = textValue(operation.get("riskLevel"));
+            if (!label.isBlank()) {
+                values.add(label + v2Suffix(List.of(intent, mode, risk)));
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2RelationshipSummaries(JsonNode relationships) {
+        List<String> values = new ArrayList<>();
+        if (relationships == null || !relationships.isArray()) {
+            return values;
+        }
+        for (JsonNode relationship : relationships) {
+            String from = textValue(relationship.get("fromObjectId"));
+            String to = textValue(relationship.get("toObjectId"));
+            String type = textValue(relationship.get("type"));
+            if (!from.isBlank() || !to.isBlank()) {
+                values.add(from + " -> " + to + v2Suffix(List.of(type)));
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private List<String> v2AmbiguitySummaries(JsonNode ambiguities) {
+        List<String> values = new ArrayList<>();
+        if (ambiguities == null || !ambiguities.isArray()) {
+            return values;
+        }
+        for (JsonNode ambiguity : ambiguities) {
+            String message = textValue(ambiguity.get("message"));
+            String severity = textValue(ambiguity.get("severity"));
+            if (!message.isBlank()) {
+                values.add(message + v2Suffix(List.of(severity)));
+            }
+        }
+        return List.copyOf(values);
+    }
+
+    private String v2Suffix(List<String> parts) {
+        List<String> safeParts = new ArrayList<>();
+        for (String part : parts) {
+            if (part != null && !part.isBlank()) {
+                safeParts.add(part);
+            }
+        }
+        if (safeParts.isEmpty()) {
+            return "";
+        }
+        return "（" + String.join(" / ", safeParts) + "）";
     }
 
     private BlueprintInput mapV2Input(JsonNode businessContext, JsonNode domains, JsonNode businessObjects,

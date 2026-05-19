@@ -37,6 +37,63 @@
         </ul>
     </section>
 
+    <section class="form-section extraction-summary"
+             th:if="${importResult.valid && importResult.canGenerate && importResult.extractionSummary != null && importResult.extractionSummary.hasContent()}">
+        <h2>v2抽出結果の確認</h2>
+        <p class="form-help">外部AIが抽出した業務構造です。下の既存APIM入力フォームへ反映する前に、業務領域・対象・利用者・操作・承認監査・曖昧点を確認してください。</p>
+
+        <div class="summary-grid">
+            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.domains)}">
+                <h3>業務領域</h3>
+                <ul>
+                    <li th:each="item : ${importResult.extractionSummary.domains}" th:text="${item}"></li>
+                </ul>
+            </section>
+            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.businessObjects)}">
+                <h3>業務オブジェクト</h3>
+                <ul>
+                    <li th:each="item : ${importResult.extractionSummary.businessObjects}" th:text="${item}"></li>
+                </ul>
+            </section>
+            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.actors)}">
+                <h3>利用者・ロール</h3>
+                <ul>
+                    <li th:each="item : ${importResult.extractionSummary.actors}" th:text="${item}"></li>
+                </ul>
+            </section>
+            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.operations)}">
+                <h3>操作</h3>
+                <ul>
+                    <li th:each="item : ${importResult.extractionSummary.operations}" th:text="${item}"></li>
+                </ul>
+            </section>
+            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.relationships)}">
+                <h3>関係</h3>
+                <ul>
+                    <li th:each="item : ${importResult.extractionSummary.relationships}" th:text="${item}"></li>
+                </ul>
+            </section>
+            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.approvalRequiredOperations)}">
+                <h3>承認必須操作</h3>
+                <ul>
+                    <li th:each="item : ${importResult.extractionSummary.approvalRequiredOperations}" th:text="${item}"></li>
+                </ul>
+            </section>
+            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.auditLogRequiredOperations)}">
+                <h3>監査ログ必須操作</h3>
+                <ul>
+                    <li th:each="item : ${importResult.extractionSummary.auditLogRequiredOperations}" th:text="${item}"></li>
+                </ul>
+            </section>
+            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.ambiguities)}">
+                <h3>曖昧点・確認事項</h3>
+                <ul>
+                    <li th:each="item : ${importResult.extractionSummary.ambiguities}" th:text="${item}"></li>
+                </ul>
+            </section>
+        </div>
+    </section>
+
     <form th:if="${importResult.valid && importResult.canGenerate}" method="post"
           th:action="@{/blueprint/generate}" th:object="${blueprintInput}">
         <section class="form-section">
