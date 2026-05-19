@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.72,
+    "reason": "一部曖昧点は残るが、抽象ロールと承認境界を置けば設計生成に進めるため。",
+    "warnings": ["承認者、通知先、監査ログ保存期間は後続確認が必要です。"],
+    "missingInformation": ["承認者の具体ロール", "通知先範囲", "監査ログ保存期間"]
+  },
+  "businessContext": {
+    "systemPurpose": "問い合わせ、ナレッジ、顧客情報、通知を横断し、曖昧点を保持したまま初期設計を生成する。",
+    "summary": "サポート担当が問い合わせを確認し、関連ナレッジを参照して顧客通知を準備する。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "問い合わせ対応に必要な情報はあるが、承認者や通知先が曖昧。"
+  },
+  "domains": [
+    {
+      "id": "inquiry_management",
+      "name": "問い合わせ管理",
+      "role": "primary",
+      "description": "問い合わせ受付と対応履歴を扱う。"
+    },
+    {
+      "id": "knowledge_management",
+      "name": "ナレッジ検索・要約",
+      "role": "supporting",
+      "description": "FAQとナレッジ記事を扱う。"
+    },
+    {
+      "id": "customer_management",
+      "name": "顧客管理",
+      "role": "supporting",
+      "description": "顧客属性と連絡先を扱う。"
+    },
+    {
+      "id": "notification_management",
+      "name": "通知管理",
+      "role": "primary",
+      "description": "顧客向け通知を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "inquiry",
+      "name": "問い合わせ",
+      "domainId": "inquiry_management",
+      "description": "問い合わせ本文、対応履歴、状態。",
+      "sensitivity": "confidential",
+      "dataCategories": ["customer_related", "support"]
+    },
+    {
+      "id": "knowledge_article",
+      "name": "ナレッジ",
+      "domainId": "knowledge_management",
+      "description": "FAQ、手順、回答候補。",
+      "sensitivity": "internal",
+      "dataCategories": ["knowledge"]
+    },
+    {
+      "id": "customer",
+      "name": "顧客",
+      "domainId": "customer_management",
+      "description": "顧客属性と連絡先。",
+      "sensitivity": "confidential",
+      "dataCategories": ["customer_related"]
+    },
+    {
+      "id": "notification",
+      "name": "通知",
+      "domainId": "notification_management",
+      "description": "顧客向け通知文案と送信状態。",
+      "sensitivity": "confidential",
+      "dataCategories": ["notification", "external_send"]
+    }
+  ],
+  "actors": [
+    {
+      "id": "support_staff",
+      "name": "サポート担当",
+      "description": "問い合わせ対応を行う。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "抽象承認者",
+      "description": "通知送信の承認者。具体ロールは未確定。",
+      "actorType": "approver"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_inquiries",
+      "label": "問い合わせ検索",
+      "description": "問い合わせを検索する。",
+      "actorIds": ["support_staff"],
+      "objectIds": ["inquiry"],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "search_knowledge",
+      "label": "ナレッジ検索",
+      "description": "問い合わせに関連するナレッジを検索する。",
+      "actorIds": ["support_staff"],
+      "objectIds": ["knowledge_article"],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_inquiry",
+      "label": "問い合わせ要約",
+      "description": "問い合わせと対応履歴を要約する。",
+      "actorIds": ["support_staff"],
+      "objectIds": ["inquiry"],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "draft_customer_notification",
+      "label": "顧客通知文案作成",
+      "description": "顧客へ送る通知文案を作成する。",
+      "actorIds": ["support_staff"],
+      "objectIds": ["notification", "customer", "inquiry"],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_customer_notification_send",
+      "label": "顧客通知送信依頼",
+      "description": "顧客通知の送信を依頼する。",
+      "actorIds": ["support_staff", "approver"],
+      "objectIds": ["notification", "customer"],
+      "intent": "external_action",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": true,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [
+    {
+      "id": "support_notification_boundary",
+      "name": "問い合わせ回答通知境界",
+      "operationIds": ["draft_customer_notification", "request_customer_notification_send"],
+      "description": "文案作成と送信依頼を分離する。"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "inquiry_references_knowledge",
+      "fromObjectId": "inquiry",
+      "toObjectId": "knowledge_article",
+      "type": "references",
+      "description": "問い合わせ対応時にナレッジを参照する。"
+    },
+    {
+      "id": "inquiry_has_customer_notification",
+      "fromObjectId": "inquiry",
+      "toObjectId": "notification",
+      "type": "triggers",
+      "description": "問い合わせ対応から顧客通知が発生する。"
+    }
+  ],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "顧客向け送信は承認必須、監査ログ必須とする。",
+      "曖昧点は自動補完せず確認事項として保持する。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "approval_actor_unspecified",
+      "type": "missing_approval_actor",
+      "message": "通知送信の具体的な承認者ロールが明示されていません。",
+      "affectedOperationIds": ["request_customer_notification_send"],
+      "defaultHandling": "抽象承認者として扱い、承認必須にする。",
+      "severity": "medium"
+    },
+    {
+      "id": "notification_scope_unspecified",
+      "type": "external_action_unclear",
+      "message": "通知先の範囲が明示されていません。",
+      "affectedOperationIds": ["request_customer_notification_send"],
+      "defaultHandling": "実送信はAI直接実行不可として扱う。",
+      "severity": "medium"
+    }
+  ]
+}

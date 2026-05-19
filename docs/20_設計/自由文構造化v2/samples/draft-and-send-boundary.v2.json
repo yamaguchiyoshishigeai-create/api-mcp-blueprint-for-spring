@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.84,
+    "reason": "文案作成と実送信の境界を分離できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "顧客向け通知の文案作成と送信承認を分離して扱う。",
+    "summary": "サポート担当が問い合わせ回答通知の文案をAIで作成し、実送信は人間承認後に行う。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "通知文案作成と送信の境界を扱う。"
+  },
+  "domains": [
+    {
+      "id": "inquiry_management",
+      "name": "問い合わせ管理",
+      "role": "primary",
+      "description": "問い合わせと回答状況を扱う。"
+    },
+    {
+      "id": "customer_management",
+      "name": "顧客管理",
+      "role": "supporting",
+      "description": "通知対象顧客を扱う。"
+    },
+    {
+      "id": "notification_management",
+      "name": "通知管理",
+      "role": "primary",
+      "description": "通知文案と送信依頼を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "inquiry",
+      "name": "問い合わせ",
+      "domainId": "inquiry_management",
+      "description": "顧客問い合わせと対応履歴。",
+      "sensitivity": "confidential",
+      "dataCategories": ["customer_related", "support"]
+    },
+    {
+      "id": "customer",
+      "name": "顧客",
+      "domainId": "customer_management",
+      "description": "通知対象顧客。",
+      "sensitivity": "confidential",
+      "dataCategories": ["customer_related"]
+    },
+    {
+      "id": "notification",
+      "name": "通知",
+      "domainId": "notification_management",
+      "description": "顧客向け通知文案と送信状態。",
+      "sensitivity": "confidential",
+      "dataCategories": ["notification", "external_send"]
+    }
+  ],
+  "actors": [
+    {
+      "id": "support_staff",
+      "name": "サポート担当",
+      "description": "問い合わせ回答を担当する。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "承認者",
+      "description": "通知送信を承認する。",
+      "actorType": "approver"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_inquiries",
+      "label": "問い合わせ検索",
+      "description": "問い合わせを検索する。",
+      "actorIds": ["support_staff"],
+      "objectIds": ["inquiry"],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "draft_customer_notification",
+      "label": "顧客通知文案作成",
+      "description": "問い合わせ回答に基づく顧客通知文案を作成する。",
+      "actorIds": ["support_staff"],
+      "objectIds": ["notification", "inquiry", "customer"],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_customer_notification_send",
+      "label": "顧客通知送信依頼",
+      "description": "顧客通知の実送信を依頼する。",
+      "actorIds": ["support_staff", "approver"],
+      "objectIds": ["notification", "customer"],
+      "intent": "external_action",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": true,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [
+    {
+      "id": "notification_boundary",
+      "name": "通知文案作成と送信境界",
+      "operationIds": ["draft_customer_notification", "request_customer_notification_send"],
+      "description": "AI文案作成と人間承認付き送信を分離する。"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "inquiry_uses_customer_notification",
+      "fromObjectId": "inquiry",
+      "toObjectId": "notification",
+      "type": "triggers",
+      "description": "問い合わせ回答から顧客通知文案を作成する。"
+    }
+  ],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "外部送信はAI直接実行不可とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "send_channel_unspecified",
+      "type": "draft_vs_send_boundary",
+      "message": "通知送信チャネルがメールかチャットか明示されていません。",
+      "affectedOperationIds": ["request_customer_notification_send"],
+      "defaultHandling": "送信依頼はチャネル未確定でも承認必須として扱う。",
+      "severity": "medium"
+    }
+  ]
+}
