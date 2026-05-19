@@ -101,6 +101,43 @@ class MarkdownDocumentGeneratorTest {
                 .contains("- 正規化後ドメイン一覧: 注文管理");
     }
 
+
+    @Test
+    void includesV2ConfirmationDetailsInMarkdownSummary() {
+        MarkdownDocumentGenerator generator = new MarkdownDocumentGenerator();
+        BlueprintInput input = new BlueprintInput();
+        input.setTargetDomain("営業案件管理 / 契約請求管理");
+        input.setSystemTypes(List.of("営業案件管理", "契約請求管理"));
+        input.setPrimaryDomain("営業案件管理");
+        input.setRelatedDomains(List.of("営業案件管理", "契約請求管理"));
+        input.setUserTypes("- 営業担当\n- 契約担当者\n- 承認者");
+        input.setRequiredOperations("- 顧客検索\n- 請求確定依頼");
+        input.setAllowedAiOperations("- 顧客検索\n- 商談履歴要約");
+        input.setReadOnlyOperations("- 顧客検索\n- 請求状況確認");
+        input.setWriteOperations("- 請求確定依頼");
+        input.setApprovalRequiredOperations("- 請求確定依頼");
+        input.setAuditLogRequiredOperations("- 請求確定依頼");
+        input.setAuthenticationMethod("authenticated_user");
+        input.setTargetUsers("営業担当、契約担当者、承認者");
+
+        BlueprintResult result = new BlueprintResult();
+        result.setControllerSkeleton(new ControllerSkeleton("SalesBillingController", "@RestController"));
+
+        String markdown = generator.generate(input, result);
+
+        assertThat(markdown)
+                .contains("### v2確認結果からの操作分類")
+                .contains("- AI許可操作: 顧客検索 / 商談履歴要約")
+                .contains("- 読み取り専用操作: 顧客検索 / 請求状況確認")
+                .contains("- 書き込み・状態変更操作: 請求確定依頼")
+                .contains("- 承認必須操作: 請求確定依頼")
+                .contains("- 監査ログ必須操作: 請求確定依頼")
+                .contains("### v2確認結果からの利用者・認証")
+                .contains("- 想定認証方式: authenticated_user")
+                .contains("- 想定利用者: 営業担当、契約担当者、承認者");
+    }
+
+
     @Test
     void outOfScopeSectionIsExpressedAsLaterPhaseDecisions() {
         MarkdownDocumentGenerator generator = new MarkdownDocumentGenerator();
