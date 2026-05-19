@@ -340,6 +340,46 @@ class BlueprintGenerationServiceTest {
                 && endpoint.approvalRequired().equals("必須"));
         assertThat(result.getApiEndpoints()).anyMatch(endpoint -> endpoint.path().equals("/api/invoices/{id}/confirmation-requests")
                 && endpoint.auditLogRequired().equals("必須"));
+        assertThat(result.getBlueprintMarkdown())
+                .contains(
+                        "営業案件管理",
+                        "契約請求管理",
+                        "顧客",
+                        "商談",
+                        "見積",
+                        "契約",
+                        "請求",
+                        "入金",
+                        "営業担当",
+                        "契約担当者",
+                        "商談履歴要約",
+                        "失注リスク候補提示",
+                        "フォローアップ文案作成",
+                        "見積金額変更",
+                        "受注確度変更",
+                        "契約条件変更",
+                        "請求確定",
+                        "入金消込",
+                        "## 3. 抽出された業務構造",
+                        "### 3.5 関係性",
+                        "## 4. AI支援・承認・監査の分類",
+                        "### 4.1 AI支援可能操作",
+                        "### 4.2 人間承認必須操作",
+                        "### 4.3 監査ログ必須操作",
+                        "### 4.4 AI直接実行不可操作",
+                        "## 5. 曖昧点・確認事項",
+                        "## 6. REST API候補",
+                        "## 7. MCP tools候補",
+                        "承認要否",
+                        "AI Execution Policy");
+        assertThat(result.getBlueprintMarkdown().indexOf("## 3. 抽出された業務構造"))
+                .isLessThan(result.getBlueprintMarkdown().indexOf("## 6. REST API候補"));
+        assertThat(result.getBlueprintMarkdown().indexOf("## 4. AI支援・承認・監査の分類"))
+                .isLessThan(result.getBlueprintMarkdown().indexOf("## 6. REST API候補"));
+        assertThat(result.getBlueprintMarkdown().indexOf("## 5. 曖昧点・確認事項"))
+                .isLessThan(result.getBlueprintMarkdown().indexOf("## 6. REST API候補"));
+        assertThat(result.getBlueprintMarkdown().indexOf("## 6. REST API候補"))
+                .isLessThan(result.getBlueprintMarkdown().indexOf("## 7. MCP tools候補"));
         assertThat(majorGeneratedNames(result))
                 .doesNotContain("DomainItem")
                 .doesNotContain("domain-items")

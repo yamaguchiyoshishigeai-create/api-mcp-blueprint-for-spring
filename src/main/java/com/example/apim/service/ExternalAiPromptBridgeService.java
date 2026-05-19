@@ -467,10 +467,26 @@ public class ExternalAiPromptBridgeService {
         input.setAuthenticationMethod(textValue(securityPolicy.get("defaultAuthentication")));
         input.setTargetUsers(String.join("、", v2Names(actors)));
         input.setOutputLanguage(mapOutputLanguage(textValue(businessContext.get("language"))));
+        input.setV2Domains(v2Domains(domains));
         input.setV2BusinessObjects(v2BusinessObjects(businessObjects));
         input.setV2Actors(v2Actors(actors));
         input.setV2Operations(v2Operations(operations));
+        input.setV2Relationships(v2Relationships(relationships));
+        input.setV2Ambiguities(v2Ambiguities(ambiguities));
         return input;
+    }
+
+    private List<BlueprintInput.V2Domain> v2Domains(JsonNode domains) {
+        List<BlueprintInput.V2Domain> values = new ArrayList<>();
+        for (JsonNode domain : domains) {
+            values.add(new BlueprintInput.V2Domain(
+                    textValue(domain.get("id")),
+                    textValue(domain.get("name")),
+                    textValue(domain.get("role")),
+                    textValue(domain.get("description"))
+            ));
+        }
+        return List.copyOf(values);
     }
 
     private List<BlueprintInput.V2BusinessObject> v2BusinessObjects(JsonNode objects) {
@@ -517,6 +533,41 @@ public class ExternalAiPromptBridgeService {
                     v2BooleanValue(operation.get("externalAction")),
                     v2BooleanValue(operation.get("stateChanging")),
                     textValue(operation.get("outputType"))
+            ));
+        }
+        return List.copyOf(values);
+    }
+
+    private List<BlueprintInput.V2Relationship> v2Relationships(JsonNode relationships) {
+        List<BlueprintInput.V2Relationship> values = new ArrayList<>();
+        if (relationships == null || !relationships.isArray()) {
+            return values;
+        }
+        for (JsonNode relationship : relationships) {
+            values.add(new BlueprintInput.V2Relationship(
+                    textValue(relationship.get("id")),
+                    textValue(relationship.get("fromObjectId")),
+                    textValue(relationship.get("toObjectId")),
+                    textValue(relationship.get("type")),
+                    textValue(relationship.get("description"))
+            ));
+        }
+        return List.copyOf(values);
+    }
+
+    private List<BlueprintInput.V2Ambiguity> v2Ambiguities(JsonNode ambiguities) {
+        List<BlueprintInput.V2Ambiguity> values = new ArrayList<>();
+        if (ambiguities == null || !ambiguities.isArray()) {
+            return values;
+        }
+        for (JsonNode ambiguity : ambiguities) {
+            values.add(new BlueprintInput.V2Ambiguity(
+                    textValue(ambiguity.get("id")),
+                    textValue(ambiguity.get("type")),
+                    textValue(ambiguity.get("message")),
+                    textArrayValue(ambiguity.get("affectedOperationIds")),
+                    textValue(ambiguity.get("defaultHandling")),
+                    textValue(ambiguity.get("severity"))
             ));
         }
         return List.copyOf(values);
