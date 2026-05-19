@@ -56,6 +56,12 @@ public class BlueprintInput {
 
     private String outputLanguage = "\u65e5\u672c\u8a9e";
 
+    private List<V2BusinessObject> v2BusinessObjects = new ArrayList<>();
+
+    private List<V2Actor> v2Actors = new ArrayList<>();
+
+    private List<V2Operation> v2Operations = new ArrayList<>();
+
     public String getBusinessRequirements() {
         return businessRequirements;
     }
@@ -176,6 +182,34 @@ public class BlueprintInput {
         this.outputLanguage = valueOrEmpty(outputLanguage);
     }
 
+    public List<V2BusinessObject> getV2BusinessObjects() {
+        return v2BusinessObjects;
+    }
+
+    public void setV2BusinessObjects(List<V2BusinessObject> v2BusinessObjects) {
+        this.v2BusinessObjects = v2BusinessObjects == null ? new ArrayList<>() : new ArrayList<>(v2BusinessObjects);
+    }
+
+    public List<V2Actor> getV2Actors() {
+        return v2Actors;
+    }
+
+    public void setV2Actors(List<V2Actor> v2Actors) {
+        this.v2Actors = v2Actors == null ? new ArrayList<>() : new ArrayList<>(v2Actors);
+    }
+
+    public List<V2Operation> getV2Operations() {
+        return v2Operations;
+    }
+
+    public void setV2Operations(List<V2Operation> v2Operations) {
+        this.v2Operations = v2Operations == null ? new ArrayList<>() : new ArrayList<>(v2Operations);
+    }
+
+    public boolean hasV2BusinessOperationModel() {
+        return !v2BusinessObjects.isEmpty() && !v2Operations.isEmpty();
+    }
+
     private String valueOrEmpty(String value) {
         return value == null ? "" : value;
     }
@@ -191,5 +225,68 @@ public class BlueprintInput {
         }
 
         return safeValues;
+    }
+
+    public record V2BusinessObject(
+            String id,
+            String name,
+            String domainId,
+            String sensitivity,
+            List<String> dataCategories
+    ) {
+        public V2BusinessObject {
+            id = valueOrEmptyStatic(id);
+            name = valueOrEmptyStatic(name);
+            domainId = valueOrEmptyStatic(domainId);
+            sensitivity = valueOrEmptyStatic(sensitivity);
+            dataCategories = dataCategories == null ? List.of() : List.copyOf(dataCategories);
+        }
+    }
+
+    public record V2Actor(
+            String id,
+            String name,
+            String actorType
+    ) {
+        public V2Actor {
+            id = valueOrEmptyStatic(id);
+            name = valueOrEmptyStatic(name);
+            actorType = valueOrEmptyStatic(actorType);
+        }
+    }
+
+    public record V2Operation(
+            String id,
+            String label,
+            String description,
+            List<String> actorIds,
+            List<String> objectIds,
+            String intent,
+            String executionMode,
+            String aiPermission,
+            boolean approvalRequired,
+            String auditLogRequired,
+            String riskLevel,
+            boolean externalAction,
+            boolean stateChanging,
+            String outputType
+    ) {
+        public V2Operation {
+            id = valueOrEmptyStatic(id);
+            label = valueOrEmptyStatic(label);
+            description = valueOrEmptyStatic(description);
+            actorIds = actorIds == null ? List.of() : List.copyOf(actorIds);
+            objectIds = objectIds == null ? List.of() : List.copyOf(objectIds);
+            intent = valueOrEmptyStatic(intent);
+            executionMode = valueOrEmptyStatic(executionMode);
+            aiPermission = valueOrEmptyStatic(aiPermission);
+            auditLogRequired = valueOrEmptyStatic(auditLogRequired);
+            riskLevel = valueOrEmptyStatic(riskLevel);
+            outputType = valueOrEmptyStatic(outputType);
+        }
+    }
+
+    private static String valueOrEmptyStatic(String value) {
+        return value == null ? "" : value;
     }
 }

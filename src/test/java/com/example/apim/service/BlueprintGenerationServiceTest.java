@@ -1,11 +1,20 @@
 package com.example.apim.service;
 
 import com.example.apim.model.BlueprintInput;
+import com.example.apim.model.BlueprintResult;
+import com.example.apim.model.ExternalAiImportResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.apim.support.DomainNameNormalizer;
 import com.example.apim.support.NamingSupport;
 import com.example.apim.support.OperationClassifier;
 import com.example.apim.testsupport.BlueprintInputFixtures;
 import org.junit.jupiter.api.Test;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -294,6 +303,50 @@ class BlueprintGenerationServiceTest {
     }
 
     @Test
+    void salesContractBillingV2SampleGeneratesBusinessObjectOperationApis() throws Exception {
+        String json = Files.readString(Path.of("docs", "20_設計", "自由文構造化v2", "samples",
+                "sales-contract-billing.v2.json"), StandardCharsets.UTF_8);
+        ExternalAiImportResult importResult = new ExternalAiPromptBridgeService(new ObjectMapper()).importJson(json);
+        assertThat(importResult.valid()).isTrue();
+        assertThat(importResult.canGenerate()).isTrue();
+
+        BlueprintResult result = newService().generate(importResult.blueprintInput());
+        List<String> paths = result.getApiEndpoints().stream()
+                .map(endpoint -> endpoint.httpMethod() + " " + endpoint.path())
+                .toList();
+
+        assertThat(paths).contains(
+                "GET /api/customers",
+                "GET /api/opportunities",
+                "GET /api/quotes",
+                "GET /api/contracts",
+                "GET /api/invoices",
+                "GET /api/payments",
+                "GET /api/opportunities/{id}/history-summary",
+                "GET /api/opportunities/loss-risk-candidates",
+                "POST /api/opportunities/{id}/follow-up-drafts",
+                "POST /api/quotes/{id}/change-requests",
+                "POST /api/contracts/{id}/condition-change-requests",
+                "POST /api/invoices/{id}/confirmation-requests",
+                "POST /api/payments/{id}/reconciliation-requests"
+        );
+        assertThat(paths.stream().filter(path -> path.contains("/api/invoices")).count()).isLessThan(paths.size() / 2);
+        assertThat(result.getApiEndpoints()).noneMatch(endpoint -> endpoint.httpMethod().equals("PUT")
+                && (endpoint.path().contains("/api/quotes")
+                || endpoint.path().contains("/api/contracts")
+                || endpoint.path().contains("/api/invoices")
+                || endpoint.path().contains("/api/payments")));
+        assertThat(result.getApiEndpoints()).anyMatch(endpoint -> endpoint.path().equals("/api/quotes/{id}/change-requests")
+                && endpoint.approvalRequired().equals("必須"));
+        assertThat(result.getApiEndpoints()).anyMatch(endpoint -> endpoint.path().equals("/api/invoices/{id}/confirmation-requests")
+                && endpoint.auditLogRequired().equals("必須"));
+        assertThat(majorGeneratedNames(result))
+                .doesNotContain("DomainItem")
+                .doesNotContain("domain-items")
+                .doesNotContain("executeDomainItem");
+    }
+
+    @Test
     void legacyTargetDomainOnlyKeepsSingleDomainApiDesignCandidates() {
         BlueprintInput input = new BlueprintInput();
         input.setBusinessRequirements("顧客情報を検索して詳細参照する。");
@@ -326,6 +379,17 @@ class BlueprintGenerationServiceTest {
                 new MarkdownDocumentGenerator(),
                 new ImplementationInstructionGenerator()
         );
+    }
+
+    private String majorGeneratedNames(BlueprintResult result) {
+        List<String> names = new ArrayList<>();
+        names.addAll(result.getApiEndpoints().stream().map(endpoint -> endpoint.path()).toList());
+        names.addAll(result.getDtoCandidates().stream().map(dto -> dto.getName()).toList());
+        names.addAll(result.getMcpTools().stream().map(tool -> tool.name()).toList());
+        names.addAll(result.getMcpTools().stream().map(tool -> tool.relatedApi()).toList());
+        names.add(result.getControllerSkeleton().className());
+        names.add(result.getControllerSkeleton().sourceCode());
+        return String.join("\n", names);
     }
 
 }

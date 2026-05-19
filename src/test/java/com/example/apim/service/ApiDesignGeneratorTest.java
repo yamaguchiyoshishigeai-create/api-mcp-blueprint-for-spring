@@ -72,4 +72,46 @@ class ApiDesignGeneratorTest {
         assertThat(endpoints)
                 .noneMatch(e -> e.path().equals("/api/products") && e.httpMethod().equals("POST"));
     }
+
+    @Test
+    void generatesEndpointsFromV2BusinessObjectsAndOperations() {
+        BlueprintInput input = new BlueprintInput();
+        input.setV2BusinessObjects(List.of(
+                new BlueprintInput.V2BusinessObject("customer", "顧客", "sales", "confidential", List.of()),
+                new BlueprintInput.V2BusinessObject("opportunity", "商談", "sales", "confidential", List.of()),
+                new BlueprintInput.V2BusinessObject("quote", "見積", "sales", "confidential", List.of()),
+                new BlueprintInput.V2BusinessObject("invoice", "請求", "billing", "restricted", List.of())
+        ));
+        input.setV2Actors(List.of(new BlueprintInput.V2Actor("sales_rep", "営業担当", "human_user")));
+        input.setV2Operations(List.of(
+                new BlueprintInput.V2Operation("search_customers", "顧客検索", "", List.of("sales_rep"),
+                        List.of("customer"), "search", "direct_read", "allowed", false, "recommended",
+                        "low", false, false, "list"),
+                new BlueprintInput.V2Operation("summarize_opportunity_history", "商談履歴要約", "",
+                        List.of("sales_rep"), List.of("opportunity"), "ai_summary", "ai_assisted",
+                        "allowed", false, "recommended", "medium", false, false, "summary"),
+                new BlueprintInput.V2Operation("draft_followup_message", "フォローアップ文案作成", "",
+                        List.of("sales_rep"), List.of("customer", "opportunity"), "ai_draft", "draft_only",
+                        "allowed", false, "recommended", "medium", false, false, "draft_text"),
+                new BlueprintInput.V2Operation("request_quote_amount_change", "見積金額変更依頼", "",
+                        List.of("sales_rep"), List.of("quote"), "approval_request", "human_approved_write",
+                        "not_allowed_directly", true, "required", "high", false, true, "approval_request"),
+                new BlueprintInput.V2Operation("request_invoice_confirmation", "請求確定依頼", "",
+                        List.of("sales_rep"), List.of("invoice"), "approval_request", "human_approved_write",
+                        "not_allowed_directly", true, "required", "high", false, true, "approval_request")
+        ));
+
+        List<ApiEndpointCandidate> endpoints = new ApiDesignGenerator().generateFromV2(input, new DomainNameNormalizer());
+
+        assertThat(endpoints).anyMatch(e -> e.path().equals("/api/customers") && e.httpMethod().equals("GET"));
+        assertThat(endpoints).anyMatch(e -> e.path().equals("/api/opportunities/{id}/history-summary"));
+        assertThat(endpoints).anyMatch(e -> e.path().equals("/api/opportunities/{id}/follow-up-drafts")
+                && e.httpMethod().equals("POST"));
+        assertThat(endpoints).anyMatch(e -> e.path().equals("/api/quotes/{id}/change-requests")
+                && e.approvalRequired().equals("必須"));
+        assertThat(endpoints).anyMatch(e -> e.path().equals("/api/invoices/{id}/confirmation-requests")
+                && e.auditLogRequired().equals("必須"));
+        assertThat(endpoints).noneMatch(e -> e.path().contains("domain-items"));
+        assertThat(endpoints).noneMatch(e -> e.httpMethod().equals("PUT"));
+    }
 }
