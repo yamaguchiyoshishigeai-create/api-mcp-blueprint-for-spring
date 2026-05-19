@@ -1,0 +1,542 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.85,
+    "reason": "利用者、業務領域、対象情報、操作、AI支援範囲、承認・監査条件が抽出できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "営業案件管理と契約請求管理を横断し、参照、要約、リスク提示、文案作成、承認付き更新を支援する。",
+    "summary": "営業担当と契約担当者が、顧客・商談・見積・契約・請求・入金を確認し、AI支援を受ける。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "営業担当と契約担当者が、顧客・商談・見積・契約・請求・入金を確認し、AI支援を受ける。"
+  },
+  "domains": [
+    {
+      "id": "sales",
+      "name": "営業案件管理",
+      "role": "primary",
+      "description": "顧客、商談、見積、次回アクションを扱う。"
+    },
+    {
+      "id": "contract_billing",
+      "name": "契約請求管理",
+      "role": "primary",
+      "description": "契約、請求、入金を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "customer",
+      "name": "顧客",
+      "domainId": "sales",
+      "description": "営業活動の対象となる顧客。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "customer_related"
+      ]
+    },
+    {
+      "id": "opportunity",
+      "name": "商談",
+      "domainId": "sales",
+      "description": "商談履歴、受注確度、次回アクションを扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "sales",
+        "customer_related"
+      ]
+    },
+    {
+      "id": "quote",
+      "name": "見積",
+      "domainId": "sales",
+      "description": "見積金額と見積状況を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "financial"
+      ]
+    },
+    {
+      "id": "contract",
+      "name": "契約",
+      "domainId": "contract_billing",
+      "description": "契約一覧、契約条件、契約リスクを扱う。",
+      "sensitivity": "restricted",
+      "dataCategories": [
+        "contract"
+      ]
+    },
+    {
+      "id": "invoice",
+      "name": "請求",
+      "domainId": "contract_billing",
+      "description": "請求状況、請求確定、請求遅延候補を扱う。",
+      "sensitivity": "restricted",
+      "dataCategories": [
+        "billing",
+        "financial"
+      ]
+    },
+    {
+      "id": "payment",
+      "name": "入金",
+      "domainId": "contract_billing",
+      "description": "入金状況と入金消込を扱う。",
+      "sensitivity": "restricted",
+      "dataCategories": [
+        "payment",
+        "financial"
+      ]
+    }
+  ],
+  "actors": [
+    {
+      "id": "sales_rep",
+      "name": "営業担当",
+      "description": "顧客、商談、見積状況を確認する。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "contract_staff",
+      "name": "契約担当者",
+      "description": "契約、請求、入金を確認する。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "承認者",
+      "description": "金銭・契約・入金に関わる変更を承認する。",
+      "actorType": "approver"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_customers",
+      "label": "顧客検索",
+      "description": "顧客検索を行う。",
+      "actorIds": [
+        "sales_rep"
+      ],
+      "objectIds": [
+        "customer"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "search_opportunities",
+      "label": "商談検索",
+      "description": "商談検索を行う。",
+      "actorIds": [
+        "sales_rep"
+      ],
+      "objectIds": [
+        "opportunity"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "search_quotes",
+      "label": "見積状況検索",
+      "description": "見積状況検索を行う。",
+      "actorIds": [
+        "sales_rep"
+      ],
+      "objectIds": [
+        "quote"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_opportunity_history",
+      "label": "商談履歴要約",
+      "description": "商談履歴要約を行う。",
+      "actorIds": [
+        "sales_rep"
+      ],
+      "objectIds": [
+        "opportunity"
+      ],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "suggest_loss_risk",
+      "label": "失注リスク候補提示",
+      "description": "失注リスク候補提示を行う。",
+      "actorIds": [
+        "sales_rep"
+      ],
+      "objectIds": [
+        "opportunity"
+      ],
+      "intent": "ai_analysis",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "candidate_list"
+    },
+    {
+      "id": "draft_followup_message",
+      "label": "フォローアップ文案作成",
+      "description": "フォローアップ文案作成を行う。",
+      "actorIds": [
+        "sales_rep"
+      ],
+      "objectIds": [
+        "customer",
+        "opportunity"
+      ],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_quote_amount_change",
+      "label": "見積金額変更依頼",
+      "description": "見積金額変更依頼を行う。",
+      "actorIds": [
+        "sales_rep",
+        "approver"
+      ],
+      "objectIds": [
+        "quote"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "request_probability_change",
+      "label": "受注確度変更依頼",
+      "description": "受注確度変更依頼を行う。",
+      "actorIds": [
+        "sales_rep",
+        "approver"
+      ],
+      "objectIds": [
+        "opportunity"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "list_contracts",
+      "label": "契約一覧確認",
+      "description": "契約一覧確認を行う。",
+      "actorIds": [
+        "contract_staff"
+      ],
+      "objectIds": [
+        "contract"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "check_invoice_status",
+      "label": "請求状況確認",
+      "description": "請求状況確認を行う。",
+      "actorIds": [
+        "contract_staff"
+      ],
+      "objectIds": [
+        "invoice"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "check_payment_status",
+      "label": "入金状況確認",
+      "description": "入金状況確認を行う。",
+      "actorIds": [
+        "contract_staff"
+      ],
+      "objectIds": [
+        "payment"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_contract_risk",
+      "label": "契約リスク要約",
+      "description": "契約リスク要約を行う。",
+      "actorIds": [
+        "contract_staff"
+      ],
+      "objectIds": [
+        "contract"
+      ],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "extract_delayed_invoice_candidates",
+      "label": "請求遅延候補抽出",
+      "description": "請求遅延候補抽出を行う。",
+      "actorIds": [
+        "contract_staff"
+      ],
+      "objectIds": [
+        "invoice"
+      ],
+      "intent": "ai_analysis",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "candidate_list"
+    },
+    {
+      "id": "draft_contract_notification",
+      "label": "通知文案作成",
+      "description": "通知文案作成を行う。",
+      "actorIds": [
+        "contract_staff"
+      ],
+      "objectIds": [
+        "contract",
+        "invoice"
+      ],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_contract_condition_change",
+      "label": "契約条件変更依頼",
+      "description": "契約条件変更依頼を行う。",
+      "actorIds": [
+        "contract_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "contract"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "request_invoice_confirmation",
+      "label": "請求確定依頼",
+      "description": "請求確定依頼を行う。",
+      "actorIds": [
+        "contract_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "invoice"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "request_payment_reconciliation",
+      "label": "入金消込依頼",
+      "description": "入金消込依頼を行う。",
+      "actorIds": [
+        "contract_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "payment"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [],
+  "relationships": [
+    {
+      "id": "customer_has_opportunities",
+      "fromObjectId": "customer",
+      "toObjectId": "opportunity",
+      "type": "has_many",
+      "description": "1顧客は複数商談を持つ。"
+    },
+    {
+      "id": "opportunity_has_quotes",
+      "fromObjectId": "opportunity",
+      "toObjectId": "quote",
+      "type": "has_many",
+      "description": "1商談は複数見積を持つ。"
+    },
+    {
+      "id": "contract_has_invoices",
+      "fromObjectId": "contract",
+      "toObjectId": "invoice",
+      "type": "has_many",
+      "description": "1契約は複数請求を持つ。"
+    },
+    {
+      "id": "invoice_has_payments",
+      "fromObjectId": "invoice",
+      "toObjectId": "payment",
+      "type": "has_many",
+      "description": "1請求は複数入金に紐づく。"
+    }
+  ],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "AI支援操作と人間による確定操作を分離する。",
+      "金銭、契約、入金、権限、削除、外部送信に影響する操作は人間承認必須とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "approval_actor_unspecified",
+      "type": "missing_approval_actor",
+      "message": "承認者ロールが明示されていません。",
+      "affectedOperationIds": [
+        "request_quote_amount_change",
+        "request_probability_change",
+        "request_contract_condition_change",
+        "request_invoice_confirmation",
+        "request_payment_reconciliation"
+      ],
+      "defaultHandling": "抽象ロール approver として扱い、具体ロールは後続設計で確定する。",
+      "severity": "medium"
+    },
+    {
+      "id": "notification_send_unspecified",
+      "type": "draft_vs_send_boundary",
+      "message": "通知文案作成は許可されていますが、通知送信可否は明示されていません。",
+      "affectedOperationIds": [
+        "draft_contract_notification"
+      ],
+      "defaultHandling": "文案作成のみAI可、送信は別操作かつ人間承認必須として扱う。",
+      "severity": "medium"
+    }
+  ]
+}

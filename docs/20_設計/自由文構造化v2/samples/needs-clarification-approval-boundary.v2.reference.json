@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "needs_clarification",
+    "canGenerate": false,
+    "confidence": 0.45,
+    "reason": "文案作成、通知送信、更新反映の境界が曖昧であり、安全にJSON生成するには追加確認が必要。",
+    "warnings": [
+      "文案作成と実送信、変更提案と実更新を分離する必要がある。"
+    ],
+    "missingInformation": [
+      "通知送信可否",
+      "更新反映可否",
+      "承認者ロール",
+      "外部送信有無",
+      "監査ログ要否"
+    ]
+  },
+  "businessContext": {
+    "systemPurpose": "",
+    "summary": "",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": ""
+  },
+  "domains": [],
+  "businessObjects": [],
+  "actors": [],
+  "operations": [],
+  "operationGroups": [],
+  "relationships": [],
+  "securityPolicy": {
+    "defaultAuthentication": "unknown",
+    "defaultAuthorization": "unknown",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": []
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": []
+}

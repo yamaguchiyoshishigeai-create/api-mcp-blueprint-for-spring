@@ -1,0 +1,260 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.85,
+    "reason": "利用者、業務領域、対象情報、操作、AI支援範囲、承認・監査条件が抽出できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "問い合わせ、ナレッジ、顧客通知を横断し、問い合わせ検索、回答候補提示、通知文案作成を支援する。",
+    "summary": "サポート担当が問い合わせと顧客情報を確認し、AIに回答候補提示と通知文案作成を許可する。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "サポート担当が問い合わせと顧客情報を確認し、AIに回答候補提示と通知文案作成を許可する。"
+  },
+  "domains": [
+    {
+      "id": "support",
+      "name": "問い合わせ管理",
+      "role": "primary",
+      "description": "問い合わせ管理を扱う。"
+    },
+    {
+      "id": "knowledge",
+      "name": "ナレッジ管理",
+      "role": "primary",
+      "description": "ナレッジ管理を扱う。"
+    },
+    {
+      "id": "notification",
+      "name": "通知管理",
+      "role": "primary",
+      "description": "通知管理を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "inquiry",
+      "name": "問い合わせ",
+      "domainId": "support",
+      "description": "問い合わせを扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "support"
+      ]
+    },
+    {
+      "id": "customer",
+      "name": "顧客",
+      "domainId": "support",
+      "description": "顧客を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "support"
+      ]
+    },
+    {
+      "id": "knowledge_article",
+      "name": "ナレッジ記事",
+      "domainId": "knowledge",
+      "description": "ナレッジ記事を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "knowledge"
+      ]
+    },
+    {
+      "id": "notification_draft",
+      "name": "通知文案",
+      "domainId": "notification",
+      "description": "通知文案を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "notification"
+      ]
+    }
+  ],
+  "actors": [
+    {
+      "id": "support_staff",
+      "name": "サポート担当",
+      "description": "サポート担当。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "承認者",
+      "description": "承認者。",
+      "actorType": "approver"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_inquiry",
+      "label": "問い合わせ検索",
+      "description": "問い合わせ検索を行う。",
+      "actorIds": [
+        "support_staff"
+      ],
+      "objectIds": [
+        "inquiry"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "check_customer",
+      "label": "顧客確認",
+      "description": "顧客確認を行う。",
+      "actorIds": [
+        "support_staff"
+      ],
+      "objectIds": [
+        "customer"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_inquiry",
+      "label": "問い合わせ要約",
+      "description": "問い合わせ要約を行う。",
+      "actorIds": [
+        "support_staff"
+      ],
+      "objectIds": [
+        "inquiry"
+      ],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "suggest_customer_candidates",
+      "label": "顧客候補提示",
+      "description": "顧客候補提示を行う。",
+      "actorIds": [
+        "support_staff"
+      ],
+      "objectIds": [
+        "customer"
+      ],
+      "intent": "ai_analysis",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "candidate_list"
+    },
+    {
+      "id": "draft_inquiry_message",
+      "label": "問い合わせ文案作成",
+      "description": "問い合わせ文案作成を行う。",
+      "actorIds": [
+        "support_staff"
+      ],
+      "objectIds": [
+        "inquiry"
+      ],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_notification_draft_change",
+      "label": "通知文案変更依頼",
+      "description": "通知文案変更依頼を行う。",
+      "actorIds": [
+        "support_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "notification_draft"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [],
+  "relationships": [],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "AI支援操作と人間による確定操作を分離する。",
+      "金銭、契約、入金、権限、削除、外部送信に影響する操作は人間承認必須とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "approval_actor_unspecified",
+      "type": "missing_approval_actor",
+      "message": "承認者の具体ロールが未指定です。",
+      "affectedOperationIds": [
+        "request_notification_draft_change"
+      ],
+      "defaultHandling": "抽象ロール approver として扱い、具体ロールは後続設計で確定する。",
+      "severity": "medium"
+    },
+    {
+      "id": "external_send_unspecified",
+      "type": "draft_vs_send_boundary",
+      "message": "文案作成後の外部送信可否が未指定です。",
+      "affectedOperationIds": [
+        "draft_inquiry_message"
+      ],
+      "defaultHandling": "文案作成のみAI可、外部送信は別操作かつ人間承認必須として扱う。",
+      "severity": "medium"
+    }
+  ]
+}

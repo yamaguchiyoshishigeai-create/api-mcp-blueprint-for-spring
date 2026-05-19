@@ -1,0 +1,435 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.85,
+    "reason": "利用者、業務領域、対象情報、操作、AI支援範囲、承認・監査条件が抽出できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "注文、在庫、配送、請求、決済を横断し、参照、候補提示、文案作成、承認付き状態変更を支援する。",
+    "summary": "受注担当、倉庫担当、経理担当が注文から決済までの状況を確認し、AI支援を受ける。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "受注担当、倉庫担当、経理担当が注文から決済までの状況を確認し、AI支援を受ける。"
+  },
+  "domains": [
+    {
+      "id": "order_management",
+      "name": "注文管理",
+      "role": "primary",
+      "description": "注文受付、注文状況、注文変更を扱う。"
+    },
+    {
+      "id": "inventory_management",
+      "name": "在庫管理",
+      "role": "primary",
+      "description": "在庫状況、在庫引当、欠品候補を扱う。"
+    },
+    {
+      "id": "delivery_management",
+      "name": "配送管理",
+      "role": "primary",
+      "description": "出荷、配送状況、配送遅延候補を扱う。"
+    },
+    {
+      "id": "billing_payment",
+      "name": "請求決済管理",
+      "role": "primary",
+      "description": "請求、決済、返金、取消を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "order",
+      "name": "注文",
+      "domainId": "order_management",
+      "description": "注文内容、注文状況、変更依頼を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "order",
+        "customer_related"
+      ]
+    },
+    {
+      "id": "inventory_item",
+      "name": "在庫品目",
+      "domainId": "inventory_management",
+      "description": "在庫数量、引当可能数、欠品候補を扱う。",
+      "sensitivity": "internal",
+      "dataCategories": [
+        "inventory"
+      ]
+    },
+    {
+      "id": "shipment",
+      "name": "出荷",
+      "domainId": "delivery_management",
+      "description": "出荷指示、出荷状況を扱う。",
+      "sensitivity": "internal",
+      "dataCategories": [
+        "delivery"
+      ]
+    },
+    {
+      "id": "delivery",
+      "name": "配送",
+      "domainId": "delivery_management",
+      "description": "配送状況、配送遅延候補を扱う。",
+      "sensitivity": "internal",
+      "dataCategories": [
+        "delivery",
+        "customer_related"
+      ]
+    },
+    {
+      "id": "invoice",
+      "name": "請求",
+      "domainId": "billing_payment",
+      "description": "請求作成、請求状況を扱う。",
+      "sensitivity": "restricted",
+      "dataCategories": [
+        "billing",
+        "financial"
+      ]
+    },
+    {
+      "id": "payment",
+      "name": "決済",
+      "domainId": "billing_payment",
+      "description": "決済状況、決済取消、返金を扱う。",
+      "sensitivity": "restricted",
+      "dataCategories": [
+        "payment",
+        "financial"
+      ]
+    }
+  ],
+  "actors": [
+    {
+      "id": "order_staff",
+      "name": "受注担当",
+      "description": "注文状況と顧客対応を担当する。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "warehouse_staff",
+      "name": "倉庫担当",
+      "description": "在庫確認、在庫引当、出荷を担当する。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "accounting_staff",
+      "name": "経理担当",
+      "description": "請求と決済を担当する。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "承認者",
+      "description": "在庫引当、注文変更、決済取消、返金を承認する。",
+      "actorType": "approver"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_orders",
+      "label": "注文検索",
+      "description": "注文検索を行う。",
+      "actorIds": [
+        "order_staff"
+      ],
+      "objectIds": [
+        "order"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "check_inventory",
+      "label": "在庫確認",
+      "description": "在庫確認を行う。",
+      "actorIds": [
+        "warehouse_staff"
+      ],
+      "objectIds": [
+        "inventory_item"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_order_status",
+      "label": "注文状況要約",
+      "description": "注文状況要約を行う。",
+      "actorIds": [
+        "order_staff"
+      ],
+      "objectIds": [
+        "order"
+      ],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "suggest_shortage_candidates",
+      "label": "欠品候補提示",
+      "description": "欠品候補提示を行う。",
+      "actorIds": [
+        "warehouse_staff"
+      ],
+      "objectIds": [
+        "inventory_item",
+        "order"
+      ],
+      "intent": "ai_analysis",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "candidate_list"
+    },
+    {
+      "id": "draft_delivery_delay_notice",
+      "label": "配送遅延通知文案作成",
+      "description": "配送遅延通知文案作成を行う。",
+      "actorIds": [
+        "order_staff"
+      ],
+      "objectIds": [
+        "delivery",
+        "order"
+      ],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_inventory_allocation",
+      "label": "在庫引当依頼",
+      "description": "在庫引当依頼を行う。",
+      "actorIds": [
+        "warehouse_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "inventory_item",
+        "order"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "request_order_change",
+      "label": "注文変更依頼",
+      "description": "注文変更依頼を行う。",
+      "actorIds": [
+        "order_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "order"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "check_invoice_status",
+      "label": "請求状況確認",
+      "description": "請求状況確認を行う。",
+      "actorIds": [
+        "accounting_staff"
+      ],
+      "objectIds": [
+        "invoice"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "check_payment_status",
+      "label": "決済状況確認",
+      "description": "決済状況確認を行う。",
+      "actorIds": [
+        "accounting_staff"
+      ],
+      "objectIds": [
+        "payment"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "request_payment_cancellation",
+      "label": "決済取消依頼",
+      "description": "決済取消依頼を行う。",
+      "actorIds": [
+        "accounting_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "payment"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "critical",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    },
+    {
+      "id": "request_refund",
+      "label": "返金依頼",
+      "description": "返金依頼を行う。",
+      "actorIds": [
+        "accounting_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "payment",
+        "invoice"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "critical",
+      "externalAction": true,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [],
+  "relationships": [
+    {
+      "id": "order_allocates_inventory",
+      "fromObjectId": "order",
+      "toObjectId": "inventory_item",
+      "type": "references",
+      "description": "注文は在庫品目を参照し、在庫引当を必要とする。"
+    },
+    {
+      "id": "order_has_shipments",
+      "fromObjectId": "order",
+      "toObjectId": "shipment",
+      "type": "has_many",
+      "description": "1注文は複数出荷に分かれる可能性がある。"
+    },
+    {
+      "id": "shipment_has_delivery",
+      "fromObjectId": "shipment",
+      "toObjectId": "delivery",
+      "type": "has_one",
+      "description": "出荷は配送情報を持つ。"
+    },
+    {
+      "id": "order_has_invoice",
+      "fromObjectId": "order",
+      "toObjectId": "invoice",
+      "type": "has_one",
+      "description": "注文に対して請求が発生する。"
+    },
+    {
+      "id": "invoice_has_payment",
+      "fromObjectId": "invoice",
+      "toObjectId": "payment",
+      "type": "has_many",
+      "description": "請求に対して決済が紐づく。"
+    }
+  ],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "AI支援操作と人間による確定操作を分離する。",
+      "金銭、契約、入金、権限、削除、外部送信に影響する操作は人間承認必須とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "delivery_notice_send_unspecified",
+      "type": "draft_vs_send_boundary",
+      "message": "配送遅延通知文案作成は許可されていますが、外部送信可否は明示されていません。",
+      "affectedOperationIds": [
+        "draft_delivery_delay_notice"
+      ],
+      "defaultHandling": "文案作成のみAI可、外部送信は別操作かつ人間承認必須として扱う。",
+      "severity": "medium"
+    }
+  ]
+}

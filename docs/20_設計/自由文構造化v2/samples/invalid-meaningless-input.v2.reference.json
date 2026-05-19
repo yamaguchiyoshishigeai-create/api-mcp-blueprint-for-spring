@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "invalid",
+    "canGenerate": false,
+    "confidence": 0.2,
+    "reason": "入力が意味を成さず、業務要件として評価できない。",
+    "warnings": [
+      "外部AIはチャット上で警告して停止し、JSONを出力しない。"
+    ],
+    "missingInformation": [
+      "業務目的",
+      "利用者",
+      "対象情報",
+      "操作内容"
+    ]
+  },
+  "businessContext": {
+    "systemPurpose": "",
+    "summary": "",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": ""
+  },
+  "domains": [],
+  "businessObjects": [],
+  "actors": [],
+  "operations": [],
+  "operationGroups": [],
+  "relationships": [],
+  "securityPolicy": {
+    "defaultAuthentication": "unknown",
+    "defaultAuthorization": "unknown",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": []
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "needs_clarification",
+    "canGenerate": false,
+    "confidence": 0.45,
+    "reason": "業務要件として有効な可能性はあるが、利用者、対象情報、操作、AI支援範囲、承認監査条件が不足している。",
+    "warnings": [
+      "外部AIはJSONを生成せず、必要最小限の質問を行う。"
+    ],
+    "missingInformation": [
+      "利用者・ロール",
+      "対象業務領域",
+      "対象業務オブジェクト",
+      "必要操作",
+      "AIに許可する操作",
+      "承認必須操作",
+      "監査ログ要否"
+    ]
+  },
+  "businessContext": {
+    "systemPurpose": "",
+    "summary": "",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": ""
+  },
+  "domains": [],
+  "businessObjects": [],
+  "actors": [],
+  "operations": [],
+  "operationGroups": [],
+  "relationships": [],
+  "securityPolicy": {
+    "defaultAuthentication": "unknown",
+    "defaultAuthorization": "unknown",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": []
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": []
+}

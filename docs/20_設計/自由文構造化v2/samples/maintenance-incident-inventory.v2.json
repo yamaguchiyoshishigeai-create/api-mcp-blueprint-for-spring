@@ -1,0 +1,266 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.85,
+    "reason": "利用者、業務領域、対象情報、操作、AI支援範囲、承認・監査条件が抽出できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "保守、障害、部品在庫を横断し、障害状況、対応履歴、交換部品、作業報告を支援する。",
+    "summary": "保守担当が障害と部品在庫を確認し、AIに原因候補提示、作業報告文案作成を許可する。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "保守担当が障害と部品在庫を確認し、AIに原因候補提示、作業報告文案作成を許可する。"
+  },
+  "domains": [
+    {
+      "id": "maintenance",
+      "name": "保守管理",
+      "role": "primary",
+      "description": "保守管理を扱う。"
+    },
+    {
+      "id": "incident",
+      "name": "障害管理",
+      "role": "primary",
+      "description": "障害管理を扱う。"
+    },
+    {
+      "id": "parts_inventory",
+      "name": "部品在庫管理",
+      "role": "primary",
+      "description": "部品在庫管理を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "incident_ticket",
+      "name": "障害チケット",
+      "domainId": "incident",
+      "description": "障害チケットを扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "incident"
+      ]
+    },
+    {
+      "id": "maintenance_history",
+      "name": "保守履歴",
+      "domainId": "maintenance",
+      "description": "保守履歴を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "maintenance"
+      ]
+    },
+    {
+      "id": "part",
+      "name": "交換部品",
+      "domainId": "parts_inventory",
+      "description": "交換部品を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "parts_inventory"
+      ]
+    },
+    {
+      "id": "work_report",
+      "name": "作業報告",
+      "domainId": "maintenance",
+      "description": "作業報告を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "maintenance"
+      ]
+    }
+  ],
+  "actors": [
+    {
+      "id": "maintenance_staff",
+      "name": "保守担当",
+      "description": "保守担当。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "inventory_staff",
+      "name": "在庫担当",
+      "description": "在庫担当。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "承認者",
+      "description": "承認者。",
+      "actorType": "approver"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_incident_ticket",
+      "label": "障害チケット検索",
+      "description": "障害チケット検索を行う。",
+      "actorIds": [
+        "maintenance_staff"
+      ],
+      "objectIds": [
+        "incident_ticket"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "check_maintenance_history",
+      "label": "保守履歴確認",
+      "description": "保守履歴確認を行う。",
+      "actorIds": [
+        "maintenance_staff"
+      ],
+      "objectIds": [
+        "maintenance_history"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_incident_ticket",
+      "label": "障害チケット要約",
+      "description": "障害チケット要約を行う。",
+      "actorIds": [
+        "maintenance_staff"
+      ],
+      "objectIds": [
+        "incident_ticket"
+      ],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "suggest_maintenance_history_candidates",
+      "label": "保守履歴候補提示",
+      "description": "保守履歴候補提示を行う。",
+      "actorIds": [
+        "maintenance_staff"
+      ],
+      "objectIds": [
+        "maintenance_history"
+      ],
+      "intent": "ai_analysis",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "candidate_list"
+    },
+    {
+      "id": "draft_incident_ticket_message",
+      "label": "障害チケット文案作成",
+      "description": "障害チケット文案作成を行う。",
+      "actorIds": [
+        "maintenance_staff"
+      ],
+      "objectIds": [
+        "incident_ticket"
+      ],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_work_report_change",
+      "label": "作業報告変更依頼",
+      "description": "作業報告変更依頼を行う。",
+      "actorIds": [
+        "maintenance_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "work_report"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [],
+  "relationships": [],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "AI支援操作と人間による確定操作を分離する。",
+      "金銭、契約、入金、権限、削除、外部送信に影響する操作は人間承認必須とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "approval_actor_unspecified",
+      "type": "missing_approval_actor",
+      "message": "承認者の具体ロールが未指定です。",
+      "affectedOperationIds": [
+        "request_work_report_change"
+      ],
+      "defaultHandling": "抽象ロール approver として扱い、具体ロールは後続設計で確定する。",
+      "severity": "medium"
+    },
+    {
+      "id": "external_send_unspecified",
+      "type": "draft_vs_send_boundary",
+      "message": "文案作成後の外部送信可否が未指定です。",
+      "affectedOperationIds": [
+        "draft_incident_ticket_message"
+      ],
+      "defaultHandling": "文案作成のみAI可、外部送信は別操作かつ人間承認必須として扱う。",
+      "severity": "medium"
+    }
+  ]
+}
