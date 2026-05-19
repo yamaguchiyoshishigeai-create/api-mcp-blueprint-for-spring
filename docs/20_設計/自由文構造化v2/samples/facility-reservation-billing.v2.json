@@ -1,0 +1,266 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.85,
+    "reason": "利用者、業務領域、対象情報、操作、AI支援範囲、承認・監査条件が抽出できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "施設予約と請求を横断し、予約状況、利用実績、請求確定、キャンセルを支援する。",
+    "summary": "施設管理者が予約と利用実績を確認し、AIに空き候補提示と案内文案作成を許可する。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "施設管理者が予約と利用実績を確認し、AIに空き候補提示と案内文案作成を許可する。"
+  },
+  "domains": [
+    {
+      "id": "facility",
+      "name": "施設管理",
+      "role": "primary",
+      "description": "施設管理を扱う。"
+    },
+    {
+      "id": "reservation",
+      "name": "予約管理",
+      "role": "primary",
+      "description": "予約管理を扱う。"
+    },
+    {
+      "id": "billing",
+      "name": "請求管理",
+      "role": "primary",
+      "description": "請求管理を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "facility_resource",
+      "name": "施設",
+      "domainId": "facility",
+      "description": "施設を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "facility"
+      ]
+    },
+    {
+      "id": "reservation",
+      "name": "予約",
+      "domainId": "reservation",
+      "description": "予約を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "reservation"
+      ]
+    },
+    {
+      "id": "usage_record",
+      "name": "利用実績",
+      "domainId": "reservation",
+      "description": "利用実績を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "reservation"
+      ]
+    },
+    {
+      "id": "invoice",
+      "name": "請求",
+      "domainId": "billing",
+      "description": "請求を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "billing"
+      ]
+    }
+  ],
+  "actors": [
+    {
+      "id": "facility_admin",
+      "name": "施設管理者",
+      "description": "施設管理者。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "user",
+      "name": "利用者",
+      "description": "利用者。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "承認者",
+      "description": "承認者。",
+      "actorType": "approver"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_facility_resource",
+      "label": "施設検索",
+      "description": "施設検索を行う。",
+      "actorIds": [
+        "facility_admin"
+      ],
+      "objectIds": [
+        "facility_resource"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "check_reservation",
+      "label": "予約確認",
+      "description": "予約確認を行う。",
+      "actorIds": [
+        "facility_admin"
+      ],
+      "objectIds": [
+        "reservation"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_facility_resource",
+      "label": "施設要約",
+      "description": "施設要約を行う。",
+      "actorIds": [
+        "facility_admin"
+      ],
+      "objectIds": [
+        "facility_resource"
+      ],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "suggest_reservation_candidates",
+      "label": "予約候補提示",
+      "description": "予約候補提示を行う。",
+      "actorIds": [
+        "facility_admin"
+      ],
+      "objectIds": [
+        "reservation"
+      ],
+      "intent": "ai_analysis",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "candidate_list"
+    },
+    {
+      "id": "draft_facility_resource_message",
+      "label": "施設文案作成",
+      "description": "施設文案作成を行う。",
+      "actorIds": [
+        "facility_admin"
+      ],
+      "objectIds": [
+        "facility_resource"
+      ],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_invoice_change",
+      "label": "請求変更依頼",
+      "description": "請求変更依頼を行う。",
+      "actorIds": [
+        "facility_admin",
+        "approver"
+      ],
+      "objectIds": [
+        "invoice"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [],
+  "relationships": [],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "AI支援操作と人間による確定操作を分離する。",
+      "金銭、契約、入金、権限、削除、外部送信に影響する操作は人間承認必須とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "approval_actor_unspecified",
+      "type": "missing_approval_actor",
+      "message": "承認者の具体ロールが未指定です。",
+      "affectedOperationIds": [
+        "request_invoice_change"
+      ],
+      "defaultHandling": "抽象ロール approver として扱い、具体ロールは後続設計で確定する。",
+      "severity": "medium"
+    },
+    {
+      "id": "external_send_unspecified",
+      "type": "draft_vs_send_boundary",
+      "message": "文案作成後の外部送信可否が未指定です。",
+      "affectedOperationIds": [
+        "draft_facility_resource_message"
+      ],
+      "defaultHandling": "文案作成のみAI可、外部送信は別操作かつ人間承認必須として扱う。",
+      "severity": "medium"
+    }
+  ]
+}

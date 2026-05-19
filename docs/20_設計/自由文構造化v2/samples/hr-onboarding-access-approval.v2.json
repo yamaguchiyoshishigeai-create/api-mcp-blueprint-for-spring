@@ -1,0 +1,260 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.85,
+    "reason": "利用者、業務領域、対象情報、操作、AI支援範囲、承認・監査条件が抽出できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "人事オンボーディングと権限付与を横断し、入社手続き、必要アカウント、承認付き権限付与を支援する。",
+    "summary": "人事担当と情報システム担当が入社者情報、必要手続き、アカウント、権限を確認し、AIに案内文案作成と手続き漏れ候補提示を許可する。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "人事担当と情報システム担当が入社者情報、必要手続き、アカウント、権限を確認し、AIに案内文案作成と手続き漏れ候補提示を許可する。"
+  },
+  "domains": [
+    {
+      "id": "hr",
+      "name": "人事管理",
+      "role": "primary",
+      "description": "人事管理を扱う。"
+    },
+    {
+      "id": "access",
+      "name": "権限管理",
+      "role": "primary",
+      "description": "権限管理を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "employee",
+      "name": "入社者",
+      "domainId": "hr",
+      "description": "入社者を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "hr"
+      ]
+    },
+    {
+      "id": "onboarding_task",
+      "name": "入社手続き",
+      "domainId": "hr",
+      "description": "入社手続きを扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "hr"
+      ]
+    },
+    {
+      "id": "account",
+      "name": "アカウント",
+      "domainId": "access",
+      "description": "アカウントを扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "access"
+      ]
+    },
+    {
+      "id": "permission",
+      "name": "権限",
+      "domainId": "access",
+      "description": "権限を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "access"
+      ]
+    }
+  ],
+  "actors": [
+    {
+      "id": "hr_staff",
+      "name": "人事担当",
+      "description": "人事担当。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "it_admin",
+      "name": "情報システム担当",
+      "description": "情報システム担当。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "承認者",
+      "description": "承認者。",
+      "actorType": "approver"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_employee",
+      "label": "入社者検索",
+      "description": "入社者検索を行う。",
+      "actorIds": [
+        "hr_staff"
+      ],
+      "objectIds": [
+        "employee"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "check_onboarding_task",
+      "label": "入社手続き確認",
+      "description": "入社手続き確認を行う。",
+      "actorIds": [
+        "hr_staff"
+      ],
+      "objectIds": [
+        "onboarding_task"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_employee",
+      "label": "入社者要約",
+      "description": "入社者要約を行う。",
+      "actorIds": [
+        "hr_staff"
+      ],
+      "objectIds": [
+        "employee"
+      ],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "suggest_onboarding_task_candidates",
+      "label": "入社手続き候補提示",
+      "description": "入社手続き候補提示を行う。",
+      "actorIds": [
+        "hr_staff"
+      ],
+      "objectIds": [
+        "onboarding_task"
+      ],
+      "intent": "ai_analysis",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "candidate_list"
+    },
+    {
+      "id": "draft_employee_message",
+      "label": "入社者文案作成",
+      "description": "入社者文案作成を行う。",
+      "actorIds": [
+        "hr_staff"
+      ],
+      "objectIds": [
+        "employee"
+      ],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_permission_change",
+      "label": "権限変更依頼",
+      "description": "権限変更依頼を行う。",
+      "actorIds": [
+        "hr_staff",
+        "approver"
+      ],
+      "objectIds": [
+        "permission"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [],
+  "relationships": [],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "AI支援操作と人間による確定操作を分離する。",
+      "金銭、契約、入金、権限、削除、外部送信に影響する操作は人間承認必須とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "approval_actor_unspecified",
+      "type": "missing_approval_actor",
+      "message": "承認者の具体ロールが未指定です。",
+      "affectedOperationIds": [
+        "request_permission_change"
+      ],
+      "defaultHandling": "抽象ロール approver として扱い、具体ロールは後続設計で確定する。",
+      "severity": "medium"
+    },
+    {
+      "id": "external_send_unspecified",
+      "type": "draft_vs_send_boundary",
+      "message": "文案作成後の外部送信可否が未指定です。",
+      "affectedOperationIds": [
+        "draft_employee_message"
+      ],
+      "defaultHandling": "文案作成のみAI可、外部送信は別操作かつ人間承認必須として扱う。",
+      "severity": "medium"
+    }
+  ]
+}

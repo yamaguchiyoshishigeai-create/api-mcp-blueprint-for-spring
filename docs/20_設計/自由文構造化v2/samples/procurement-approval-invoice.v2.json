@@ -1,0 +1,276 @@
+{
+  "schemaVersion": "apim-blueprint-input/v2",
+  "judgement": {
+    "state": "ready_to_generate",
+    "canGenerate": true,
+    "confidence": 0.85,
+    "reason": "利用者、業務領域、対象情報、操作、AI支援範囲、承認・監査条件が抽出できるため。",
+    "warnings": [],
+    "missingInformation": []
+  },
+  "businessContext": {
+    "systemPurpose": "購買、稟議、請求を横断し、購買依頼、承認、発注、請求確認を支援する。",
+    "summary": "購買担当と承認者が購買依頼、見積、発注、請求を確認し、AIに比較要約と稟議文案作成を許可する。",
+    "language": "ja",
+    "sourceInputType": "free_text",
+    "sourceInputSummary": "購買担当と承認者が購買依頼、見積、発注、請求を確認し、AIに比較要約と稟議文案作成を許可する。"
+  },
+  "domains": [
+    {
+      "id": "procurement",
+      "name": "購買管理",
+      "role": "primary",
+      "description": "購買管理を扱う。"
+    },
+    {
+      "id": "approval",
+      "name": "稟議承認",
+      "role": "primary",
+      "description": "稟議承認を扱う。"
+    },
+    {
+      "id": "billing",
+      "name": "請求管理",
+      "role": "primary",
+      "description": "請求管理を扱う。"
+    }
+  ],
+  "businessObjects": [
+    {
+      "id": "purchase_request",
+      "name": "購買依頼",
+      "domainId": "procurement",
+      "description": "購買依頼を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "procurement"
+      ]
+    },
+    {
+      "id": "vendor_quote",
+      "name": "取引先見積",
+      "domainId": "procurement",
+      "description": "取引先見積を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "procurement"
+      ]
+    },
+    {
+      "id": "purchase_order",
+      "name": "発注",
+      "domainId": "procurement",
+      "description": "発注を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "procurement"
+      ]
+    },
+    {
+      "id": "approval_request",
+      "name": "稟議",
+      "domainId": "approval",
+      "description": "稟議を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "approval"
+      ]
+    },
+    {
+      "id": "invoice",
+      "name": "請求",
+      "domainId": "billing",
+      "description": "請求を扱う。",
+      "sensitivity": "confidential",
+      "dataCategories": [
+        "billing"
+      ]
+    }
+  ],
+  "actors": [
+    {
+      "id": "buyer",
+      "name": "購買担当",
+      "description": "購買担当。",
+      "actorType": "human_user"
+    },
+    {
+      "id": "approver",
+      "name": "承認者",
+      "description": "承認者。",
+      "actorType": "approver"
+    },
+    {
+      "id": "accounting_staff",
+      "name": "経理担当",
+      "description": "経理担当。",
+      "actorType": "human_user"
+    }
+  ],
+  "operations": [
+    {
+      "id": "search_purchase_request",
+      "label": "購買依頼検索",
+      "description": "購買依頼検索を行う。",
+      "actorIds": [
+        "buyer"
+      ],
+      "objectIds": [
+        "purchase_request"
+      ],
+      "intent": "search",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "low",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "check_vendor_quote",
+      "label": "取引先見積確認",
+      "description": "取引先見積確認を行う。",
+      "actorIds": [
+        "buyer"
+      ],
+      "objectIds": [
+        "vendor_quote"
+      ],
+      "intent": "read",
+      "executionMode": "direct_read",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "list"
+    },
+    {
+      "id": "summarize_purchase_request",
+      "label": "購買依頼要約",
+      "description": "購買依頼要約を行う。",
+      "actorIds": [
+        "buyer"
+      ],
+      "objectIds": [
+        "purchase_request"
+      ],
+      "intent": "ai_summary",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "summary"
+    },
+    {
+      "id": "suggest_vendor_quote_candidates",
+      "label": "取引先見積候補提示",
+      "description": "取引先見積候補提示を行う。",
+      "actorIds": [
+        "buyer"
+      ],
+      "objectIds": [
+        "vendor_quote"
+      ],
+      "intent": "ai_analysis",
+      "executionMode": "ai_assisted",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "candidate_list"
+    },
+    {
+      "id": "draft_purchase_request_message",
+      "label": "購買依頼文案作成",
+      "description": "購買依頼文案作成を行う。",
+      "actorIds": [
+        "buyer"
+      ],
+      "objectIds": [
+        "purchase_request"
+      ],
+      "intent": "ai_draft",
+      "executionMode": "draft_only",
+      "aiPermission": "allowed",
+      "approvalRequired": false,
+      "auditLogRequired": "recommended",
+      "riskLevel": "medium",
+      "externalAction": false,
+      "stateChanging": false,
+      "outputType": "draft_text"
+    },
+    {
+      "id": "request_invoice_change",
+      "label": "請求変更依頼",
+      "description": "請求変更依頼を行う。",
+      "actorIds": [
+        "buyer",
+        "approver"
+      ],
+      "objectIds": [
+        "invoice"
+      ],
+      "intent": "approval_request",
+      "executionMode": "human_approved_write",
+      "aiPermission": "not_allowed_directly",
+      "approvalRequired": true,
+      "auditLogRequired": "required",
+      "riskLevel": "high",
+      "externalAction": false,
+      "stateChanging": true,
+      "outputType": "approval_request"
+    }
+  ],
+  "operationGroups": [],
+  "relationships": [],
+  "securityPolicy": {
+    "defaultAuthentication": "authenticated_user",
+    "defaultAuthorization": "role_based",
+    "defaultAuditLog": "recommended",
+    "dangerousOperationPolicy": "human_approval_required",
+    "externalActionPolicy": "human_approval_required",
+    "dataProtectionNotes": [
+      "AI支援操作と人間による確定操作を分離する。",
+      "金銭、契約、入金、権限、削除、外部送信に影響する操作は人間承認必須とする。"
+    ]
+  },
+  "generationHints": {
+    "apiStyle": "rest",
+    "mcpGeneration": true,
+    "markdownLanguage": "ja",
+    "preferApprovalRequestEndpoints": true,
+    "preferDraftEndpointsForMessages": true,
+    "avoidDirectDangerousWriteEndpoints": true
+  },
+  "ambiguities": [
+    {
+      "id": "approval_actor_unspecified",
+      "type": "missing_approval_actor",
+      "message": "承認者の具体ロールが未指定です。",
+      "affectedOperationIds": [
+        "request_invoice_change"
+      ],
+      "defaultHandling": "抽象ロール approver として扱い、具体ロールは後続設計で確定する。",
+      "severity": "medium"
+    },
+    {
+      "id": "external_send_unspecified",
+      "type": "draft_vs_send_boundary",
+      "message": "文案作成後の外部送信可否が未指定です。",
+      "affectedOperationIds": [
+        "draft_purchase_request_message"
+      ],
+      "defaultHandling": "文案作成のみAI可、外部送信は別操作かつ人間承認必須として扱う。",
+      "severity": "medium"
+    }
+  ]
+}
