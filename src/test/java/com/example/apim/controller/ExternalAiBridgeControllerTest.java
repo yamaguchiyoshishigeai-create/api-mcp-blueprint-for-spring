@@ -119,6 +119,56 @@ class ExternalAiBridgeControllerTest {
     }
 
     @Test
+    void importTextWithValidV2JsonShowsExtractionSummary() throws Exception {
+        BlueprintInput input = new BlueprintInput();
+        input.setBusinessRequirements("営業案件管理と契約請求管理を横断して支援する。");
+        input.setTargetDomain("営業案件管理 / 契約請求管理");
+        input.setPrimaryDomain("営業案件管理");
+        input.setRelatedDomains(List.of("営業案件管理", "契約請求管理"));
+        input.setSystemTypes(List.of("営業案件管理", "契約請求管理"));
+        input.setUserTypes("- 営業担当\n- 契約担当者");
+        input.setRequiredOperations("- 顧客検索\n- 請求確定依頼");
+        input.setAllowedAiOperations("- 顧客検索");
+        input.setApprovalRequiredOperations("- 請求確定依頼");
+        input.setAuditLogRequiredOperations("- 請求確定依頼");
+
+        ExternalAiImportResult.ExtractionSummary summary = new ExternalAiImportResult.ExtractionSummary(
+                List.of("営業案件管理", "契約請求管理"),
+                List.of("顧客（domainId=sales / sensitivity=confidential）",
+                        "請求（domainId=contract_billing / sensitivity=restricted）"),
+                List.of("営業担当 (human_user)", "契約担当者 (human_user)", "承認者 (approver)"),
+                List.of("顧客検索（search / direct_read / low）",
+                        "請求確定依頼（approval_request / human_approved_write / high）"),
+                List.of("opportunity -> invoice（references）"),
+                List.of("請求確定依頼"),
+                List.of("請求確定依頼"),
+                List.of("請求確定の承認者ロールが未確定です。（medium）")
+        );
+
+        when(bridgeService.importJson("{v2}"))
+                .thenReturn(ExternalAiImportResult.canGenerate(input, "ok", List.of(), summary));
+
+        mockMvc.perform(post("/external-ai-bridge/import-text")
+                        .param("jsonText", "{v2}"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("external-ai-import-result"))
+                .andExpect(content().string(containsString("v2抽出結果の確認")))
+                .andExpect(content().string(containsString("業務領域")))
+                .andExpect(content().string(containsString("業務オブジェクト")))
+                .andExpect(content().string(containsString("利用者・ロール")))
+                .andExpect(content().string(containsString("操作")))
+                .andExpect(content().string(containsString("関係")))
+                .andExpect(content().string(containsString("承認必須操作")))
+                .andExpect(content().string(containsString("監査ログ必須操作")))
+                .andExpect(content().string(containsString("曖昧点・確認事項")))
+                .andExpect(content().string(containsString("営業案件管理")))
+                .andExpect(content().string(containsString("顧客")))
+                .andExpect(content().string(containsString("請求確定依頼")))
+                .andExpect(content().string(containsString("請求確定の承認者ロールが未確定です。")));
+    }
+
+
+    @Test
     void importTextWithValidJsonShowsConfirmationForm() throws Exception {
         BlueprintInput input = new BlueprintInput();
         input.setBusinessRequirements("営業担当が顧客情報を検索する。");
