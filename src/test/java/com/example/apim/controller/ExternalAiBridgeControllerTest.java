@@ -47,7 +47,7 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(view().name("external-ai-bridge"))
                 .andExpect(content().string(containsString("API + MCP Blueprint Compiler for Spring")))
                 .andExpect(content().string(containsString("trial-ui-page external-ai-bridge-page")))
-                                .andExpect(content().string(containsString("workflow-steps")))
+                .andExpect(content().string(containsString("workflow-steps")))
                 .andExpect(content().string(containsString("自由文を書く")))
                 .andExpect(content().string(not(containsString("試行UI/UX確認用"))))
                 .andExpect(content().string(containsString("外部AI用プロンプトをコピーする")))
