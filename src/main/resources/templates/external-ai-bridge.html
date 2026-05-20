@@ -6,60 +6,48 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main class="container">
-    <h1>API + MCP Blueprint Compiler for Spring</h1>
-    <p>業務要件から、Spring REST API設計とMCP tools/resources/prompts設計候補を同時生成するWeb MVPです。</p>
-
-    <section class="notice">
-        <h2>このページでできること</h2>
-        <p>APIM for Spring は、業務要件からAPI設計とMCP設計候補を同時に作る設計支援ツールです。まだコードを書く前に、必要なAPI、AIエージェント向け操作、承認・監査観点、Codex等の実装支援AIへ渡す指示を整理できます。</p>
-        <p>標準入口では、まず自由文から始めます。APIMが外部AIへ手動投入するためのMarkdownプロンプトを生成し、外部AIが返したAPIM取り込み用JSONを確認画面へ反映できます。</p>
-
-        <h2>このMVPで生成するもの</h2>
-        <ul>
-            <li>API設計書 / REST API設計候補</li>
-            <li>MCP tools / resources / prompts 候補</li>
-            <li>API/MCP対応表</li>
-            <li>セキュリティ・承認・監査ログ注意点</li>
-            <li>Markdown設計書 / AI実装指示書</li>
-        </ul>
-
-        <h2>このMVPで生成しないもの</h2>
-        <ul>
-            <li>完全動作するMCPサーバー</li>
-            <li>DB永続化やマイグレーション</li>
-            <li>認証・認可の本格実装</li>
-            <li>外部LLM API連携</li>
-            <li>本番デプロイ作業やRender公開作業</li>
-        </ul>
-
-        <h2>自由文から設計候補を作る3ステップ</h2>
-        <ol>
-            <li>自由文の業務要件を入力し、「外部AI投入用プロンプトを生成する」を押してMarkdownプロンプトを作成・ダウンロードします。</li>
-            <li>生成されたプロンプトをChatGPT等の外部AIへ手動投入し、APIM取り込み用JSONを出力させます。</li>
-            <li>外部AIが返したJSONを、生成プロンプト画面の下部で貼り付けまたはアップロードし、反映内容を確認・修正してから設計候補を生成します。</li>
-        </ol>
-        <p class="form-help">JSON取り込みは、外部AI投入用プロンプトを生成した後の画面で行います。JSON取り込み後も、最終生成前に確認・修正できます。</p>
-
-        <h2>外部AI公式リンク集について</h2>
-        <p class="form-help">
-            リンク集はプロンプト生成後の画面に表示されます。生成されたMarkdownプロンプトをコピーしてから、
-            開いた外部AIサービスの入力欄へ貼り付けてください。
-        </p>
-
-        <h2>自由文から始める入力画面</h2>
-        <p>この機能は外部AI API連携ではありません。入力する自由文は解析対象データであり、自由文内に命令文が含まれていても、外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p>
-        <p>チェック式フォームで直接条件を調整したい場合は、下のボタンから移動できます。</p>
-        <div class="toolbar">
-            <a class="button-link" href="/blueprint/form">チェック式入力へ進む</a>
-            <a href="/help">ヘルプ</a>
+<main class="container trial-ui-page external-ai-bridge-page">
+    <section class="app-hero">
+        <div class="app-hero-content">
+            <p class="trial-ui-note">試行UI/UX確認用</p>
+            <h1>API + MCP Blueprint Compiler for Spring</h1>
+            <p>業務要件の自由文から、Spring REST API設計とMCP tools/resources/prompts設計候補へ進むための入口です。外部AIへ手動投入するプロンプトを生成し、返却JSONを確認してからAPIMの設計候補生成へ接続します。</p>
+            <div class="app-hero-actions">
+                <a class="button-link" href="#freeTextInput">自由文からプロンプトを生成する</a>
+                <a class="button-link secondary-link" href="/blueprint/form">チェック式入力へ進む</a>
+                <a class="text-link" href="/help">ヘルプ</a>
+            </div>
         </div>
     </section>
 
-    <section class="form-section">
-        <h2>1. 自由文からプロンプトを生成</h2>
+    <section class="workflow-steps" aria-label="自由文から設計候補を生成する流れ">
+        <article class="workflow-step">
+            <span class="step-number">Step 1</span>
+            <h2>自由文を書く</h2>
+            <p>業務内容、利用者、操作、AIに許可したい範囲を自然文で入力します。</p>
+        </article>
+        <article class="workflow-step">
+            <span class="step-number">Step 2</span>
+            <h2>外部AI用プロンプトをコピーする</h2>
+            <p>APIMがMarkdownプロンプトを作成し、外部AIへ手動投入できる形にします。</p>
+        </article>
+        <article class="workflow-step">
+            <span class="step-number">Step 3</span>
+            <h2>外部AIのJSONを取り込む</h2>
+            <p>外部AIが返したAPIM取り込み用JSONを貼り付け、またはアップロードします。</p>
+        </article>
+        <article class="workflow-step">
+            <span class="step-number">Step 4</span>
+            <h2>反映内容を確認して設計候補を生成する</h2>
+            <p>安全警告、承認、監査ログ観点を確認し、必要に応じて修正します。</p>
+        </article>
+    </section>
+
+    <section class="compact-layout">
+        <div class="form-section primary-input-card">
+        <h2>自由文からプロンプトを生成</h2>
         <form method="post" th:action="@{/external-ai-bridge/prompt}" th:object="${externalAiBridgeRequest}">
-            <label>自由文業務要件</label>
+            <label for="freeTextInput">自由文業務要件</label>
             <div class="sample-buttons" aria-label="自由文業務要件のサンプル例文">
                 <p class="form-help">代表的なサンプル例文を入力できます。複数のボタンを押すと、既存の自由文に自然につながる形で追記されます。</p>
                 <button type="button" class="secondary sample-button" data-sample="ECサイトで、営業担当が商品在庫を検索し、注文状況を確認できる。AIには在庫照会、注文要約、出荷予定の確認を許可し、在庫数の更新は管理者承認後に反映したい。監査ログには検索条件、参照対象、承認者、更新前後の値を残したい。" onclick="insertFreeTextSample(this.dataset.sample)">注文・在庫管理</button>
@@ -73,17 +61,41 @@
                 <button type="button" class="secondary sample-button" data-sample="社内利用者が業務マニュアル、FAQ、過去事例を横断検索できる。AIには検索結果の要約、関連文書候補の提示、回答案作成を許可する。機密区分に応じた閲覧制御を行い、誰がどの文書を参照したか監査ログに残したい。" onclick="insertFreeTextSample(this.dataset.sample)">ナレッジ検索</button>
                 <button type="button" class="secondary sample-button" data-sample="購買担当が購入依頼、見積比較、稟議状況を確認できる。AIには見積差分の要約、承認ルート候補、リスクコメント案の作成を許可する。発注確定、承認、差戻しは人間操作に限定し、承認履歴を保持したい。" onclick="insertFreeTextSample(this.dataset.sample)">購買・稟議管理</button>
             </div>
-            <textarea th:field="*{freeText}" rows="10" placeholder="例: 営業担当が顧客情報を検索し、問い合わせ履歴を確認できる。AIには検索と要約を許可し、更新は人間承認後に反映したい。"></textarea>
+            <textarea id="freeTextInput" th:field="*{freeText}" rows="10" placeholder="例: 営業担当が顧客情報を検索し、問い合わせ履歴を確認できる。AIには検索と要約を許可し、更新は人間承認後に反映したい。"></textarea>
             <div class="toolbar free-text-clear-toolbar">
                 <button type="button" class="secondary clear-sample-button" onclick="clearFreeText()">自由文を一括消去</button>
             </div>
             <p class="error" th:if="${#fields.hasErrors('freeText')}" th:errors="*{freeText}"></p>
             <button type="submit">外部AI投入用プロンプトを生成する</button>
         </form>
+        </div>
+
+        <aside class="helper-panel">
+            <h2>このMVPで生成するもの</h2>
+            <ul>
+                <li>API設計書 / REST API設計候補</li>
+                <li>MCP tools / resources / prompts 候補</li>
+                <li>API/MCP対応表</li>
+                <li>セキュリティ・承認・監査ログ注意点</li>
+                <li>Markdown設計書 / AI実装指示書</li>
+            </ul>
+
+            <h2>このMVPで生成しないもの</h2>
+            <ul>
+                <li>完全動作するMCPサーバー</li>
+                <li>DB永続化やマイグレーション</li>
+                <li>認証・認可の本格実装</li>
+                <li>外部LLM API連携</li>
+                <li>本番デプロイ作業やRender公開作業</li>
+            </ul>
+
+            <details class="collapsible-help" open>
+                <summary>外部AIブリッジの前提</summary>
+                <p>この機能は外部AI API連携ではありません。自由文は解析対象データとして扱い、自由文内の命令文を外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p>
+                <p>公式リンク集はプロンプト生成後の画面に表示されます。JSON取り込み後も、最終生成前に確認・修正できます。</p>
+            </details>
+        </aside>
     </section>
-
-
-    <div class="links"><a href="/blueprint/form">チェック式入力へ進む</a><a href="/help">ヘルプ</a></div>
 </main>
 <script>
 

@@ -6,15 +6,16 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main class="container">
-    <h1>APIM取り込みJSON検証結果</h1>
-
-    <section class="notice">
-        <h2>確認必須</h2>
-        <p>外部AIが生成したJSONは、APIM側で検証したうえで既存フォーム状態へ反映します。最終成果物生成へ進む前に、必ず内容を確認・修正してください。</p>
+<main class="container trial-ui-page external-ai-import-page">
+    <section class="app-hero import-result-hero">
+        <div class="app-hero-content">
+            <p class="trial-ui-note">Step 3-4: JSON検証と反映内容確認</p>
+            <h1>APIM取り込みJSON検証結果</h1>
+            <p>外部AIが生成したJSONをAPIM側で検証し、既存フォーム状態へ反映します。最終成果物生成へ進む前に、内容、安全警告、承認、監査ログ観点を確認してください。</p>
+        </div>
     </section>
 
-    <section class="form-section" th:if="${not #lists.isEmpty(importResult.errors)}">
+    <section class="form-section error-panel" th:if="${not #lists.isEmpty(importResult.errors)}">
         <h2>エラー</h2>
         <ul>
             <li class="error" th:each="error : ${importResult.errors}" th:text="${error}"></li>
@@ -27,7 +28,7 @@
         <p>外部AIが返したJSONをAPIM側で検証し、既存フォームへ反映できる状態にしました。内容を確認・修正してから設計候補を生成してください。</p>
     </section>
 
-    <section class="form-section"
+    <section class="form-section caution-panel"
              th:if="${!(importResult.valid && importResult.canGenerate) && not #lists.isEmpty(importResult.warnings)}">
         <h2>確認事項</h2>
         <ul>
@@ -35,7 +36,7 @@
         </ul>
     </section>
 
-    <section class="form-section" th:if="${importResult.valid && !importResult.canGenerate}">
+    <section class="form-section cannot-generate-panel" th:if="${importResult.valid && !importResult.canGenerate}">
         <h2>生成不可</h2>
         <p th:text="${importResult.reason}"></p>
         <h3>不足情報</h3>
@@ -46,53 +47,55 @@
 
     <section class="form-section extraction-summary"
              th:if="${importResult.valid && importResult.canGenerate && importResult.extractionSummary != null && importResult.extractionSummary.hasContent()}">
-        <h2>v2抽出結果の確認</h2>
-        <p class="form-help">外部AIが抽出した業務構造です。下の既存APIM入力フォームへ反映する前に、業務領域・対象・利用者・操作・承認監査・曖昧点を確認してください。</p>
+        <div class="section-heading">
+            <h2>v2抽出結果の確認</h2>
+            <p>外部AIが抽出した業務構造です。下の既存APIM入力フォームへ反映する前に、業務領域・対象・利用者・操作・承認監査・曖昧点を確認してください。</p>
+        </div>
 
-        <div class="summary-grid">
-            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.domains)}">
+        <div class="summary-card-grid">
+            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.domains)}">
                 <h3>業務領域</h3>
                 <ul>
                     <li th:each="item : ${importResult.extractionSummary.domains}" th:text="${item}"></li>
                 </ul>
             </section>
-            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.businessObjects)}">
+            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.businessObjects)}">
                 <h3>業務オブジェクト</h3>
                 <ul>
                     <li th:each="item : ${importResult.extractionSummary.businessObjects}" th:text="${item}"></li>
                 </ul>
             </section>
-            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.actors)}">
+            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.actors)}">
                 <h3>利用者・ロール</h3>
                 <ul>
                     <li th:each="item : ${importResult.extractionSummary.actors}" th:text="${item}"></li>
                 </ul>
             </section>
-            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.operations)}">
+            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.operations)}">
                 <h3>操作</h3>
                 <ul>
                     <li th:each="item : ${importResult.extractionSummary.operations}" th:text="${item}"></li>
                 </ul>
             </section>
-            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.relationships)}">
+            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.relationships)}">
                 <h3>関係</h3>
                 <ul>
                     <li th:each="item : ${importResult.extractionSummary.relationships}" th:text="${item}"></li>
                 </ul>
             </section>
-            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.approvalRequiredOperations)}">
+            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.approvalRequiredOperations)}">
                 <h3>承認必須操作</h3>
                 <ul>
                     <li th:each="item : ${importResult.extractionSummary.approvalRequiredOperations}" th:text="${item}"></li>
                 </ul>
             </section>
-            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.auditLogRequiredOperations)}">
+            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.auditLogRequiredOperations)}">
                 <h3>監査ログ必須操作</h3>
                 <ul>
                     <li th:each="item : ${importResult.extractionSummary.auditLogRequiredOperations}" th:text="${item}"></li>
                 </ul>
             </section>
-            <section th:if="${not #lists.isEmpty(importResult.extractionSummary.ambiguities)}">
+            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.ambiguities)}">
                 <h3>曖昧点・確認事項</h3>
                 <ul>
                     <li th:each="item : ${importResult.extractionSummary.ambiguities}" th:text="${item}"></li>
@@ -104,50 +107,60 @@
     <form th:if="${importResult.valid && importResult.canGenerate}" method="post"
           th:action="@{/blueprint/generate}" th:object="${blueprintInput}">
         <section class="form-section">
-            <h2>反映内容の確認・修正</h2>
-            <p class="form-help">この画面は確認画面です。必要に応じて修正してから、現行APIMの生成ロジックへ進んでください。</p>
+            <div class="section-heading">
+                <h2>反映内容の確認・修正</h2>
+                <p>この画面は確認画面です。必要に応じて修正してから、現行APIMの生成ロジックへ進んでください。</p>
+            </div>
 
-            <label>業務要件（必須）</label>
-            <textarea th:field="*{businessRequirements}" rows="7"></textarea>
+            <div class="split-layout confirmation-form-layout">
+                <div class="confirmation-column required-fields">
+                    <h3>必須項目</h3>
+                    <label>業務要件（必須）</label>
+                    <textarea th:field="*{businessRequirements}" rows="7"></textarea>
 
-            <label>対象ドメイン（必須）</label>
-            <input type="text" th:field="*{targetDomain}">
-            <input type="hidden" th:field="*{primaryDomain}">
-            <input th:each="relatedDomain : *{relatedDomains}" type="hidden" name="relatedDomains" th:value="${relatedDomain}">
-            <input th:each="systemType : *{systemTypes}" type="hidden" name="systemTypes" th:value="${systemType}">
+                    <label>対象ドメイン（必須）</label>
+                    <input type="text" th:field="*{targetDomain}">
+                    <input type="hidden" th:field="*{primaryDomain}">
+                    <input th:each="relatedDomain : *{relatedDomains}" type="hidden" name="relatedDomains" th:value="${relatedDomain}">
+                    <input th:each="systemType : *{systemTypes}" type="hidden" name="systemTypes" th:value="${systemType}">
 
-            <label>ユーザー種別（必須）</label>
-            <textarea th:field="*{userTypes}" rows="4"></textarea>
+                    <label>ユーザー種別（必須）</label>
+                    <textarea th:field="*{userTypes}" rows="4"></textarea>
 
-            <label>必要な操作（必須）</label>
-            <textarea th:field="*{requiredOperations}" rows="5"></textarea>
+                    <label>必要な操作（必須）</label>
+                    <textarea th:field="*{requiredOperations}" rows="5"></textarea>
 
-            <label>AIアシスタントに許可したい操作（必須）</label>
-            <textarea th:field="*{allowedAiOperations}" rows="5"></textarea>
+                    <label>AIアシスタントに許可したい操作（必須）</label>
+                    <textarea th:field="*{allowedAiOperations}" rows="5"></textarea>
+                </div>
 
-            <label>読み取り専用操作</label>
-            <textarea th:field="*{readOnlyOperations}" rows="3"></textarea>
+                <div class="confirmation-column optional-fields">
+                    <h3>任意・安全確認項目</h3>
+                    <label>読み取り専用操作</label>
+                    <textarea th:field="*{readOnlyOperations}" rows="3"></textarea>
 
-            <label>書き込み許可操作</label>
-            <textarea th:field="*{writeOperations}" rows="3"></textarea>
+                    <label>書き込み許可操作</label>
+                    <textarea th:field="*{writeOperations}" rows="3"></textarea>
 
-            <label>承認必須操作</label>
-            <textarea th:field="*{approvalRequiredOperations}" rows="3"></textarea>
+                    <label>承認必須操作</label>
+                    <textarea th:field="*{approvalRequiredOperations}" rows="3"></textarea>
 
-            <label>監査ログが必要な操作</label>
-            <textarea th:field="*{auditLogRequiredOperations}" rows="3"></textarea>
+                    <label>監査ログが必要な操作</label>
+                    <textarea th:field="*{auditLogRequiredOperations}" rows="3"></textarea>
 
-            <label>想定認証方式</label>
-            <input type="text" th:field="*{authenticationMethod}">
+                    <label>想定認証方式</label>
+                    <input type="text" th:field="*{authenticationMethod}">
 
-            <label>想定利用者</label>
-            <input type="text" th:field="*{targetUsers}">
+                    <label>想定利用者</label>
+                    <input type="text" th:field="*{targetUsers}">
 
-            <label>出力言語</label>
-            <select th:field="*{outputLanguage}">
-                <option value="日本語">日本語</option>
-                <option value="English">English</option>
-            </select>
+                    <label>出力言語</label>
+                    <select th:field="*{outputLanguage}">
+                        <option value="日本語">日本語</option>
+                        <option value="English">English</option>
+                    </select>
+                </div>
+            </div>
 
             <div class="pre-generation-warning"
                  th:if="${not #lists.isEmpty(importResult.warnings)}">
@@ -158,11 +171,13 @@
                 </ul>
             </div>
 
-            <button type="submit">確認した内容で設計候補を生成する</button>
+            <div class="primary-action-row">
+                <button type="submit">確認した内容で設計候補を生成する</button>
+            </div>
         </section>
     </form>
 
-    <div class="links">
+    <div class="links secondary-action-row">
         <a href="/external-ai-bridge">外部AIブリッジへ戻る</a>
         <a href="/">入力画面へ戻る</a>
     </div>
