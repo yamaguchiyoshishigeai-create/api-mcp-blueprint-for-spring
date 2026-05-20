@@ -61,11 +61,11 @@
                 <button type="button" class="secondary sample-button" data-sample="購買担当が購入依頼、見積比較、稟議状況を確認できる。AIには見積差分の要約、承認ルート候補、リスクコメント案の作成を許可する。発注確定、承認、差戻しは人間操作に限定し、承認履歴を保持したい。" onclick="insertFreeTextSample(this.dataset.sample)">購買・稟議管理</button>
             </div>
             <textarea id="freeTextInput" th:field="*{freeText}" rows="10" placeholder="例: 営業担当が顧客情報を検索し、問い合わせ履歴を確認できる。AIには検索と要約を許可し、更新は人間承認後に反映したい。"></textarea>
-            <div class="toolbar free-text-clear-toolbar">
+            <div class="free-text-action-row">
+                <button type="submit" class="free-text-generate-button">外部AI投入用プロンプトを生成する</button>
                 <button type="button" class="secondary clear-sample-button" onclick="clearFreeText()">自由文を一括消去</button>
             </div>
             <p class="error" th:if="${#fields.hasErrors('freeText')}" th:errors="*{freeText}"></p>
-            <button type="submit">外部AI投入用プロンプトを生成する</button>
         </form>
         </div>
 
