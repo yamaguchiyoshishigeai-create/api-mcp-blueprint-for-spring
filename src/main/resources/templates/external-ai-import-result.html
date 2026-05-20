@@ -21,8 +21,15 @@
         </ul>
     </section>
 
-    <section class="form-section" th:if="${not #lists.isEmpty(importResult.warnings)}">
-        <h2>警告</h2>
+    <section class="success-announcement"
+             th:if="${importResult.valid && importResult.canGenerate}">
+        <h2>JSONの検証と反映準備が完了しました</h2>
+        <p>外部AIが返したJSONをAPIM側で検証し、既存フォームへ反映できる状態にしました。内容を確認・修正してから設計候補を生成してください。</p>
+    </section>
+
+    <section class="form-section"
+             th:if="${!(importResult.valid && importResult.canGenerate) && not #lists.isEmpty(importResult.warnings)}">
+        <h2>確認事項</h2>
         <ul>
             <li class="warning" th:each="warning : ${importResult.warnings}" th:text="${warning}"></li>
         </ul>
@@ -141,6 +148,15 @@
                 <option value="日本語">日本語</option>
                 <option value="English">English</option>
             </select>
+
+            <div class="pre-generation-warning"
+                 th:if="${not #lists.isEmpty(importResult.warnings)}">
+                <h3>設計候補生成前の確認事項</h3>
+                <p>JSONの取り込み処理は完了しています。以下は、設計候補を生成する前に人間が確認すべき安全・承認・権限上の注意事項です。</p>
+                <ul>
+                    <li class="pre-generation-warning-item" th:each="warning : ${importResult.warnings}" th:text="${warning}"></li>
+                </ul>
+            </div>
 
             <button type="submit">確認した内容で設計候補を生成する</button>
         </section>

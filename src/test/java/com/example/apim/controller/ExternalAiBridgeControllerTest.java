@@ -10,10 +10,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,13 +50,8 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("自由文業務要件")))
                 .andExpect(content().string(containsString("生成されたプロンプトをChatGPT等の外部AIへ手動投入")))
                 .andExpect(content().string(containsString("JSON取り込みは、外部AI投入用プロンプトを生成した後の画面で行います")))
-                .andExpect(content().string(containsString("外部AI公式リンク集")))
-                .andExpect(content().string(containsString("ChatGPT公式サイトを別タブで開く")))
-                .andExpect(content().string(containsString("Claude公式サイトを別タブで開く")))
-                .andExpect(content().string(containsString("Gemini公式サイトを別タブで開く")))
-                .andExpect(content().string(containsString("Microsoft Copilot公式サイトを別タブで開く")))
-                .andExpect(content().string(containsString("target=\"_blank\"")))
-                .andExpect(content().string(containsString("rel=\"noopener noreferrer\"")))
+                .andExpect(content().string(containsString("外部AI公式リンク集について")))
+                .andExpect(content().string(containsString("リンク集はプロンプト生成後の画面に表示されます")))
                 .andExpect(content().string(containsString("チェック式入力へ進む")))
                 .andExpect(content().string(containsString("代表的なサンプル例文を入力できます")))
                 .andExpect(content().string(containsString("複数のボタンを押すと、既存の自由文に自然につながる形で追記されます")))
@@ -72,6 +72,21 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("購買・稟議管理")))
                 .andExpect(content().string(containsString("insertFreeTextSample")))
                 .andExpect(content().string(containsString("data-sample")));
+    }
+
+    @Test
+    void bridgePageDoesNotKeepDetailedOfficialAiLinkList() throws Exception {
+        MvcResult result = mockMvc.perform(get("/external-ai-bridge"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("external-ai-bridge"))
+                .andReturn();
+
+        String html = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        assertTrue(html.contains("リンク集はプロンプト生成後の画面に表示されます"));
+        assertFalse(html.contains("ChatGPT公式サイトを別タブで開く"));
+        assertFalse(html.contains("Claude公式サイトを別タブで開く"));
+        assertFalse(html.contains("Gemini公式サイトを別タブで開く"));
+        assertFalse(html.contains("Microsoft Copilot公式サイトを別タブで開く"));
     }
 
     @Test
@@ -96,6 +111,13 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("navigator.clipboard.writeText")))
                 .andExpect(content().string(containsString("promptText.value || promptText.textContent || promptText.innerText")))
                 .andExpect(content().string(containsString("document.execCommand")))
+                .andExpect(content().string(containsString("外部AI公式リンク集")))
+                .andExpect(content().string(containsString("ChatGPT公式サイトを別タブで開く")))
+                .andExpect(content().string(containsString("Claude公式サイトを別タブで開く")))
+                .andExpect(content().string(containsString("Gemini公式サイトを別タブで開く")))
+                .andExpect(content().string(containsString("Microsoft Copilot公式サイトを別タブで開く")))
+                .andExpect(content().string(containsString("target=\"_blank\"")))
+                .andExpect(content().string(containsString("rel=\"noopener noreferrer\"")))
                 .andExpect(content().string(containsString("2. APIM取り込み用JSONを読み込む")))
                 .andExpect(content().string(containsString("ファイルアップロードで取り込む")))
                 .andExpect(content().string(containsString("貼り付けで取り込む")))
@@ -192,6 +214,56 @@ class ExternalAiBridgeControllerTest {
     }
 
     @Test
+    void importTextWithValidJsonShowsSuccessBeforeWarnings() throws Exception {
+        BlueprintInput input = validBlueprintInput();
+        when(bridgeService.importJson("{valid-warning}"))
+                .thenReturn(ExternalAiImportResult.canGenerate(
+                        input,
+                        "ok",
+                        List.of("承認必須操作は人間確認が必要です。")));
+
+        MvcResult result = mockMvc.perform(post("/external-ai-bridge/import-text")
+                        .param("jsonText", "{valid-warning}"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("external-ai-import-result"))
+                .andExpect(model().attributeExists("blueprintInput"))
+                .andExpect(content().string(containsString("JSONの検証と反映準備が完了しました")))
+                .andExpect(content().string(containsString("反映内容の確認・修正")))
+                .andExpect(content().string(containsString("設計候補生成前の確認事項")))
+                .andExpect(content().string(containsString("確認した内容で設計候補を生成する")))
+                .andReturn();
+
+        String html = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        assertAppearsInOrder(
+                html,
+                "JSONの検証と反映準備が完了しました",
+                "設計候補生成前の確認事項");
+    }
+
+    @Test
+    void importTextWithValidJsonShowsWarningsImmediatelyBeforeGenerateButton() throws Exception {
+        BlueprintInput input = validBlueprintInput();
+        when(bridgeService.importJson("{valid-warning-order}"))
+                .thenReturn(ExternalAiImportResult.canGenerate(
+                        input,
+                        "ok",
+                        List.of("監査ログ対象を確認してください。")));
+
+        MvcResult result = mockMvc.perform(post("/external-ai-bridge/import-text")
+                        .param("jsonText", "{valid-warning-order}"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("external-ai-import-result"))
+                .andReturn();
+
+        String html = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        assertAppearsInOrder(
+                html,
+                "反映内容の確認・修正",
+                "設計候補生成前の確認事項",
+                "確認した内容で設計候補を生成する");
+    }
+
+    @Test
     void importTextWithCanGenerateFalseShowsReason() throws Exception {
         when(bridgeService.importJson("{cannot}")).thenReturn(ExternalAiImportResult.cannotGenerate(
                 "対象ドメインが不足しています。", List.of("対象ドメイン"), List.of()));
@@ -214,7 +286,34 @@ class ExternalAiBridgeControllerTest {
                         .param("jsonText", "<script>alert(1)</script>"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
-                .andExpect(content().string(containsString("&lt;script&gt;alert(1)&lt;/script&gt;")));
+                .andExpect(content().string(containsString("エラー")))
+                .andExpect(content().string(containsString("<h2>エラー</h2>")))
+                .andExpect(content().string(containsString("&lt;script&gt;alert(1)&lt;/script&gt;")))
+                .andExpect(content().string(not(containsString("JSONの検証と反映準備が完了しました"))))
+                .andExpect(content().string(not(containsString("確認した内容で設計候補を生成する"))))
+                .andExpect(content().string(not(containsString("反映内容の確認・修正"))));
+    }
+
+    private static BlueprintInput validBlueprintInput() {
+        BlueprintInput input = new BlueprintInput();
+        input.setBusinessRequirements("営業担当が顧客情報を検索する。");
+        input.setTargetDomain("顧客管理");
+        input.setPrimaryDomain("顧客管理");
+        input.setRelatedDomains(List.of("顧客管理"));
+        input.setUserTypes("- 営業担当\n- AIアシスタント");
+        input.setRequiredOperations("- 顧客検索");
+        input.setAllowedAiOperations("- 顧客検索");
+        return input;
+    }
+
+    private static void assertAppearsInOrder(String html, String... texts) {
+        int previousIndex = -1;
+        for (String text : texts) {
+            int currentIndex = html.indexOf(text);
+            assertTrue(currentIndex >= 0, () -> "Expected to find text: " + text);
+            assertTrue(currentIndex > previousIndex, () -> "Expected text to appear later: " + text);
+            previousIndex = currentIndex;
+        }
     }
 
     @Test
