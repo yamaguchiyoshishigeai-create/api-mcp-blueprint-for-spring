@@ -91,7 +91,14 @@ public class ExternalAiPromptBridgeService {
                 - domains, businessObjects, actors, operations, securityPolicy は必ず1件以上または有効な内容を含めてください。
                 - operationの actorIds / objectIds は、actors / businessObjects の id を参照してください。
                 - operationGroups と relationships は抽出できる場合に出力してください。
+                - relationships を出力する場合、必ず fromObjectId / toObjectId / type を使用してください。
+                - sourceObjectId / targetObjectId / relationshipType は使用しないでください。
                 - ambiguities は、曖昧点がある場合に必ず出力してください。曖昧点がない場合は空配列にしてください。
+                - ambiguities を出力する場合、必ず message / affectedOperationIds / defaultHandling を使用してください。
+                - description は ambiguities では使用せず、曖昧点本文は message に入れてください。
+                - affectedOperationIds は、曖昧点に関連する operations[].id を配列で入れてください。
+                - 影響操作が複数ある場合は、affectedOperationIds にすべて列挙してください。
+                - 曖昧点が特定操作に関係する限り、affectedOperationIds を省略しないでください。
 
                 出力形式:
                 {
@@ -156,7 +163,15 @@ public class ExternalAiPromptBridgeService {
                     }
                   ],
                   "operationGroups": [],
-                  "relationships": [],
+                  "relationships": [
+                    {
+                      "id": "contract_has_invoice",
+                      "fromObjectId": "contract",
+                      "toObjectId": "invoice",
+                      "type": "has_many",
+                      "description": "1契約は複数請求を持つ。"
+                    }
+                  ],
                   "securityPolicy": {
                     "defaultAuthentication": "authenticated_user",
                     "defaultAuthorization": "role_based",
@@ -173,7 +188,18 @@ public class ExternalAiPromptBridgeService {
                     "preferDraftEndpointsForMessages": true,
                     "avoidDirectDangerousWriteEndpoints": true
                   },
-                  "ambiguities": []
+                  "ambiguities": [
+                    {
+                      "id": "approval_actor_unspecified",
+                      "type": "missing_approval_actor",
+                      "message": "承認者ロールが明示されていません。",
+                      "affectedOperationIds": [
+                        "request_invoice_confirmation"
+                      ],
+                      "defaultHandling": "抽象ロール approver として扱い、具体ロールは後続設計で確定する。",
+                      "severity": "medium"
+                    }
+                  ]
                 }
 
                 使用できる代表値:
@@ -185,8 +211,18 @@ public class ExternalAiPromptBridgeService {
                 - operation.aiPermission: allowed, allowed_with_review, not_allowed_directly, human_only, unknown
                 - operation.auditLogRequired: none, recommended, required
                 - operation.riskLevel: low, medium, high, critical
+                - relationship.type: references, owns, has_one, has_many, depends_on, triggers
                 - ambiguity.type: missing_actor, missing_object, missing_approval_actor, draft_vs_send_boundary, proposal_vs_write_boundary, external_action_unclear, audit_requirement_unclear, authorization_unclear, data_sensitivity_unclear
                 - ambiguity.severity: low, medium, high, critical
+                - ambiguity 完全例:
+                  {
+                    "id": "approval_actor_unspecified",
+                    "type": "missing_approval_actor",
+                    "message": "承認者ロールが明示されていません。",
+                    "affectedOperationIds": ["request_invoice_confirmation"],
+                    "defaultHandling": "抽象ロール approver として扱い、具体ロールは後続設計で確定する。",
+                    "severity": "medium"
+                  }
 
                 解析対象データ:
                 <apim-analysis-target-data>
@@ -691,18 +727,30 @@ public class ExternalAiPromptBridgeService {
             return;
         }
         for (int i = 0; i < relationships.size(); i++) {
-            String fromObjectId = textValue(relationships.get(i).get("fromObjectId"));
-            String toObjectId = textValue(relationships.get(i).get("toObjectId"));
+            JsonNode relationship = relationships.get(i);
+            String path = "relationships[" + i + "]";
+            String fromObjectId = v2RequiredText(relationship, "fromObjectId", path + ".fromObjectId", errors);
+            String toObjectId = v2RequiredText(relationship, "toObjectId", path + ".toObjectId", errors);
+            v2RequiredText(relationship, "type", path + ".type", errors);
+            v2RejectRelationshipAlias(relationship, "sourceObjectId", "fromObjectId", path, errors);
+            v2RejectRelationshipAlias(relationship, "targetObjectId", "toObjectId", path, errors);
+            v2RejectRelationshipAlias(relationship, "relationshipType", "type", path, errors);
             if (!fromObjectId.isBlank() && !objectIds.contains(fromObjectId)) {
-                errors.add("relationships[" + i
-                        + "].fromObjectId は businessObjects に存在する id を参照する必要があります: "
+                errors.add(path + ".fromObjectId は businessObjects に存在する id を参照する必要があります: "
                         + fromObjectId);
             }
             if (!toObjectId.isBlank() && !objectIds.contains(toObjectId)) {
-                errors.add("relationships[" + i
-                        + "].toObjectId は businessObjects に存在する id を参照する必要があります: "
+                errors.add(path + ".toObjectId は businessObjects に存在する id を参照する必要があります: "
                         + toObjectId);
             }
+        }
+    }
+
+    private void v2RejectRelationshipAlias(JsonNode relationship, String aliasFieldName, String canonicalFieldName,
+                                           String path, List<String> errors) {
+        if (relationship.has(aliasFieldName)) {
+            errors.add(path + "." + aliasFieldName + " は使用できません。" + canonicalFieldName
+                    + " を使用してください。");
         }
     }
 
@@ -713,8 +761,14 @@ public class ExternalAiPromptBridgeService {
         }
         for (int i = 0; i < ambiguities.size(); i++) {
             JsonNode ambiguity = ambiguities.get(i);
+            String path = "ambiguities[" + i + "]";
+            v2RequiredText(ambiguity, "message", path + ".message", errors);
             v2ValidateReferences(ambiguity.get("affectedOperationIds"), operationIds,
-                    "ambiguities[" + i + "].affectedOperationIds", errors);
+                    path + ".affectedOperationIds", errors);
+            v2RequiredText(ambiguity, "defaultHandling", path + ".defaultHandling", errors);
+            if (ambiguity.has("description")) {
+                errors.add(path + ".description は使用できません。曖昧点本文は message を使用してください。");
+            }
             String message = textValue(ambiguity.get("message"));
             if (!message.isBlank()) {
                 warnings.add("確認事項: " + message);

@@ -73,6 +73,25 @@ class ExternalAiPromptBridgeServiceTest {
     }
 
     @Test
+    void promptShowsCompleteV2RelationshipAndAmbiguityShapes() {
+        String prompt = service.generatePrompt("契約ごとに請求を管理し、請求確定は承認者が確認する。");
+
+        assertThat(prompt)
+                .contains("\"fromObjectId\"")
+                .contains("\"toObjectId\"")
+                .contains("\"type\"")
+                .contains("\"message\"")
+                .contains("\"affectedOperationIds\"")
+                .contains("\"defaultHandling\"")
+                .contains("sourceObjectId / targetObjectId / relationshipType は使用しない")
+                .contains("description は ambiguities では使用せず、曖昧点本文は message")
+                .contains("affectedOperationIds は、曖昧点に関連する operations[].id")
+                .contains("\"fromObjectId\": \"contract\"")
+                .contains("\"toObjectId\": \"invoice\"")
+                .contains("\"affectedOperationIds\": [\"request_invoice_confirmation\"]");
+    }
+
+    @Test
     void importsValidJson() {
         ExternalAiImportResult result = service.importJson(validJson());
 
@@ -265,6 +284,45 @@ class ExternalAiPromptBridgeServiceTest {
         assertThat(result.warnings()).contains(
                 "operations[3] は危険操作の可能性がありますが approvalRequired=true ではありません。",
                 "operations[3] は危険操作の可能性がありますが auditLogRequired=required ではありません。"
+        );
+    }
+
+    @Test
+    void rejectsV2AmbiguityMissingRequiredFieldsAndDescriptionAlias() {
+        String invalidJson = validV2Json()
+                .replace("\"message\": \"請求確定の承認者ロールが未確定です。\",",
+                        "\"description\": \"請求確定の承認者ロールが未確定です。\",")
+                .replace("\"affectedOperationIds\": [\"request_invoice_confirmation\"],", "")
+                .replace("\"defaultHandling\": \"抽象ロール approver として扱う。\",", "");
+
+        ExternalAiImportResult result = service.importJson(invalidJson);
+
+        assertThat(result.valid()).isFalse();
+        assertThat(result.errors()).contains(
+                "ambiguities[0].message は必須です。",
+                "ambiguities[0].affectedOperationIds は必須です。",
+                "ambiguities[0].defaultHandling は必須です。",
+                "ambiguities[0].description は使用できません。曖昧点本文は message を使用してください。"
+        );
+    }
+
+    @Test
+    void rejectsV2RelationshipAliasFieldsWithoutAdoptingThem() {
+        String invalidJson = validV2Json()
+                .replace("\"fromObjectId\": \"opportunity\"", "\"sourceObjectId\": \"opportunity\"")
+                .replace("\"toObjectId\": \"invoice\"", "\"targetObjectId\": \"invoice\"")
+                .replace("\"type\": \"references\"", "\"relationshipType\": \"references\"");
+
+        ExternalAiImportResult result = service.importJson(invalidJson);
+
+        assertThat(result.valid()).isFalse();
+        assertThat(result.errors()).contains(
+                "relationships[0].fromObjectId は必須です。",
+                "relationships[0].toObjectId は必須です。",
+                "relationships[0].type は必須です。",
+                "relationships[0].sourceObjectId は使用できません。fromObjectId を使用してください。",
+                "relationships[0].targetObjectId は使用できません。toObjectId を使用してください。",
+                "relationships[0].relationshipType は使用できません。type を使用してください。"
         );
     }
 
