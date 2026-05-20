@@ -6,64 +6,51 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main class="container">
-    <h1>外部AI投入用プロンプト</h1>
-
-    <section class="notice">
-        <h2>次の操作</h2>
-        <p>以下のMarkdownをChatGPT等の外部AIへ手動投入してください。APIMは外部AIへ自動送信せず、APIキーも保存しません。</p>
-        <p>外部AIが返したJSONは、このページ下部の「APIM取り込み用JSONを読み込む」から、貼り付けまたはアップロードで取り込めます。</p>
-    </section>
-
-    <div class="toolbar">
-        <a href="/external-ai-bridge/prompt/download">Markdownダウンロード</a>
-        <a href="/external-ai-bridge">自由文入力トップへ戻る</a>
-    </div>
-    <section class="form-section">
-        <h2>生成プロンプト</h2>
-        <textarea id="externalAiPromptText" class="prompt-preview" readonly rows="28" th:text="${externalAiPrompt}"></textarea>
-        <div class="toolbar prompt-copy-toolbar">
+<main class="container trial-ui-page external-ai-prompt-page">
+    <section class="app-hero">
+        <div class="app-hero-content">
+            <p class="trial-ui-note">Step 2: 外部AI投入用プロンプト</p>
+            <h1>外部AI投入用プロンプト</h1>
+            <p>生成されたMarkdownをコピーし、ChatGPT等の外部AIへ手動投入してください。APIMは外部AIへ自動送信せず、APIキーも保存しません。</p>
+            <div class="app-hero-actions">
+                <button type="button" onclick="copyGeneratedPrompt()">生成プロンプトを一括コピー</button>
+                <a class="button-link secondary-link" href="/external-ai-bridge/prompt/download">Markdownダウンロード</a>
+                <a class="text-link" href="/external-ai-bridge">自由文入力トップへ戻る</a>
+            </div>
             <span id="copyStatus" class="copy-feedback-bubble" aria-live="polite" hidden></span>
-            <button type="button" class="secondary" onclick="copyGeneratedPrompt()">生成プロンプトを一括コピー</button>
         </div>
     </section>
 
-    <section class="form-section">
-        <h2>外部AI公式リンク集</h2>
-        <p>
-            このページのプロンプトをコピーし、開いた外部AIサービスの入力欄へ貼り付けてください。
-            以下は各AIサービスの公式サイトへの外部リンクです。リンクをクリックすると、別タブで外部サイトが開きます。
-        </p>
-        <p class="form-help">
-            当サイトは各サービス提供元と提携・公認関係にあるものではありません。
-            各サービスの利用条件、料金、提供地域、機能は変更される可能性があります。最新情報は各公式サイトをご確認ください。
-            ブラウザやOSの仕様上、APIM側から左右分割表示を強制することはできません。必要に応じて、別タブや別ウィンドウをユーザー側で横に並べてください。
-        </p>
-        <ul>
-            <li>
-                <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">
-                    ChatGPT公式サイトを別タブで開く
-                </a>
-            </li>
-            <li>
-                <a href="https://claude.ai/" target="_blank" rel="noopener noreferrer">
-                    Claude公式サイトを別タブで開く
-                </a>
-            </li>
-            <li>
-                <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">
-                    Gemini公式サイトを別タブで開く
-                </a>
-            </li>
-            <li>
-                <a href="https://copilot.microsoft.com/" target="_blank" rel="noopener noreferrer">
-                    Microsoft Copilot公式サイトを別タブで開く
-                </a>
-            </li>
-        </ul>
+    <section class="split-layout">
+        <div class="form-section prompt-card">
+            <div class="section-heading">
+                <h2>生成プロンプトプレビュー</h2>
+                <p>内容を確認し、必要に応じてMarkdownとして保存できます。</p>
+            </div>
+            <textarea id="externalAiPromptText" class="prompt-preview" readonly rows="28" th:text="${externalAiPrompt}"></textarea>
+            <div class="toolbar prompt-copy-toolbar">
+                <button type="button" class="secondary" onclick="copyGeneratedPrompt()">生成プロンプトを一括コピー</button>
+            </div>
+        </div>
+
+        <aside class="helper-panel prompt-side-panel">
+            <h2>外部AI公式リンク集</h2>
+            <p>このページのプロンプトをコピーし、開いた外部AIサービスの入力欄へ貼り付けてください。</p>
+            <div class="feature-grid external-ai-links">
+                <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">ChatGPT公式サイトを別タブで開く</a>
+                <a href="https://claude.ai/" target="_blank" rel="noopener noreferrer">Claude公式サイトを別タブで開く</a>
+                <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">Gemini公式サイトを別タブで開く</a>
+                <a href="https://copilot.microsoft.com/" target="_blank" rel="noopener noreferrer">Microsoft Copilot公式サイトを別タブで開く</a>
+            </div>
+            <details class="collapsible-help" open>
+                <summary>貼り付けと取り込み</summary>
+                <p>外部AIが返したJSONは、このページ下部の「APIM取り込み用JSONを読み込む」から、貼り付けまたはアップロードで取り込めます。</p>
+                <p>当サイトは各サービス提供元と提携・公認関係にあるものではありません。利用条件、料金、提供地域、機能は変更される可能性があります。</p>
+            </details>
+        </aside>
     </section>
 
-    <section class="form-section">
+    <section class="form-section json-import-card">
         <h2>2. APIM取り込み用JSONを読み込む</h2>
         <p class="form-help">外部AIが返したJSONは、貼り付けまたはファイルアップロードのどちらか一方で取り込めます。両方を順番に行う必要はありません。</p>
 
