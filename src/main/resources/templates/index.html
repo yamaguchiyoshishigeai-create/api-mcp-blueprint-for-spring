@@ -367,6 +367,55 @@
         'governance-audit-management': preset(['権限管理', '監査ログ管理', '承認ワークフロー', '契約管理', '通知管理'], '監査担当, セキュリティ担当', '監査担当、セキュリティ担当、承認者、管理者、AIアシスタント', '社内SSO', '統制・監査管理として、権限、監査ログ、承認ワークフロー、契約管理を対象にする。権限変更、承認、却下は人間確認と監査ログを前提にする。', ['承認者', '管理者', 'AIアシスタント'], ['検索', '一覧', '詳細取得', '登録', '更新', '承認', '却下', '権限変更', '通知'], ['検索', '一覧', '詳細参照', '要約', '下書き作成', '更新案の作成'], ['AIは承認を直接実行しない', 'AIは却下を直接実行しない', 'AIは権限変更を直接実行しない'], ['検索', '一覧', '詳細取得', '要約'], ['登録', '更新', '通知', '権限変更'], ['更新', '承認', '却下', '権限変更'], ['登録', '更新', '承認', '却下', '通知', '権限変更'])
     };
 
+    function splitRestoredValues(value) {
+        if (!value) {
+            return [];
+        }
+        return String(value).split(/[,\n、，/／]+/).map(item => item.trim()).filter(item => item.length > 0);
+    }
+
+    function collectCurrentValuesForTarget(targetName) {
+        const directField = document.getElementById(targetName);
+        if (directField) {
+            return splitRestoredValues(directField.value);
+        }
+        if (targetName === 'systemTypePresets') {
+            return Array.isArray(restoredSystemTypes) ? restoredSystemTypes : [];
+        }
+        if (targetName === 'domainCatalog') {
+            const values = [];
+            const targetDomainField = document.getElementById('targetDomain');
+            const primaryDomainField = document.getElementById('primaryDomain');
+            if (targetDomainField) values.push(...splitRestoredValues(targetDomainField.value));
+            if (primaryDomainField) values.push(...splitRestoredValues(primaryDomainField.value));
+            if (Array.isArray(restoredRelatedDomains)) values.push(...restoredRelatedDomains);
+            return values;
+        }
+        return [];
+    }
+
+    function restoreCheckboxGroupFromCurrentValues(targetName) {
+        const restoredValues = new Set(collectCurrentValuesForTarget(targetName));
+        document.querySelectorAll(`input[type="checkbox"][data-target="${targetName}"]`).forEach(checkbox => {
+            checkbox.checked = restoredValues.has(checkbox.value);
+        });
+    }
+
+    function restoreCheckedItemsFromBlueprintInput() {
+        [
+            'systemTypePresets',
+            'domainCatalog',
+            'userTypes',
+            'requiredOperations',
+            'allowedAiOperations',
+            'businessRequirements',
+            'readOnlyOperations',
+            'writeOperations',
+            'approvalRequiredOperations',
+            'auditLogRequiredOperations'
+        ].forEach(restoreCheckboxGroupFromCurrentValues);
+    }
+
     function preset(domains, customUserTypes, targetUsers, authenticationMethod, supplement, userTypes, requiredOperations, allowedAiOperations, businessRequirements, readOnlyOperations, writeOperations, approvalRequiredOperations, auditLogRequiredOperations) {
         return { domains, customUserTypes, targetUsers, authenticationMethod, supplement, userTypes, requiredOperations, allowedAiOperations, businessRequirements, readOnlyOperations, writeOperations, approvalRequiredOperations, auditLogRequiredOperations };
     }
@@ -600,6 +649,10 @@
         syncInputModelFields();
     });
     restoreGeneratedInputState();
+    document.addEventListener('DOMContentLoaded', () => {
+        restoreCheckedItemsFromBlueprintInput();
+    });
+
 </script>
 </body>
 </html>
