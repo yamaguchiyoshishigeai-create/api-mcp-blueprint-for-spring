@@ -1,6 +1,7 @@
 package com.example.apim.controller;
 
 import com.example.apim.model.BlueprintInput;
+import java.util.List;
 import com.example.apim.model.BlueprintResult;
 import com.example.apim.service.BlueprintGenerationService;
 import org.junit.jupiter.api.Test;
@@ -453,4 +454,35 @@ class BlueprintControllerTest {
         mockMvc.perform(get("/blueprint/implementation-instructions/download"))
                 .andExpect(status().isNotFound());
     }
+    @Test
+    void editFormRestoresCheckedItemsFromGeneratedBlueprintInput() throws Exception {
+        BlueprintInput input = new BlueprintInput();
+        input.setTargetDomain("注文管理");
+        input.setPrimaryDomain("注文管理");
+        input.setRelatedDomains(List.of("在庫管理"));
+        input.setSystemTypes(List.of("sales-commerce"));
+        input.setUserTypes("管理者、AIアシスタント");
+        input.setRequiredOperations("検索、更新、通知");
+        input.setAllowedAiOperations("検索、要約");
+        input.setBusinessRequirements("AIは外部送信を直接実行しない");
+        input.setReadOnlyOperations("検索、要約");
+        input.setWriteOperations("更新、通知");
+        input.setApprovalRequiredOperations("更新、外部送信");
+        input.setAuditLogRequiredOperations("更新、通知");
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("blueprintInput", input);
+
+        mockMvc.perform(get("/blueprint/edit").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("restoreCheckedItemsFromBlueprintInput")))
+                .andExpect(content().string(containsString("restoreCheckboxGroupFromCurrentValues")))
+                .andExpect(content().string(containsString("systemTypePresets")))
+                .andExpect(content().string(containsString("domainCatalog")))
+                .andExpect(content().string(containsString("approvalRequiredOperations")))
+                .andExpect(content().string(containsString("sales-commerce")))
+                .andExpect(content().string(containsString("在庫管理")))
+                .andExpect(content().string(containsString("AIは外部送信を直接実行しない")));
+    }
+
 }
