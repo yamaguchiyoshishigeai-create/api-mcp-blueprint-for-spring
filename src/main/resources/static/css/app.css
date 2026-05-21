@@ -658,3 +658,23 @@ button.secondary.sample-button {
   }
 
 }
+
+
+.check-input-page .app-hero-actions .secondary-link { background: #ffffff; color: #173f7a; }
+.check-overview-layout { grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr); margin-bottom: 18px; }
+.check-form-layout { grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.55fr); align-items: start; }
+.check-form-main { min-width: 0; }
+.check-input-form { display: block; }
+.check-input-page .form-section { padding: 18px; }
+.check-input-page fieldset { background: #ffffff; border-color: #dce4f2; box-shadow: 0 8px 22px rgba(20, 34, 58, 0.04); }
+.check-input-page legend { color: #213047; }
+.check-input-page .checkbox-grid label { min-height: 34px; border: 1px solid #e1e8f4; border-radius: 8px; background: #f8fbff; padding: 8px 10px; }
+.check-input-page .checkbox-grid label:hover { background: #eef6ff; border-color: #c8d6f8; }
+.check-input-page .bulk-controls { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px; }
+.check-input-page .bulk-controls button { margin-top: 0; }
+.checklist-top-actions { justify-content: flex-start; margin-top: 16px; }
+.check-submit-row { justify-content: flex-start; background: #ffffff; border: 1px solid #dce4f2; border-radius: 8px; padding: 14px; }
+.check-submit-row button { margin-top: 0; min-height: 44px; }
+.check-sticky-panel { position: sticky; top: 16px; }
+.check-sticky-panel .secondary-action-row { margin-top: 12px; }
+
