@@ -504,4 +504,34 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("AIは外部送信を直接実行しない")));
     }
 
+    @Test
+    void editFormRestoresGeneratedDetailedOperationsToChecklistCandidates() throws Exception {
+        BlueprintInput input = new BlueprintInput();
+        input.setTargetDomain("注文管理 / 在庫管理 / 商品管理");
+        input.setPrimaryDomain("注文管理");
+        input.setRelatedDomains(List.of("在庫管理", "商品管理"));
+        input.setSystemTypes(List.of("sales-commerce"));
+        input.setUserTypes("- 管理者\n- AIアシスタント");
+        input.setRequiredOperations("- 注文検索\n- 注文詳細取得\n- 注文ステータス更新\n- 承認依頼");
+        input.setAllowedAiOperations("- 注文検索\n- 注文詳細参照\n- 出荷前チェック結果の要約\n- 注文変更案の作成");
+        input.setBusinessRequirements("AIは外部送信を直接実行しない");
+        input.setReadOnlyOperations("- 注文検索\n- 注文詳細取得\n- 要約");
+        input.setWriteOperations("- 注文ステータス更新\n- 出荷通知送信");
+        input.setApprovalRequiredOperations("- 注文ステータス更新\n- 注文キャンセル\n- 返金処理\n- 外部通知送信");
+        input.setAuditLogRequiredOperations("- 注文ステータス更新\n- AIによる変更案作成\n- 承認依頼");
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("blueprintInput", input);
+
+        mockMvc.perform(get("/blueprint/edit").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("normalizeRestoreText")))
+                .andExpect(content().string(containsString("isRestoredCheckboxValueMatch")))
+                .andExpect(content().string(containsString("normalizedRestored.includes('外部')")))
+                .andExpect(content().string(containsString("normalizedCandidate === '詳細参照'")))
+                .andExpect(content().string(containsString("注文ステータス更新")))
+                .andExpect(content().string(containsString("外部通知送信")))
+                .andExpect(content().string(containsString("restoreCheckedItemsFromBlueprintInput();")));
+    }
+
 }

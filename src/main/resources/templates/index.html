@@ -389,10 +389,54 @@
         return [];
     }
 
+    function normalizeRestoreText(value) {
+        return String(value || '').replace(/[\s\-・、，,／/]+/g, '').trim();
+    }
+
+    function isRestoredCheckboxValueMatch(candidate, restoredValue) {
+        const normalizedCandidate = normalizeRestoreText(candidate);
+        const normalizedRestored = normalizeRestoreText(restoredValue);
+        if (!normalizedCandidate || !normalizedRestored) {
+            return false;
+        }
+        if (normalizedCandidate === normalizedRestored
+                || normalizedRestored.includes(normalizedCandidate)
+                || normalizedCandidate.includes(normalizedRestored)) {
+            return true;
+        }
+        if (normalizedCandidate === '外部送信'
+                && normalizedRestored.includes('外部')
+                && normalizedRestored.includes('送信')) {
+            return true;
+        }
+        if (normalizedCandidate === '詳細参照'
+                && normalizedRestored.includes('詳細')
+                && (normalizedRestored.includes('参照') || normalizedRestored.includes('取得'))) {
+            return true;
+        }
+        if (normalizedCandidate === '詳細取得'
+                && normalizedRestored.includes('詳細')
+                && (normalizedRestored.includes('取得') || normalizedRestored.includes('参照'))) {
+            return true;
+        }
+        if (normalizedCandidate === '下書き作成'
+                && normalizedRestored.includes('下書き')
+                && normalizedRestored.includes('作成')) {
+            return true;
+        }
+        if (normalizedCandidate === '更新案の作成'
+                && normalizedRestored.includes('更新')
+                && normalizedRestored.includes('案')
+                && normalizedRestored.includes('作成')) {
+            return true;
+        }
+        return false;
+    }
+
     function restoreCheckboxGroupFromCurrentValues(targetName) {
-        const restoredValues = new Set(collectCurrentValuesForTarget(targetName));
+        const restoredValues = collectCurrentValuesForTarget(targetName);
         document.querySelectorAll(`input[type="checkbox"][data-target="${targetName}"]`).forEach(checkbox => {
-            checkbox.checked = restoredValues.has(checkbox.value);
+            checkbox.checked = restoredValues.some(restoredValue => isRestoredCheckboxValueMatch(checkbox.value, restoredValue));
         });
     }
 
@@ -644,9 +688,7 @@
         syncInputModelFields();
     });
     restoreGeneratedInputState();
-    document.addEventListener('DOMContentLoaded', () => {
-        restoreCheckedItemsFromBlueprintInput();
-    });
+    restoreCheckedItemsFromBlueprintInput();
 
 </script>
 </body>
