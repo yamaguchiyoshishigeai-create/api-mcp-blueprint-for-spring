@@ -46,30 +46,49 @@ class BlueprintControllerTest {
     void checklistFormShowsFirstVisitorGuideAndSampleRoute() throws Exception {
         mockMvc.perform(get("/blueprint/form"))
                 .andExpect(status().isOk())
+                .andExpect(content().string(containsString("container trial-ui-page check-input-page")))
+                .andExpect(content().string(containsString("check-input-hero")))
                 .andExpect(content().string(containsString("チェック式入力フォーム")))
-                .andExpect(content().string(containsString("チェック式フォームで、業務要件、対象ドメイン、利用者、操作、AI許可操作、承認条件、監査ログ条件を直接調整するページ")))
-                .andExpect(content().string(containsString("サンプル業務パターンやチェック項目から、API設計とMCP設計候補に必要な条件を手動で整理できます")))
-                .andExpect(content().string(containsString("自由文から始めたい場合は、標準入口の外部AIプロンプトブリッジへ戻ってください")))
-                .andExpect(content().string(containsString("はじめて試す場合の3ステップ")))
-                .andExpect(content().string(containsString("自分の業務に近いものを選んでフォームへ自動入力")))
-                .andExpect(content().string(containsString("サンプル投入だけでは生成は実行されません")))
-                .andExpect(content().string(containsString("設計候補を生成する」を押すと生成結果へ進みます")))
-                .andExpect(content().string(containsString("開発前に、どのAPIが必要かを整理できます")))
-                .andExpect(content().string(containsString("AIアシスタントに許可する操作と禁止する操作を分けて考えられます")))
-                .andExpect(content().string(containsString("生成されたAI実装指示書をCodex等へ渡し、実装着手の材料にできます")))
+                .andExpect(content().string(containsString("チェック項目を編集する")))
+                .andExpect(content().string(containsString("トップページへ戻る")))
+                .andExpect(content().string(containsString("check-workflow-steps")))
+                .andExpect(content().string(containsString("Step 1")))
+                .andExpect(content().string(containsString("Step 4")))
+                .andExpect(content().string(containsString("check-overview-layout")))
+                .andExpect(content().string(containsString("check-form-layout")))
+                .andExpect(content().string(containsString("check-sticky-panel")))
                 .andExpect(content().string(containsString("注文・在庫管理サンプル")))
-                .andExpect(content().string(containsString("EC、販売管理、在庫引当、出荷前チェックを題材にします")))
                 .andExpect(content().string(containsString("社内申請・承認ワークフローサンプル")))
-                .andExpect(content().string(containsString("申請、承認、差戻し、人間確認、監査ログを題材にします")))
                 .andExpect(content().string(containsString("問い合わせ・サポート管理サンプル")))
-                .andExpect(content().string(containsString("FAQ検索、問い合わせ分類、AI要約、返信下書きを題材にします")))
                 .andExpect(content().string(containsString("契約・請求管理サンプル")))
-                .andExpect(content().string(containsString("契約承認、外部通知、請求・入金状態、業務リスク管理を題材にします")))
                 .andExpect(content().string(containsString("fillSample('order-inventory')")))
                 .andExpect(content().string(containsString("fillSample('internal-approval')")))
                 .andExpect(content().string(containsString("fillSample('support-inquiry')")))
                 .andExpect(content().string(containsString("fillSample('contract-billing')")))
-                .andExpect(content().string(containsString("自由文入力へ戻る")));
+                .andExpect(content().string(containsString("restoreCheckedItemsFromBlueprintInput")))
+                .andExpect(content().string(containsString("設計候補を生成する")));
+    }
+
+    @Test
+    void blueprintRelatedPagesExposeTopPageLink() throws Exception {
+        BlueprintResult mockResult = new BlueprintResult();
+        mockResult.setInputSummary("summary");
+        mockResult.setApiDesignSummary("api summary");
+        mockResult.setBlueprintMarkdown("# markdown");
+        mockResult.setImplementationInstructions("instructions");
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("blueprintResult", mockResult);
+
+        mockMvc.perform(get("/blueprint/preview").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("トップページへ戻る")))
+                .andExpect(content().string(containsString("/external-ai-bridge")));
+
+        mockMvc.perform(get("/blueprint/implementation-instructions").session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("トップページへ戻る")))
+                .andExpect(content().string(containsString("/external-ai-bridge")));
     }
 
     @Test
