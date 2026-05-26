@@ -392,4 +392,4 @@ not_done:
   - 保存・履歴・ログイン・DB/Migrationの実装はMVP外futureバックログ登録に留めた。
 
 pull_request:
-  - PR作成後にURLを追記する。
+  - https://github.com/yamaguchiyoshishigeai-create/api-mcp-blueprint-for-spring/pull/197
