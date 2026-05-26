@@ -322,3 +322,74 @@ APIM-013で手動確認した3サンプル（備品貸出管理、社内申請�
 ### PR
 
 - URL: https://github.com/yamaguchiyoshishigeai-create/api-mcp-blueprint-for-spring/pull/13
+
+## APIM-TSK-BATCH-01 評価xlsx由来改善候補の一括TSK登録（2026-05-26）
+
+result: success
+repository: yamaguchiyoshishigeai-create/api-mcp-blueprint-for-spring
+branch: codex/register-recheck-20260526-tsks
+purpose: 評価xlsx由来改善候補の一括TSK登録
+
+registered_tasks:
+  immediate:
+    - TSK-071 トップページ・ターゲット明示改善
+    - TSK-072 viewport meta追加とスマホ幅確認
+    - TSK-073 結果画面のSaaS風サマリー再構成
+    - TSK-074 READMEスクリーンショット追加
+    - TSK-075 インラインJavaScript外出し
+  next:
+    - TSK-076 共通エラーページ / ControllerAdvice追加
+    - TSK-077 Thymeleaf fragment共通化
+    - TSK-078 HTML即時バリデーション強化
+    - TSK-079 ローディング / 待ち状態表示追加
+    - TSK-080 CI最新結果・公開確認のREADME追記
+  future:
+    - TSK-081 保存・履歴・再編集構想整理
+    - TSK-082 ログイン / 認証導入構想整理
+    - TSK-083 DB / Migration導入構想整理
+    - TSK-084 ログ / 監視方針整理
+  investigation:
+    - TSK-085 評価xlsx由来改善候補一覧の台帳登録
+    - TSK-086 既存JavaScript配置・依存関係調査
+    - TSK-087 スマホ幅・主要画面表示確認
+
+changed_files:
+  - AI_REPO_RESULT.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/改善タスク課題一覧.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/評価xlsx由来改善候補登録確認表-20260526.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-071.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-072.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-073.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-074.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-075.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-076.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-077.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-078.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-079.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-080.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-081.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-082.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-083.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-084.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/確認待ち/TSK-085.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-086.md
+  - docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-087.md
+
+validation:
+  - chatgpt-ops-rules mainのPROJECT_START_PROMPT.md、強制ゲート一覧、運用ルール索引、作業開始プロンプト標準、PR・CI・merge統合方針、発生・残存課題の個票化最優先ルール、回帰テスト必要十分性ゲートを確認した。
+  - APIM側のPROJECT_START_PROMPT.md、README.md、docs/README.md、改善タスク課題一覧、課題管理ID体系、AIリポジトリ作業証跡管理ルール、PRテンプレートを確認した。
+  - open PRなし、直近merge済みPRは #196 であることを確認した。
+  - 既存最大TSKがTSK-070であることをリポジトリ現物から確認し、TSK-071からTSK-087を採番した。
+  - python scripts/check_tsk_index_consistency.py: PASS
+  - git diff --check: PASS
+  - python scripts/check_ai_repo_result.py .github/PULL_REQUEST_TEMPLATE.md: PASS
+  - rgによる発生元 evaluation-recheck-20260526 の記載確認: PASS
+  - rgによるfuture分類とMVP外記載確認: PASS
+  - .\mvnw.cmd test: PASS（Tests run: 112, Failures: 0, Errors: 0, Skipped: 0）
+
+not_done:
+  - UI、Java、HTML、CSS、README本文の本格実装修正は本作業範囲外のため未実施。
+  - 保存・履歴・ログイン・DB/Migrationの実装はMVP外futureバックログ登録に留めた。
+
+pull_request:
+  - https://github.com/yamaguchiyoshishigeai-create/api-mcp-blueprint-for-spring/pull/197
