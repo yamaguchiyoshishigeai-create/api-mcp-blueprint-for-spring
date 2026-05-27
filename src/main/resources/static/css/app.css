@@ -4474,6 +4474,54 @@ button.secondary.sample-button {
 }
 /* END APIM_TSK088_MARKDOWN_PREVIEW_UI */
 
+/* BEGIN APIM_PR206_MARKDOWN_BUTTON_ALIGN */
+.markdown-preview-page .markdown-preview-actions .button-link,
+.markdown-preview-page .markdown-status-card .button-link,
+.markdown-preview-page .markdown-side-actions .button-link,
+.markdown-preview-page .markdown-bottom-actions .button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+}
+
+.markdown-preview-page .markdown-preview-actions .button-link,
+.markdown-preview-page .markdown-bottom-actions .button-link {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.markdown-preview-page .markdown-side-actions .button-link {
+  min-height: 58px;
+  width: 100%;
+}
+
+.markdown-preview-page .markdown-status-card .button-link {
+  min-height: 56px;
+  align-self: center;
+}
+
+.markdown-preview-page .markdown-bottom-actions {
+  align-items: stretch;
+}
+
+.markdown-preview-page .markdown-bottom-actions .button-link {
+  flex: 0 1 auto;
+}
+
+@media (max-width: 900px) {
+  .markdown-preview-page .markdown-preview-actions .button-link,
+  .markdown-preview-page .markdown-status-card .button-link,
+  .markdown-preview-page .markdown-side-actions .button-link,
+  .markdown-preview-page .markdown-bottom-actions .button-link {
+    min-height: 56px;
+  }
+}
+/* END APIM_PR206_MARKDOWN_BUTTON_ALIGN */
+
 /* BEGIN APIM_TSK088_IMPLEMENTATION_PREVIEW_UI */
 .implementation-preview-page.trial-ui-page.container {
   width: min(1580px, 96vw);
