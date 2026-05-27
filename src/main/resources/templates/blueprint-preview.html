@@ -2,25 +2,110 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Blueprint Markdown Preview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown設計書プレビュー</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main class="container">
-    <h1>Markdown設計書プレビュー</h1>
-    <nav class="links">
-        <a href="/blueprint/download">Markdown設計書ダウンロード</a>
-        <a href="/blueprint/edit">設定を修正して再生成</a>
-        <a href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
-        <a href="/external-ai-bridge">トップページへ戻る</a>
-    </nav>
-    <pre th:text="${blueprintResult.blueprintMarkdown}"></pre>
-    <nav class="links">
-        <a href="/blueprint/download">Markdown設計書ダウンロード</a>
-        <a href="/blueprint/edit">設定を修正して再生成</a>
-        <a href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
-        <a href="/external-ai-bridge">トップページへ戻る</a>
-    </nav>
+<main class="container trial-ui-page markdown-preview-page">
+    <section class="app-hero markdown-preview-hero" aria-labelledby="markdown-preview-title">
+        <div class="app-hero-content">
+            <p class="trial-ui-note">Design Artifact: Markdown設計書レビュー</p>
+            <h1 id="markdown-preview-title">Markdown設計書プレビュー</h1>
+            <p>生成されたAPI設計書・MCP設計書・Controller雛形・安全注意点を、レビューしやすいMarkdown成果物として確認します。ダウンロードしてdocs転記や実装依頼に利用できます。</p>
+            <div class="app-hero-actions markdown-preview-actions">
+                <a class="button-link hero-primary-action" href="/blueprint/download">Markdown設計書ダウンロード</a>
+                <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
+                <a class="button-link secondary" href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
+                <a class="text-link" href="/external-ai-bridge">トップページへ戻る</a>
+            </div>
+        </div>
+        <div class="markdown-hero-visual" aria-hidden="true">
+            <div class="markdown-hero-doc">
+                <strong># API MCP Blueprint</strong>
+                <div class="markdown-hero-line w-96"></div>
+                <div class="markdown-hero-line w-82"></div>
+                <div class="markdown-hero-line w-70"></div>
+                <div class="markdown-hero-code">GET /api/resources</div>
+            </div>
+            <div class="markdown-hero-badge markdown-hero-badge-api">API</div>
+            <div class="markdown-hero-badge markdown-hero-badge-mcp">MCP</div>
+            <div class="markdown-hero-badge markdown-hero-badge-review">Review</div>
+        </div>
+    </section>
+
+    <section class="workflow-steps compact-stepper markdown-preview-stepper" aria-label="成果物レビューの流れ">
+        <article class="workflow-step step-completed"><span class="step-number">✓</span><div><h2>設計候補生成</h2><p>API / MCP候補を生成済み</p></div></article>
+        <article class="workflow-step step-active"><span class="step-number">2</span><div><h2>Markdown設計書確認</h2><p>設計レビュー用成果物を確認中</p></div></article>
+        <article class="workflow-step"><span class="step-number">3</span><div><h2>AI実装指示書確認</h2><p>実装依頼用の指示書を確認します</p></div></article>
+        <article class="workflow-step"><span class="step-number">4</span><div><h2>保存・共有</h2><p>ダウンロードしてレビューへ回します</p></div></article>
+    </section>
+
+    <section class="success-announcement markdown-status-card">
+        <div class="markdown-status-icon">MD</div>
+        <div>
+            <h2>Markdown設計書をレビューできる状態です</h2>
+            <p>画面上で内容を確認し、必要に応じて設定を修正して再生成してください。確定前に承認・監査・危険操作の記載を重点的に確認します。</p>
+        </div>
+        <a class="button-link hero-primary-action" href="/blueprint/download">設計書をダウンロード</a>
+    </section>
+
+    <section class="markdown-preview-grid">
+        <section class="form-section markdown-preview-card">
+            <div class="section-heading markdown-section-heading">
+                <span class="markdown-section-icon">MD</span>
+                <div>
+                    <h2>設計書本文</h2>
+                    <p>生成されたMarkdownをそのまま表示しています。docs転記やPR添付前の内容確認に利用してください。</p>
+                </div>
+            </div>
+            <pre class="markdown-preview-body" th:text="${blueprintResult.blueprintMarkdown}"></pre>
+        </section>
+
+        <aside class="markdown-side-stack">
+            <section class="form-section markdown-side-card">
+                <h2><span class="markdown-round-icon blue">✓</span>この画面で確認すること</h2>
+                <ul>
+                    <li>入力サマリーが今回の業務要件と一致しているか</li>
+                    <li>REST APIとMCP tools/resources/promptsの対応が自然か</li>
+                    <li>承認必須操作と監査ログ対象が抜けていないか</li>
+                    <li>Codex等へ渡す前に補足すべき業務ルールがないか</li>
+                </ul>
+            </section>
+            <section class="form-section markdown-side-card markdown-risk-card">
+                <h2><span class="markdown-round-icon orange">!</span>レビュー観点</h2>
+                <ul>
+                    <li>生成結果は設計たたき台であり、最終判断は人間が行います。</li>
+                    <li>金銭・契約・請求・外部通知に影響する操作は、人間承認後の反映として扱ってください。</li>
+                    <li>認証・認可、DB永続化、マイグレーション、本番運用設計は別途詳細化が必要です。</li>
+                </ul>
+            </section>
+            <section class="form-section markdown-side-card">
+                <h2><span class="markdown-round-icon green">→</span>次のアクション</h2>
+                <p>Markdown設計書の確認後、AI実装指示書を確認し、実装支援AIへ渡せる粒度かを確認してください。</p>
+                <div class="markdown-side-actions">
+                    <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
+                    <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
+                </div>
+            </section>
+        </aside>
+    </section>
+
+    <section class="form-section markdown-bottom-card">
+        <div class="section-heading markdown-section-heading">
+            <span class="markdown-section-icon">DL</span>
+            <div>
+                <h2>保存・再生成</h2>
+                <p>レビューに回す場合はMarkdown設計書をダウンロードしてください。入力条件を変更する場合は、設定修正画面へ戻れます。</p>
+            </div>
+        </div>
+        <div class="markdown-bottom-actions">
+            <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
+            <a class="button-link secondary" href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
+            <a class="button-link secondary" href="/external-ai-bridge">トップページへ戻る</a>
+            <a class="button-link hero-primary-action" href="/blueprint/download">Markdown設計書ダウンロード</a>
+        </div>
+    </section>
 </main>
 </body>
 </html>

@@ -357,7 +357,15 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("Markdown設計書ダウンロード")))
                 .andExpect(content().string(containsString("/blueprint/download")))
                 .andExpect(content().string(containsString("設定を修正して再生成")))
-                .andExpect(content().string(containsString("/blueprint/edit")));
+                .andExpect(content().string(containsString("/blueprint/edit")))
+                .andExpect(content().string(containsString("markdown-preview-page")))
+                .andExpect(content().string(containsString("markdown-preview-hero")))
+                .andExpect(content().string(containsString("Design Artifact: Markdown設計書レビュー")))
+                .andExpect(content().string(containsString("Markdown設計書をレビューできる状態です")))
+                .andExpect(content().string(containsString("markdown-preview-stepper")))
+                .andExpect(content().string(containsString("markdown-preview-body")))
+                .andExpect(content().string(containsString("AI実装指示書プレビューへ")))
+                .andExpect(content().string(containsString("/external-ai-bridge")));
     }
 
     @Test
