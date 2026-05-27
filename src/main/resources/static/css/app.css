@@ -2458,3 +2458,33 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_TSK088_STEP2_HERO_VISUAL_V3 */
+
+/* BEGIN APIM_TSK088_STEPPER_STATE_TEXT_V4 */
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step {
+  background: transparent;
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step .step-number {
+  background: #e7edf5;
+  color: #334155;
+  box-shadow: none;
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step.step-active .step-number {
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(21, 89, 230, 0.26);
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step.step-active h2 {
+  color: #1d4ed8;
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step:not(.step-active) h2 {
+  color: #0f172a;
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step p {
+  color: #64748b;
+}
+/* END APIM_TSK088_STEPPER_STATE_TEXT_V4 */
