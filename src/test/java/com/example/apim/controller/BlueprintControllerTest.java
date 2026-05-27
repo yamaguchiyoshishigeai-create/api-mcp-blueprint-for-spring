@@ -357,7 +357,15 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("Markdown設計書ダウンロード")))
                 .andExpect(content().string(containsString("/blueprint/download")))
                 .andExpect(content().string(containsString("設定を修正して再生成")))
-                .andExpect(content().string(containsString("/blueprint/edit")));
+                .andExpect(content().string(containsString("/blueprint/edit")))
+                .andExpect(content().string(containsString("markdown-preview-page")))
+                .andExpect(content().string(containsString("markdown-preview-hero")))
+                .andExpect(content().string(containsString("Design Artifact: Markdown設計書レビュー")))
+                .andExpect(content().string(containsString("Markdown設計書をレビューできる状態です")))
+                .andExpect(content().string(containsString("markdown-preview-stepper")))
+                .andExpect(content().string(containsString("markdown-preview-body")))
+                .andExpect(content().string(containsString("AI実装指示書プレビューへ")))
+                .andExpect(content().string(containsString("/external-ai-bridge")));
     }
 
     @Test
@@ -553,6 +561,27 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("注文ステータス更新")))
                 .andExpect(content().string(containsString("外部通知送信")))
                 .andExpect(content().string(containsString("restoreCheckedItemsFromBlueprintInput();")));
+    }
+
+    @Test
+    void previewImplementationInstructionsShowsSaasReviewUi() throws Exception {
+        BlueprintResult result = new BlueprintResult();
+        result.setImplementationInstructions("# Implementation Instructions");
+
+        mockMvc.perform(get("/blueprint/implementation-instructions").flashAttr("blueprintResult", result))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("implementation-preview-page")))
+                .andExpect(content().string(containsString("implementation-preview-hero")))
+                .andExpect(content().string(containsString("Implementation Artifact: AI実装指示書レビュー")))
+                .andExpect(content().string(containsString("AI実装指示書をレビューできる状態です")))
+                .andExpect(content().string(containsString("implementation-preview-stepper")))
+                .andExpect(content().string(containsString("implementation-preview-body")))
+                .andExpect(content().string(containsString("実装指示書本文")))
+                .andExpect(content().string(containsString("# Implementation Instructions")))
+                .andExpect(content().string(containsString("/blueprint/preview")))
+                .andExpect(content().string(containsString("/blueprint/implementation-instructions/download")))
+                .andExpect(content().string(containsString("/blueprint/edit")))
+                .andExpect(content().string(containsString("/external-ai-bridge")));
     }
 
 }
