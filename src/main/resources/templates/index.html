@@ -7,29 +7,52 @@
 </head>
 <body>
 <main class="container trial-ui-page check-input-page">
-    <section class="app-hero check-input-hero">
+    <section class="app-hero check-input-hero check-input-saas-hero" aria-labelledby="check-input-page-title">
         <div class="app-hero-content">
-            <h1>業務要件からAPI/MCP設計を作るチェック式入力フォーム</h1>
-            <p>業務要件、対象ドメイン、ユースケース、エンドポイント候補、データ項目、AI許可操作、制約、承認条件、監査ログ条件を直接調整する設計入力ページです。既存コード診断ではなく、API設計書、MCP設計書、Controller雛形、AI実装指示書の生成へ進めます。</p>
-            <div class="app-hero-actions">
-                <a class="button-link" href="#blueprintForm">チェック項目を編集する</a>
-                <a class="button-link secondary-link" href="/external-ai-bridge">トップページへ戻る</a>
+            <p class="trial-ui-note">Structured Input: チェック式設計条件入力</p>
+            <h1 id="check-input-page-title">チェック項目からAPI / MCP設計候補を作成</h1>
+            <p>業務ドメイン、利用者、必要操作、AIに許可する操作、承認・監査条件を直接整える入力画面です。自由文ではなく、構造化された設計条件から成果物を生成します。</p>
+            <div class="app-hero-actions check-hero-actions">
+                <a class="button-link hero-primary-action" href="#blueprintForm">チェック項目を編集する</a>
+                <a class="button-link secondary" href="#sample-patterns">サンプルから始める</a>
+                <a class="button-link secondary" href="/external-ai-bridge">自由文入力へ戻る</a>
                 <a class="text-link" href="/help">ヘルプ</a>
             </div>
         </div>
+        <div class="check-hero-visual" aria-hidden="true">
+            <div class="check-hero-node check-hero-node-domain">Domain</div>
+            <div class="check-hero-panel">
+                <strong>Input Checklist</strong>
+                <div class="check-hero-row"><span>✓</span><em>AI許可操作</em></div>
+                <div class="check-hero-row"><span>✓</span><em>承認必須</em></div>
+                <div class="check-hero-row"><span>✓</span><em>監査ログ</em></div>
+            </div>
+            <div class="check-hero-node check-hero-node-api">API</div>
+            <div class="check-hero-node check-hero-node-mcp">MCP</div>
+            <div class="check-hero-dash"></div>
+        </div>
     </section>
 
-    <section class="workflow-steps check-workflow-steps" aria-label="チェック式入力フォームの流れ">
-        <article class="workflow-step"><span class="step-number">Step 1</span><h2>サンプルを選ぶ</h2><p>業務に近いサンプルから、対象ドメイン、利用者、操作、承認、監査ログ条件を初期投入します。</p></article>
-        <article class="workflow-step"><span class="step-number">Step 2</span><h2>チェック項目を整える</h2><p>必要操作、AIに許可する操作、禁止・承認・監査ログ条件をカード単位で調整します。</p></article>
-        <article class="workflow-step"><span class="step-number">Step 3</span><h2>補足条件を確認する</h2><p>想定認証方式、利用者、補足業務要件を確認し、生成前の入力条件を揃えます。</p></article>
-        <article class="workflow-step"><span class="step-number">Step 4</span><h2>設計候補を生成する</h2><p>REST API、MCP tools/resources/prompts、対応表、AI実装指示書の順に確認します。</p></article>
+    <section class="workflow-steps check-workflow-steps compact-stepper check-progress-stepper" aria-label="チェック式入力フォームの流れ">
+        <article class="workflow-step step-active"><span class="step-number">1</span><div><h2>サンプル選択</h2><p>近い業務パターンから初期値を投入します</p></div></article>
+        <article class="workflow-step"><span class="step-number">2</span><div><h2>設計条件を整理</h2><p>ドメイン・利用者・操作候補を調整します</p></div></article>
+        <article class="workflow-step"><span class="step-number">3</span><div><h2>承認・監査を確認</h2><p>危険操作と人間確認の範囲を定義します</p></div></article>
+        <article class="workflow-step"><span class="step-number">4</span><div><h2>設計候補生成</h2><p>API / MCP / 実装指示書へ進みます</p></div></article>
+    </section>
+
+    <section class="success-announcement check-status-card">
+        <div class="check-status-icon">✓</div>
+        <div>
+            <h2>構造化された設計条件を直接編集できます</h2>
+            <p>サンプル投入後にチェック項目を確認し、AIに任せる範囲、人間承認が必要な操作、監査ログ対象を明確にしてから設計候補を生成してください。</p>
+        </div>
+        <a class="button-link hero-primary-action" href="#blueprintForm">入力フォームへ進む</a>
     </section>
 
     <section class="compact-layout check-overview-layout">
         <div class="form-section primary-input-card check-intro-card">
             <div class="section-heading"><h2>サンプル業務パターンから始める</h2><p>サンプル投入だけでは生成は実行されません。フォームに値が入った後、画面下部の「設計候補を生成する」で生成結果へ進みます。</p></div>
-            <div class="sample-grid" aria-label="サンプル業務パターン">
+            <div id="sample-patterns" class="sample-grid" aria-label="サンプル業務パターン">
                 <section class="sample-card"><h3>注文・在庫管理サンプル</h3><p>EC、販売管理、在庫引当、出荷前チェックを題材にします。</p><button type="button" onclick="fillSample('order-inventory')">注文・在庫管理を挿入</button></section>
                 <section class="sample-card"><h3>社内申請・承認ワークフローサンプル</h3><p>申請、承認、差戻し、人間確認、監査ログを題材にします。</p><button type="button" onclick="fillSample('internal-approval')">申請・承認を挿入</button></section>
                 <section class="sample-card"><h3>問い合わせ・サポート管理サンプル</h3><p>FAQ検索、問い合わせ分類、AI要約、返信下書きを題材にします。</p><button type="button" onclick="fillSample('support-inquiry')">問い合わせ管理を挿入</button></section>
