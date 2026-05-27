@@ -4934,3 +4934,51 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_TSK088_IMPLEMENTATION_PREVIEW_UI */
+
+/* BEGIN APIM_PR206_IMPLEMENTATION_BUTTON_ALIGN */
+.implementation-preview-page .implementation-preview-actions .button-link,
+.implementation-preview-page .implementation-status-card .button-link,
+.implementation-preview-page .implementation-side-actions .button-link,
+.implementation-preview-page .implementation-bottom-actions .button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+}
+
+.implementation-preview-page .implementation-preview-actions .button-link,
+.implementation-preview-page .implementation-bottom-actions .button-link {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.implementation-preview-page .implementation-side-actions .button-link {
+  min-height: 58px;
+  width: 100%;
+}
+
+.implementation-preview-page .implementation-status-card .button-link {
+  min-height: 56px;
+  align-self: center;
+}
+
+.implementation-preview-page .implementation-bottom-actions {
+  align-items: stretch;
+}
+
+.implementation-preview-page .implementation-bottom-actions .button-link {
+  flex: 0 1 auto;
+}
+
+@media (max-width: 900px) {
+  .implementation-preview-page .implementation-preview-actions .button-link,
+  .implementation-preview-page .implementation-status-card .button-link,
+  .implementation-preview-page .implementation-side-actions .button-link,
+  .implementation-preview-page .implementation-bottom-actions .button-link {
+    min-height: 56px;
+  }
+}
+/* END APIM_PR206_IMPLEMENTATION_BUTTON_ALIGN */
