@@ -2320,3 +2320,141 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_TSK088_STEP2_STEPPER_V2 */
+
+/* BEGIN APIM_TSK088_STEP2_HERO_VISUAL_V3 */
+.external-ai-prompt-page .app-hero.step2-hero-with-visual {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(280px, 0.82fr);
+  gap: 24px;
+  align-items: center;
+  min-height: 182px;
+  padding: 24px 30px;
+}
+
+.external-ai-prompt-page .app-hero.step2-hero-with-visual > :not(.step2-hero-visual) {
+  position: relative;
+  z-index: 1;
+}
+
+.external-ai-prompt-page .step2-hero-visual {
+  position: relative;
+  justify-self: end;
+  width: min(100%, 370px);
+  height: 134px;
+  opacity: 0.98;
+  z-index: 1;
+}
+
+.external-ai-prompt-page .step2-hero-node,
+.external-ai-prompt-page .step2-hero-window {
+  position: absolute;
+  border: 1px solid rgba(127, 233, 255, 0.38);
+  color: #e6fbff;
+  background: rgba(14, 78, 176, 0.26);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 14px 26px rgba(3, 14, 48, 0.18);
+  backdrop-filter: blur(4px);
+}
+
+.external-ai-prompt-page .step2-hero-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+
+.external-ai-prompt-page .step2-hero-node-step {
+  left: 18px;
+  top: 18px;
+  padding: 10px 16px;
+  font-size: 23px;
+}
+
+.external-ai-prompt-page .step2-hero-node-prompt {
+  right: 16px;
+  top: 4px;
+  padding: 12px 18px;
+  min-width: 138px;
+  font-size: 22px;
+}
+
+.external-ai-prompt-page .step2-hero-node-json {
+  right: 0;
+  bottom: 10px;
+  padding: 10px 18px;
+  min-width: 112px;
+  font-size: 21px;
+}
+
+.external-ai-prompt-page .step2-hero-window {
+  left: 84px;
+  bottom: 2px;
+  width: 206px;
+  min-height: 94px;
+  border-radius: 18px;
+  padding: 14px 15px 12px;
+}
+
+.external-ai-prompt-page .step2-hero-window-title {
+  color: #f2feff;
+  font-size: 16px;
+  font-weight: 850;
+  margin-bottom: 10px;
+}
+
+.external-ai-prompt-page .step2-hero-window-line {
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.34);
+  margin: 7px 0;
+}
+
+.external-ai-prompt-page .step2-hero-window-line.w-92 { width: 92%; }
+.external-ai-prompt-page .step2-hero-window-line.w-84 { width: 84%; }
+.external-ai-prompt-page .step2-hero-window-line.w-72 { width: 72%; }
+.external-ai-prompt-page .step2-hero-window-line.w-64 { width: 64%; }
+
+.external-ai-prompt-page .step2-hero-connector {
+  position: absolute;
+  border-top: 2px dashed rgba(122, 236, 255, 0.52);
+}
+
+.external-ai-prompt-page .step2-hero-connector-top {
+  left: 90px;
+  right: 92px;
+  top: 50px;
+}
+
+.external-ai-prompt-page .step2-hero-connector-bottom {
+  left: 168px;
+  right: 58px;
+  bottom: 38px;
+}
+
+.external-ai-prompt-page .step2-hero-spark {
+  position: absolute;
+  left: 220px;
+  top: 44px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #39e7ff;
+  box-shadow: 0 0 0 6px rgba(57, 231, 255, 0.12), 0 0 18px rgba(57, 231, 255, 0.85);
+}
+
+@media (max-width: 1080px) {
+  .external-ai-prompt-page .app-hero.step2-hero-with-visual {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 22px 24px;
+  }
+
+  .external-ai-prompt-page .step2-hero-visual {
+    display: none;
+  }
+}
+/* END APIM_TSK088_STEP2_HERO_VISUAL_V3 */
