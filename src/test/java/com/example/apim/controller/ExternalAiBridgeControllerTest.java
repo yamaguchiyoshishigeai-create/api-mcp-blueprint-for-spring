@@ -41,32 +41,43 @@ class ExternalAiBridgeControllerTest {
     private ExternalAiPromptBridgeService bridgeService;
 
     @Test
-    void bridgePageShowsManualExternalAiFlow() throws Exception {
+    void bridgePageShowsSaasStyleManualExternalAiFlow() throws Exception {
         mockMvc.perform(get("/external-ai-bridge"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-bridge"))
                 .andExpect(content().string(containsString("API + MCP Blueprint Compiler for Spring")))
+                .andExpect(content().string(containsString("業務要件を入力するだけで、API設計・MCP設計・実装指示のたたき台を自動でまとめます")))
                 .andExpect(content().string(containsString("trial-ui-page external-ai-bridge-page")))
-                .andExpect(content().string(containsString("workflow-steps")))
-                .andExpect(content().string(containsString("自由文を書く")))
+                .andExpect(content().string(containsString("external-hero")))
+                .andExpect(content().string(containsString("compact-stepper")))
+                .andExpect(content().string(containsString("external-main-grid")))
+                .andExpect(content().string(containsString("external-input-card")))
+                .andExpect(content().string(containsString("external-helper-panel")))
+                .andExpect(content().string(containsString("自由文から始める")))
+                .andExpect(content().string(containsString("チェック式入力へ")))
+                .andExpect(content().string(containsString("自由文から設計プロンプトを作成")))
+                .andExpect(content().string(containsString("設計プロンプトを作成する")))
                 .andExpect(content().string(containsString("free-text-action-row")))
                 .andExpect(content().string(containsString("free-text-generate-button")))
                 .andExpect(content().string(not(containsString("試行UI/UX確認用"))))
-                .andExpect(content().string(containsString("外部AI用プロンプトをコピーする")))
-                .andExpect(content().string(containsString("外部AIのJSONを取り込む")))
-                .andExpect(content().string(containsString("反映内容を確認して設計候補を生成する")))
-                .andExpect(content().string(containsString("compact-layout")))
-                .andExpect(content().string(containsString("primary-input-card")))
-                .andExpect(content().string(containsString("helper-panel")))
-                .andExpect(content().string(containsString("自由文業務要件")))
-                .andExpect(content().string(containsString("JSON取り込み後も、最終生成前に確認・修正できます")))
-                .andExpect(content().string(containsString("リンク集はプロンプト生成後の画面に表示されます")))
-                .andExpect(content().string(containsString("チェック式入力へ進む")))
-                .andExpect(content().string(containsString("代表的なサンプル例文を入力できます")))
-                .andExpect(content().string(containsString("複数のボタンを押すと、既存の自由文に自然につながる形で追記されます")))
-                .andExpect(content().string(containsString("clearFreeText")))
-                .andExpect(content().string(containsString("currentText.includes(nextText)")))
-                .andExpect(content().string(containsString("また、")))
+                .andExpect(content().string(containsString("業務要件を入力します")))
+                .andExpect(content().string(containsString("外部AIに渡すプロンプトを作成")))
+                .andExpect(content().string(containsString("外部AIの出力を取り込みます")))
+                .andExpect(content().string(containsString("設計候補を確認・修正します")))
+                .andExpect(content().string(containsString("このツールでできること")))
+                .andExpect(content().string(containsString("業務要件からAPI設計・MCP設計のたたき台を作成")))
+                .andExpect(content().string(containsString("Spring Boot / MCP Server実装前に設計成果物を整備")))
+                .andExpect(content().string(containsString("API設計書")))
+                .andExpect(content().string(containsString("MCP設計書")))
+                .andExpect(content().string(containsString("Controller雛形")))
+                .andExpect(content().string(containsString("AI実装指示書")))
+                .andExpect(content().string(containsString("完全動作するMCPサーバー")))
+                .andExpect(content().string(containsString("DB永続化やマイグレーション")))
+                .andExpect(content().string(containsString("外部LLM API連携の実装")))
+                .andExpect(content().string(containsString("既存コード診断・品質評価ではなく、新規設計生成を支援します")))
+                .andExpect(content().string(containsString("Q-Scout for Spring のような既存システム診断ではなく")))
+                .andExpect(content().string(containsString("この画面は外部AIを直接実行しません")))
+                .andExpect(content().string(containsString("自由文業務要件のサンプル例文")))
                 .andExpect(content().string(containsString("注文・在庫管理")))
                 .andExpect(content().string(containsString("社内申請・承認")))
                 .andExpect(content().string(containsString("問い合わせ管理")))
@@ -76,10 +87,13 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("保守・障害対応")))
                 .andExpect(content().string(containsString("営業案件管理")))
                 .andExpect(content().string(containsString("ナレッジ検索")))
-                .andExpect(content().string(containsString("購買・稟議管理")))
                 .andExpect(content().string(containsString("insertFreeTextSample")))
+                .andExpect(content().string(containsString("currentText.includes(nextText)")))
+                .andExpect(content().string(containsString("また、")))
+                .andExpect(content().string(containsString("clearFreeText")))
                 .andExpect(content().string(containsString("data-sample")));
     }
+
 
     @Test
     void bridgePageDoesNotKeepDetailedOfficialAiLinkList() throws Exception {
@@ -89,12 +103,13 @@ class ExternalAiBridgeControllerTest {
                 .andReturn();
 
         String html = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
-        assertTrue(html.contains("リンク集はプロンプト生成後の画面に表示されます"));
+        assertTrue(html.contains("この画面は外部AIを直接実行しません"));
         assertFalse(html.contains("ChatGPT公式サイトを別タブで開く"));
         assertFalse(html.contains("Claude公式サイトを別タブで開く"));
         assertFalse(html.contains("Gemini公式サイトを別タブで開く"));
         assertFalse(html.contains("Microsoft Copilot公式サイトを別タブで開く"));
     }
+
 
     @Test
     void promptGenerationDisplaysGeneratedPrompt() throws Exception {
