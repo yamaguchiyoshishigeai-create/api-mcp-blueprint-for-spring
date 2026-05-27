@@ -62,7 +62,7 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(not(containsString("試行UI/UX確認用"))))
                 .andExpect(content().string(containsString("業務要件を入力します")))
                 .andExpect(content().string(containsString("外部AIに渡すプロンプトを作成")))
-                .andExpect(content().string(containsString("外部AIの出力を取り込みます")))
+                .andExpect(content().string(containsString("取り込んだJSONを検証します")))
                 .andExpect(content().string(containsString("設計候補を確認・修正します")))
                 .andExpect(content().string(containsString("このツールでできること")))
                 .andExpect(content().string(containsString("業務要件からAPI設計・MCP設計のたたき台を作成")))

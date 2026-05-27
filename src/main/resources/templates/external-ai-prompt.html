@@ -7,7 +7,7 @@
 </head>
 <body>
 <main class="container trial-ui-page external-ai-prompt-page">
-    <section class="app-hero">
+    <section class="app-hero step2-hero-with-visual">
         <div class="app-hero-content">
             <p class="trial-ui-note">Step 2: 外部AI投入用プロンプト</p>
             <h1>外部AI投入用プロンプト</h1>
@@ -19,6 +19,28 @@
             </div>
             <span id="copyStatus" class="copy-feedback-bubble" aria-live="polite" hidden></span>
         </div>
+        <div class="step2-hero-visual" aria-hidden="true">
+            <div class="step2-hero-node step2-hero-node-step">Step 2</div>
+            <div class="step2-hero-node step2-hero-node-prompt">AI Prompt</div>
+            <div class="step2-hero-node step2-hero-node-json">JSON</div>
+            <div class="step2-hero-window">
+                <div class="step2-hero-window-title">Prompt Preview</div>
+                <div class="step2-hero-window-line w-92"></div>
+                <div class="step2-hero-window-line w-84"></div>
+                <div class="step2-hero-window-line w-72"></div>
+                <div class="step2-hero-window-line w-64"></div>
+            </div>
+            <div class="step2-hero-connector step2-hero-connector-top"></div>
+            <div class="step2-hero-connector step2-hero-connector-bottom"></div>
+            <div class="step2-hero-spark"></div>
+        </div>
+    </section>
+
+    <section class="workflow-steps compact-stepper prompt-progress-stepper" aria-label="外部AIブリッジの作業ステップ">
+        <article class="workflow-step step-completed"><span class="step-number">✓</span><div><h2>入力</h2><p>業務要件を入力済み</p></div></article>
+        <article class="workflow-step step-active"><span class="step-number">2</span><div><h2>外部AI用プロンプト生成</h2><p>外部AIに渡すプロンプトを作成</p></div></article>
+        <article class="workflow-step"><span class="step-number">3</span><div><h2>JSON検証</h2><p>取り込んだJSONを検証します</p></div></article>
+        <article class="workflow-step"><span class="step-number">4</span><div><h2>設計候補生成</h2><p>設計候補を確認・修正します</p></div></article>
     </section>
 
     <section class="split-layout">

@@ -2111,3 +2111,380 @@ button.secondary.sample-button {
 }
 
 /* END APIM_PR199_HERO_CTA_BALANCE_V13 */
+
+/* BEGIN APIM_TSK088_STEP2_STEPPER_V2 */
+.external-ai-prompt-page.trial-ui-page.container {
+  width: min(1320px, 96vw);
+  margin-top: 18px;
+}
+
+.external-ai-prompt-page .app-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 176px;
+  padding: 26px 30px;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(34, 211, 238, 0.30) 0, rgba(34, 211, 238, 0) 28%),
+    linear-gradient(135deg, #071f62 0%, #0b3a91 58%, #05bdd3 100%);
+  box-shadow: 0 16px 42px rgba(15, 35, 82, 0.20);
+}
+
+.external-ai-prompt-page .app-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.external-ai-prompt-page .app-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.external-ai-prompt-page .app-hero h1 {
+  font-size: clamp(1.9rem, 3.4vw, 2.8rem);
+  letter-spacing: -0.04em;
+}
+
+.external-ai-prompt-page .app-hero p {
+  max-width: 820px;
+  color: #e8f2ff;
+  font-weight: 600;
+}
+
+.external-ai-prompt-page .app-hero-actions .button-link,
+.external-ai-prompt-page .app-hero-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 0;
+  border-radius: 10px;
+  font-weight: 850;
+}
+
+.external-ai-prompt-page .prompt-progress-stepper {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 14px 0 16px;
+  padding: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #dce4f2;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(20, 34, 58, 0.06);
+}
+
+.external-ai-prompt-page .prompt-progress-stepper .workflow-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.external-ai-prompt-page .prompt-progress-stepper .workflow-step:not(:last-child)::after {
+  content: "›";
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 2rem;
+  font-weight: 300;
+}
+
+.external-ai-prompt-page .prompt-progress-stepper .step-number {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  border-radius: 999px;
+  background: #e7edf5;
+  color: #334155;
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.external-ai-prompt-page .prompt-progress-stepper .step-completed .step-number {
+  background: #dbeafe;
+  color: #1559e6;
+}
+
+.external-ai-prompt-page .prompt-progress-stepper .step-active .step-number {
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(21, 89, 230, 0.26);
+}
+
+.external-ai-prompt-page .prompt-progress-stepper h2 {
+  margin: 0 0 2px;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.external-ai-prompt-page .prompt-progress-stepper p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.86rem;
+  line-height: 1.3;
+}
+
+.external-ai-prompt-page .prompt-progress-stepper .step-completed h2,
+.external-ai-prompt-page .prompt-progress-stepper .step-active h2 {
+  color: #1d4ed8;
+}
+
+.external-ai-prompt-page .prompt-card,
+.external-ai-prompt-page .json-import-card,
+.external-ai-prompt-page .prompt-side-panel {
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(20, 34, 58, 0.07);
+}
+
+.external-ai-prompt-page .prompt-card {
+  padding: 22px;
+}
+
+.external-ai-prompt-page .prompt-preview {
+  min-height: 460px;
+  border-color: #cbd5e1;
+  border-radius: 10px;
+  background: #fbfdff;
+  line-height: 1.58;
+}
+
+.external-ai-prompt-page .json-import-card {
+  padding: 22px;
+}
+
+.external-ai-prompt-page .json-input-panel {
+  border: 1px solid #dce4f2;
+  border-radius: 12px;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.external-ai-prompt-page .json-input-panel button[type="submit"] {
+  min-height: 44px;
+  border-radius: 10px;
+  font-weight: 850;
+}
+
+@media (max-width: 980px) {
+  .external-ai-prompt-page .prompt-progress-stepper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .external-ai-prompt-page .prompt-progress-stepper .workflow-step:nth-child(2)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .external-ai-prompt-page .app-hero {
+    min-height: unset;
+    padding: 22px 18px;
+  }
+
+  .external-ai-prompt-page .prompt-progress-stepper {
+    grid-template-columns: 1fr;
+  }
+
+  .external-ai-prompt-page .prompt-progress-stepper .workflow-step {
+    border-top: 1px solid #edf2f8;
+  }
+
+  .external-ai-prompt-page .prompt-progress-stepper .workflow-step:first-child {
+    border-top: 0;
+  }
+
+  .external-ai-prompt-page .prompt-progress-stepper .workflow-step::after {
+    display: none;
+  }
+
+  .external-ai-prompt-page .app-hero-actions .button-link,
+  .external-ai-prompt-page .app-hero-actions button {
+    width: 100%;
+  }
+}
+/* END APIM_TSK088_STEP2_STEPPER_V2 */
+
+/* BEGIN APIM_TSK088_STEP2_HERO_VISUAL_V3 */
+.external-ai-prompt-page .app-hero.step2-hero-with-visual {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(280px, 0.82fr);
+  gap: 24px;
+  align-items: center;
+  min-height: 182px;
+  padding: 24px 30px;
+}
+
+.external-ai-prompt-page .app-hero.step2-hero-with-visual > :not(.step2-hero-visual) {
+  position: relative;
+  z-index: 1;
+}
+
+.external-ai-prompt-page .step2-hero-visual {
+  position: relative;
+  justify-self: end;
+  width: min(100%, 370px);
+  height: 134px;
+  opacity: 0.98;
+  z-index: 1;
+}
+
+.external-ai-prompt-page .step2-hero-node,
+.external-ai-prompt-page .step2-hero-window {
+  position: absolute;
+  border: 1px solid rgba(127, 233, 255, 0.38);
+  color: #e6fbff;
+  background: rgba(14, 78, 176, 0.26);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 14px 26px rgba(3, 14, 48, 0.18);
+  backdrop-filter: blur(4px);
+}
+
+.external-ai-prompt-page .step2-hero-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+
+.external-ai-prompt-page .step2-hero-node-step {
+  left: 18px;
+  top: 18px;
+  padding: 10px 16px;
+  font-size: 23px;
+}
+
+.external-ai-prompt-page .step2-hero-node-prompt {
+  right: 16px;
+  top: 4px;
+  padding: 12px 18px;
+  min-width: 138px;
+  font-size: 22px;
+}
+
+.external-ai-prompt-page .step2-hero-node-json {
+  right: 0;
+  bottom: 10px;
+  padding: 10px 18px;
+  min-width: 112px;
+  font-size: 21px;
+}
+
+.external-ai-prompt-page .step2-hero-window {
+  left: 84px;
+  bottom: 2px;
+  width: 206px;
+  min-height: 94px;
+  border-radius: 18px;
+  padding: 14px 15px 12px;
+}
+
+.external-ai-prompt-page .step2-hero-window-title {
+  color: #f2feff;
+  font-size: 16px;
+  font-weight: 850;
+  margin-bottom: 10px;
+}
+
+.external-ai-prompt-page .step2-hero-window-line {
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.34);
+  margin: 7px 0;
+}
+
+.external-ai-prompt-page .step2-hero-window-line.w-92 { width: 92%; }
+.external-ai-prompt-page .step2-hero-window-line.w-84 { width: 84%; }
+.external-ai-prompt-page .step2-hero-window-line.w-72 { width: 72%; }
+.external-ai-prompt-page .step2-hero-window-line.w-64 { width: 64%; }
+
+.external-ai-prompt-page .step2-hero-connector {
+  position: absolute;
+  border-top: 2px dashed rgba(122, 236, 255, 0.52);
+}
+
+.external-ai-prompt-page .step2-hero-connector-top {
+  left: 90px;
+  right: 92px;
+  top: 50px;
+}
+
+.external-ai-prompt-page .step2-hero-connector-bottom {
+  left: 168px;
+  right: 58px;
+  bottom: 38px;
+}
+
+.external-ai-prompt-page .step2-hero-spark {
+  position: absolute;
+  left: 220px;
+  top: 44px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #39e7ff;
+  box-shadow: 0 0 0 6px rgba(57, 231, 255, 0.12), 0 0 18px rgba(57, 231, 255, 0.85);
+}
+
+@media (max-width: 1080px) {
+  .external-ai-prompt-page .app-hero.step2-hero-with-visual {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 22px 24px;
+  }
+
+  .external-ai-prompt-page .step2-hero-visual {
+    display: none;
+  }
+}
+/* END APIM_TSK088_STEP2_HERO_VISUAL_V3 */
+
+/* BEGIN APIM_TSK088_STEPPER_STATE_TEXT_V4 */
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step {
+  background: transparent;
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step .step-number {
+  background: #e7edf5;
+  color: #334155;
+  box-shadow: none;
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step.step-active .step-number {
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(21, 89, 230, 0.26);
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step.step-active h2 {
+  color: #1d4ed8;
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step:not(.step-active) h2 {
+  color: #0f172a;
+}
+
+.external-ai-bridge-page .workflow-steps.compact-stepper .workflow-step p {
+  color: #64748b;
+}
+/* END APIM_TSK088_STEPPER_STATE_TEXT_V4 */
