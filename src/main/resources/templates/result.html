@@ -2,159 +2,375 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>APIM for Spring - 生成結果</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APIM for Spring - 設計候補生成結果</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main class="container">
-    <h1>生成結果</h1>
-    <nav class="links">
-        <a href="/blueprint/preview">Markdown設計書プレビュー</a>
-        <a href="/blueprint/download">Markdown設計書ダウンロード</a>
-        <a href="/blueprint/implementation-instructions">AI実装指示書プレビュー</a>
-        <a href="/blueprint/implementation-instructions/download">AI実装指示書ダウンロード</a>
-        <a href="/blueprint/edit">設定を修正して再生成</a>
-        <a href="/external-ai-bridge">トップページへ戻る</a>
-    </nav>
-    <p th:text="${blueprintResult.inputSummary}"></p>
-    <p th:text="${blueprintResult.apiDesignSummary}"></p>
-
-    <section class="notice">
-        <h2>おすすめの読み順</h2>
-        <ol>
-            <li>まず入力サマリーで、どの業務要件から生成されたかを確認します。</li>
-            <li>RESTエンドポイント一覧で、人間向けAPI候補を確認します。</li>
-            <li>MCP tools/resources/promptsで、AIエージェントに公開する操作候補を確認します。</li>
-            <li>API/MCP対応表で、人間向けAPIとAI向け操作入口の対応を確認します。</li>
-            <li>セキュリティ・承認・監査ログ注意点で、危険操作や人間確認が必要な箇所を確認します。</li>
-            <li>Markdown設計書やAI実装指示書を、レビューやCodex等への実装依頼に使います。</li>
-        </ol>
-        <h2>出力物の見方</h2>
-        <ul>
-            <li>API設計書は、人間による設計レビューやdocs転記に使います。</li>
-            <li>MCP tools/resources/promptsは、AIエージェントへ公開する操作・参照範囲・定型指示の設計候補です。</li>
-            <li>API/MCP対応表は、人間向けAPIとAI向け操作入口の対応を確認するための表です。</li>
-            <li>AI実装指示書は、APIM for Springを実装するためではなく、生成された設計候補をCodex等の実装支援AIへ渡し、対象業務アプリケーションの実装につなげるための成果物です。</li>
-        </ul>
-        <h2>このMVPで生成しないもの</h2>
-        <ul>
-            <li>完全動作するMCPサーバー</li>
-            <li>DB永続化やマイグレーション</li>
-            <li>認証・認可の本格実装</li>
-            <li>外部LLM API連携</li>
-            <li>本番デプロイ作業やRender公開作業</li>
-        </ul>
+<main class="container trial-ui-page step4-result-page">
+    <section class="app-hero step4-result-hero" aria-labelledby="step4-page-title">
+        <div class="app-hero-content">
+            <p class="trial-ui-note">Step 4: 設計候補生成結果</p>
+            <h1 id="step4-page-title">API / MCP設計候補を生成しました</h1>
+            <p>確認済みの業務要件から、REST API設計、MCP tools/resources/prompts、Controller雛形、AI実装指示書の候補を生成しました。レビューと実装引き継ぎに必要な成果物を確認してください。</p>
+            <div class="app-hero-actions step4-hero-actions">
+                <a class="button-link hero-primary-action" href="/blueprint/preview">Markdown設計書を確認</a>
+                <a class="button-link secondary" href="/blueprint/implementation-instructions">AI実装指示書を確認</a>
+                <a class="button-link secondary" href="#result-summary">生成結果を見る</a>
+            </div>
+        </div>
+        <div class="step4-hero-visual" aria-hidden="true">
+            <div class="step4-hero-dash"></div>
+            <div class="step4-hero-node step4-hero-api">API</div>
+            <div class="step4-hero-panel">
+                <strong>Blueprint Result</strong>
+                <div class="step4-hero-line w-96"></div>
+                <div class="step4-hero-line w-82"></div>
+                <div class="step4-hero-line w-68"></div>
+            </div>
+            <div class="step4-hero-node step4-hero-mcp">MCP</div>
+            <div class="step4-hero-node step4-hero-code">&lt;/&gt;</div>
+            <div class="step4-hero-node step4-hero-docs">Docs</div>
+        </div>
     </section>
 
-    <h2>RESTエンドポイント一覧</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>Method</th>
-            <th>Path</th>
-            <th>Purpose</th>
-            <th>Approval</th>
-            <th>Audit</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="e : ${blueprintResult.apiEndpoints}">
-            <td th:text="${e.httpMethod}"></td>
-            <td th:text="${e.path}"></td>
-            <td th:text="${e.purpose}"></td>
-            <td th:text="${e.approvalRequired}" th:classappend="${e.approvalRequired.contains('必須') ? 'warning-strong' : ''}"></td>
-            <td th:text="${e.auditLogRequired}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <section class="workflow-steps compact-stepper step4-progress-stepper" aria-label="外部AIブリッジの作業ステップ">
+        <article class="workflow-step step-completed"><span class="step-number">✓</span><div><h2>入力</h2><p>業務要件を入力済み</p></div></article>
+        <article class="workflow-step step-completed"><span class="step-number">✓</span><div><h2>外部AI用プロンプト生成</h2><p>外部AIに渡すプロンプトを作成済み</p></div></article>
+        <article class="workflow-step step-completed"><span class="step-number">✓</span><div><h2>JSON検証</h2><p>抽出結果を検証・反映済み</p></div></article>
+        <article class="workflow-step step-active"><span class="step-number">4</span><div><h2>設計候補生成</h2><p>生成結果を確認します</p></div></article>
+    </section>
 
-    <h2>DTO候補</h2>
-    <div th:each="d : ${blueprintResult.dtoCandidates}" class="card">
-        <h3 th:text="${d.name}"></h3>
-        <p th:text="${d.purpose}"></p>
-        <ul>
-            <li th:each="f : ${d.fields}">
-                <span th:text="${f.name}"></span> :
-                <span th:text="${f.javaType}"></span>
-                (<span th:text="${f.required ? 'required' : 'optional'}"></span>)
+    <section class="success-announcement step4-status-card">
+        <div class="step4-status-icon">✓</div>
+        <div>
+            <h2>設計候補の生成が完了しました</h2>
+            <p>API設計書、MCP設計書、Controller雛形、AI実装指示書をレビューできる状態になりました。まずは成果物の全体像と安全・承認観点を確認してください。</p>
+        </div>
+        <a class="button-link hero-primary-action" href="/blueprint/download">Markdown設計書をダウンロード</a>
+    </section>
+
+    <section class="step4-main-grid" id="result-summary">
+        <section class="form-section step4-overview-card">
+            <div class="section-heading step4-section-heading">
+                <span class="step4-section-icon">▣</span>
+                <div>
+                    <h2>生成成果物の全体像</h2>
+                    <p>このページでは、生成されたRESTエンドポイント、DTO、Controller雛形、MCP設計候補、API/MCP対応、安全上の注意点を確認できます。</p>
+                </div>
+            </div>
+
+            <div class="step4-metric-grid">
+                <section class="step4-metric-card">
+                    <span>REST API候補</span>
+                    <strong th:text="${blueprintResult.apiEndpoints == null ? 0 : blueprintResult.apiEndpoints.size()}">0</strong>
+                </section>
+                <section class="step4-metric-card">
+                    <span>DTO候補</span>
+                    <strong th:text="${blueprintResult.dtoCandidates == null ? 0 : blueprintResult.dtoCandidates.size()}">0</strong>
+                </section>
+                <section class="step4-metric-card">
+                    <span>MCP tools</span>
+                    <strong th:text="${blueprintResult.mcpTools == null ? 0 : blueprintResult.mcpTools.size()}">0</strong>
+                </section>
+                <section class="step4-metric-card">
+                    <span>安全注意点</span>
+                    <strong th:text="${blueprintResult.securityNotes == null ? 0 : blueprintResult.securityNotes.size()}">0</strong>
+                </section>
+            </div>
+
+            <div class="step4-artifact-grid">
+                <article class="step4-artifact-card">
+                    <div class="step4-artifact-head"><h3>API設計書</h3><span class="step4-tag">Markdown</span></div>
+                    <p>RESTエンドポイント、DTO、Controller雛形、セキュリティ観点をまとめた設計レビュー用成果物です。</p>
+                    <div class="step4-mini-actions">
+                        <a href="/blueprint/preview">プレビュー</a>
+                        <a href="/blueprint/download">ダウンロード</a>
+                    </div>
+                </article>
+                <article class="step4-artifact-card">
+                    <div class="step4-artifact-head"><h3>MCP設計候補</h3><span class="step4-tag">tools / resources / prompts</span></div>
+                    <p>AIエージェントに公開する操作、参照範囲、定型プロンプト候補を確認できます。</p>
+                    <div class="step4-mini-actions">
+                        <a href="#mcp-design">候補を見る</a>
+                    </div>
+                </article>
+                <article class="step4-artifact-card">
+                    <div class="step4-artifact-head"><h3>Controller雛形</h3><span class="step4-tag">Spring</span></div>
+                    <p>Spring Boot実装の出発点となるController雛形コードを確認できます。</p>
+                    <div class="step4-mini-actions">
+                        <a href="#controller-skeleton">コードを見る</a>
+                    </div>
+                </article>
+                <article class="step4-artifact-card">
+                    <div class="step4-artifact-head"><h3>AI実装指示書</h3><span class="step4-tag">Implementation</span></div>
+                    <p>AI実装指示書は、APIM for Springを実装するためではなく、生成された設計候補をCodex等の実装支援AIへ渡し、対象業務アプリケーションの実装につなげるための成果物です。</p>
+                    <div class="step4-mini-actions">
+                        <a href="/blueprint/implementation-instructions">プレビュー</a>
+                        <a href="/blueprint/implementation-instructions/download">ダウンロード</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <aside class="step4-side-stack">
+            <section class="form-section step4-side-card">
+                <h2><span class="step4-round-icon blue">✓</span>このページで行うこと</h2>
+                <ul class="step4-check-list">
+                    <li>生成成果物の全体像を確認する</li>
+                    <li>REST APIとMCP toolsの対応を確認する</li>
+                    <li>承認・監査・危険操作の注意点をレビューする</li>
+                    <li>Markdown設計書とAI実装指示書を保存する</li>
+                </ul>
+            </section>
+            <section class="form-section step4-side-card step4-risk-card">
+                <h2><span class="step4-round-icon orange">!</span>レビュー前提</h2>
+                <ul>
+                    <li>生成結果は設計たたき台であり、最終設計判断ではありません。</li>
+                    <li>承認必須操作や監査ログ対象は、人間が業務ルールに照らして確認してください。</li>
+                    <li>完全動作するMCPサーバー、DB永続化やマイグレーション、本番デプロイはこのMVPでは生成しません。</li>
+                </ul>
+            </section>
+            <section class="form-section step4-side-card">
+                <h2><span class="step4-round-icon green">→</span>次のアクション</h2>
+                <p>Markdown設計書とAI実装指示書をレビューし、必要に応じて設定を修正して再生成してください。</p>
+                <div class="step4-side-actions">
+                    <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions">AI実装指示書を見る</a>
+                    <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
+                </div>
+            </section>
+        </aside>
+    </section>
+
+    <section class="form-section step4-guide-card">
+        <div class="section-heading step4-section-heading">
+            <span class="step4-section-icon">?</span>
+            <div>
+                <h2>おすすめの読み順</h2>
+                <p>生成成果物をレビューする順序と、このMVPの出力範囲を確認します。</p>
+            </div>
+        </div>
+        <div class="step4-guide-grid">
+            <section>
+                <h3>出力物の見方</h3>
+                <ul>
+                    <li>まず入力サマリーで、どの業務要件から生成されたかを確認します。</li>
+                    <li>RESTエンドポイント一覧で、人間向けAPI候補を確認します。</li>
+                    <li>MCP tools/resources/promptsで、AIエージェントに公開する操作候補を確認します。</li>
+                    <li>API/MCP対応表は、人間向けAPIとAI向け操作入口の対応を確認するための表です。</li>
+                    <li>Markdown設計書やAI実装指示書を、レビューやCodex等への実装依頼に使います。</li>
+                </ul>
+            </section>
+            <section>
+                <h3>このMVPで生成しないもの</h3>
+                <ul>
+                    <li>API設計書は、人間による設計レビューやdocs転記に使います。</li>
+                    <li>MCP tools/resources/promptsは、AIエージェントへ公開する操作・参照範囲・定型指示の設計候補です。</li>
+                    <li>完全動作するMCPサーバー</li>
+                    <li>DB永続化やマイグレーション</li>
+                    <li>認証・認可の本格実装、外部LLM API連携、本番デプロイ作業</li>
+                </ul>
+            </section>
+        </div>
+    </section>
+
+    <section class="form-section step4-detail-card">
+        <div class="section-heading step4-section-heading">
+            <span class="step4-section-icon">in</span>
+            <div>
+                <h2>入力サマリー</h2>
+                <p>生成対象となった業務要件とAPI設計の要約です。</p>
+            </div>
+        </div>
+        <div class="step4-summary-box">
+            <h3>業務要件</h3>
+            <p th:text="${blueprintResult.inputSummary}"></p>
+        </div>
+        <div class="step4-summary-box">
+            <h3>API設計サマリー</h3>
+            <p th:text="${blueprintResult.apiDesignSummary}"></p>
+        </div>
+    </section>
+
+    <section class="form-section step4-detail-card">
+        <div class="section-heading step4-section-heading">
+            <span class="step4-section-icon">API</span>
+            <div>
+                <h2>RESTエンドポイント一覧</h2>
+                <p>人間向けAPI候補です。承認必須操作と監査ログ対象を優先的に確認してください。</p>
+            </div>
+        </div>
+        <div class="step4-table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Path</th>
+                    <th>Purpose</th>
+                    <th>Approval</th>
+                    <th>Audit</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="e : ${blueprintResult.apiEndpoints}">
+                    <td><span class="step4-method-badge" th:text="${e.httpMethod}"></span></td>
+                    <td th:text="${e.path}"></td>
+                    <td th:text="${e.purpose}"></td>
+                    <td th:text="${e.approvalRequired}" th:classappend="${e.approvalRequired.contains('必須') ? 'warning-strong' : ''}"></td>
+                    <td th:text="${e.auditLogRequired}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="form-section step4-detail-card">
+        <div class="section-heading step4-section-heading">
+            <span class="step4-section-icon">DTO</span>
+            <div>
+                <h2>DTO候補</h2>
+                <p>API入出力に利用するDTO候補です。required / optional の妥当性を確認してください。</p>
+            </div>
+        </div>
+        <div class="step4-dto-grid">
+            <article th:each="d : ${blueprintResult.dtoCandidates}" class="step4-mini-card">
+                <div class="step4-mini-head"><h3 th:text="${d.name}"></h3><span class="step4-tag">DTO</span></div>
+                <div class="step4-mini-body">
+                    <p th:text="${d.purpose}"></p>
+                    <ul>
+                        <li th:each="f : ${d.fields}">
+                            <span th:text="${f.name}"></span> :
+                            <span th:text="${f.javaType}"></span>
+                            (<span th:text="${f.required ? 'required' : 'optional'}"></span>)
+                        </li>
+                    </ul>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="form-section step4-detail-card" id="controller-skeleton">
+        <div class="section-heading step4-section-heading">
+            <span class="step4-section-icon">&lt;/&gt;</span>
+            <div>
+                <h2>Controller雛形</h2>
+                <p>Spring Boot実装へ接続するためのController雛形です。実装前にエンドポイント名、認可、例外処理を確認してください。</p>
+            </div>
+        </div>
+        <pre class="step4-code-preview" th:text="${blueprintResult.controllerSkeleton.sourceCode}"></pre>
+    </section>
+
+    <section class="form-section step4-detail-card" id="mcp-design">
+        <div class="section-heading step4-section-heading">
+            <span class="step4-section-icon">MCP</span>
+            <div>
+                <h2>MCP tools / resources / prompts</h2>
+                <p>MCP tools/resources/promptsは、AIエージェントへ公開する操作・参照範囲・定型指示の設計候補です。</p>
+            </div>
+        </div>
+
+        <h3>MCP tools</h3>
+        <div class="step4-table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Tool</th>
+                    <th>Policy</th>
+                    <th>Approval</th>
+                    <th>API</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="t : ${blueprintResult.mcpTools}">
+                    <td th:text="${t.name}"></td>
+                    <td th:text="${t.aiExecutionPolicy}"></td>
+                    <td th:text="${t.approvalRequired}" th:classappend="${t.approvalRequired.contains('必須') ? 'warning-strong' : ''}"></td>
+                    <td th:text="${t.relatedApi}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="step4-mcp-grid">
+            <section class="step4-mini-card">
+                <div class="step4-mini-head"><h3>MCP resources</h3><span class="step4-tag">resources</span></div>
+                <div class="step4-mini-body">
+                    <ul>
+                        <li th:each="r : ${blueprintResult.mcpResources}">
+                            <span th:text="${r.name}"></span> -
+                            <span th:text="${r.purpose}"></span>
+                            (<span th:text="${r.scope}"></span>)
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <section class="step4-mini-card">
+                <div class="step4-mini-head"><h3>MCP prompts</h3><span class="step4-tag">prompts</span></div>
+                <div class="step4-mini-body">
+                    <ul>
+                        <li th:each="p : ${blueprintResult.mcpPrompts}">
+                            <strong th:text="${p.name}"></strong>:
+                            <span th:text="${p.purpose}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="form-section step4-detail-card">
+        <div class="section-heading step4-section-heading">
+            <span class="step4-section-icon">↔</span>
+            <div>
+                <h2>API / MCP対応表</h2>
+                <p>人間向けAPIとAI向け操作入口の対応を確認するための表です。</p>
+            </div>
+        </div>
+        <div class="step4-table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>API</th>
+                    <th>Tool</th>
+                    <th>Notes</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="m : ${blueprintResult.apiMcpMappings}">
+                    <td th:text="${m.apiPath}"></td>
+                    <td th:text="${m.toolName}"></td>
+                    <td th:text="${m.notes}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="form-section step4-detail-card step4-security-card">
+        <div class="section-heading step4-section-heading">
+            <span class="step4-section-icon">!</span>
+            <div>
+                <h2>セキュリティ・承認・監査ログ注意点</h2>
+                <p>危険操作や人間確認が必要な箇所を実装前に確認してください。</p>
+            </div>
+        </div>
+        <ul class="step4-security-list">
+            <li th:each="n : ${blueprintResult.securityNotes}" class="warning">
+                <strong th:text="${n.category}"></strong>:
+                <span th:text="${n.message}"></span>
             </li>
         </ul>
-    </div>
-
-    <h2>Controller雛形</h2>
-    <pre th:text="${blueprintResult.controllerSkeleton.sourceCode}"></pre>
-
-    <h2>MCP tools</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>Tool</th>
-            <th>Policy</th>
-            <th>Approval</th>
-            <th>API</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="t : ${blueprintResult.mcpTools}">
-            <td th:text="${t.name}"></td>
-            <td th:text="${t.aiExecutionPolicy}"></td>
-            <td th:text="${t.approvalRequired}" th:classappend="${t.approvalRequired.contains('必須') ? 'warning-strong' : ''}"></td>
-            <td th:text="${t.relatedApi}"></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <h2>MCP resources</h2>
-    <ul>
-        <li th:each="r : ${blueprintResult.mcpResources}">
-            <span th:text="${r.name}"></span> -
-            <span th:text="${r.purpose}"></span>
-            (<span th:text="${r.scope}"></span>)
-        </li>
-    </ul>
-
-    <h2>MCP prompts</h2>
-    <ul>
-        <li th:each="p : ${blueprintResult.mcpPrompts}">
-            <strong th:text="${p.name}"></strong>:
-            <span th:text="${p.purpose}"></span>
-        </li>
-    </ul>
-
-    <h2>API / MCP対応表</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>API</th>
-            <th>Tool</th>
-            <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="m : ${blueprintResult.apiMcpMappings}">
-            <td th:text="${m.apiPath}"></td>
-            <td th:text="${m.toolName}"></td>
-            <td th:text="${m.notes}"></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <h2>セキュリティ・承認・監査ログ注意点</h2>
-    <ul>
-        <li th:each="n : ${blueprintResult.securityNotes}" class="warning">
-            <strong th:text="${n.category}"></strong>:
-            <span th:text="${n.message}"></span>
-        </li>
-    </ul>
-
-    <nav class="links">
-        <a href="/blueprint/preview">Markdown設計書プレビュー</a>
-        <a href="/blueprint/download">Markdown設計書ダウンロード</a>
-        <a href="/blueprint/implementation-instructions">AI実装指示書プレビュー</a>
-        <a href="/blueprint/implementation-instructions/download">AI実装指示書ダウンロード</a>
-        <a href="/blueprint/edit">設定を修正して再生成</a>
-        <a href="/external-ai-bridge">トップページへ戻る</a>
-    </nav>
+        <div class="step4-bottom-actions">
+            <div>
+                <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
+                <a class="button-link secondary" href="/external-ai-bridge">トップページへ戻る</a>
+            </div>
+            <div>
+                <a class="button-link secondary" href="/blueprint/preview">Markdown設計書プレビュー</a>
+                <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions">AI実装指示書プレビュー</a>
+            </div>
+        </div>
+    </section>
 </main>
 </body>
 </html>

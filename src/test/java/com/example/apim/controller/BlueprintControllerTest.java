@@ -292,7 +292,16 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("MCP tools/resources/promptsで、AIエージェントに公開する操作候補を確認します")))
                 .andExpect(content().string(containsString("Markdown設計書やAI実装指示書を、レビューやCodex等への実装依頼に使います")))
                 .andExpect(content().string(containsString("完全動作するMCPサーバー")))
-                .andExpect(content().string(containsString("DB永続化やマイグレーション")));
+                .andExpect(content().string(containsString("DB永続化やマイグレーション")))
+                .andExpect(content().string(containsString("step4-result-page")))
+                .andExpect(content().string(containsString("step4-result-hero")))
+                .andExpect(content().string(containsString("Step 4: 設計候補生成結果")))
+                .andExpect(content().string(containsString("API / MCP設計候補を生成しました")))
+                .andExpect(content().string(containsString("step4-progress-stepper")))
+                .andExpect(content().string(containsString("step4-status-card")))
+                .andExpect(content().string(containsString("生成成果物の全体像")))
+                .andExpect(content().string(containsString("step4-overview-card")))
+                .andExpect(content().string(containsString("step4-detail-card")));
     }
 
     @Test
