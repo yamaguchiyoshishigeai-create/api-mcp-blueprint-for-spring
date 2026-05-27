@@ -7,151 +7,107 @@
 </head>
 <body>
 <main class="container trial-ui-page external-ai-bridge-page">
-    <section class="app-hero">
-        <div class="app-hero-content">
-            <h1>API + MCP Blueprint Compiler for Spring</h1>
-            <p>業務要件から、Spring REST API設計とMCP設計のたたき台を作る設計生成ツールです。API設計書、MCP設計書、Controller雛形、AI実装指示書を整理し、Spring Boot / MCP Server実装の前段に接続します。</p>
+    <section class="app-hero external-hero">
+        <div class="app-hero-content external-hero-copy">
+            <div class="hero-title-row">
+                <div class="app-icon" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" fill="none" role="img">
+                        <path d="M37 10c-6.8.3-13.8 2.3-19 7.6-5.3 5.3-6.5 11.7-4.7 16.4 4.6 1.9 11.2.7 16.5-4.6C35.1 24 37 16.7 37 10Z" fill="white"/>
+                        <path d="M12 37c5.2-1.3 12-5.6 17.8-13" stroke="#0d6cf2" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="trial-ui-note">Spring向け API / MCP 設計生成コンパイラ</p>
+                    <h1>API + MCP Blueprint Compiler for Spring</h1>
+                </div>
+            </div>
+            <p>業務要件を入力するだけで、API設計・MCP設計・実装指示のたたき台を自動でまとめます。外部AIに渡せる安全なプロンプトを生成し、開発を加速します。</p>
             <div class="app-hero-actions">
-                <a class="button-link" href="#freeTextInput">自由文からプロンプトを生成する</a>
-                <a class="button-link secondary-link" href="/blueprint/form">チェック式入力へ進む</a>
-                <a class="text-link" href="/help">ヘルプ</a>
+                <a class="button-link hero-primary-action" href="#freeTextInput">🚀 自由文から始める</a>
+                <a class="button-link secondary-link hero-secondary-action" href="/blueprint/form">☷ チェック式入力へ</a>
+                <a class="text-link" href="/help">ヘルプ ↗</a>
             </div>
+        </div>
+        <div class="hero-blueprint-visual" aria-hidden="true">
+            <div class="line-dot"></div>
+            <div class="hero-visual-card hero-visual-brace">{ }</div>
+            <div class="hero-visual-card hero-visual-api">API</div>
+            <div class="hero-visual-card hero-visual-mcp">MCP</div>
+            <div class="hero-visual-card hero-visual-code">&lt;/&gt;</div>
+            <div class="hero-visual-db"></div>
         </div>
     </section>
 
-    <section class="workflow-steps" aria-label="自由文から設計候補を生成する流れ">
-        <article class="workflow-step">
-            <span class="step-number">Step 1</span>
-            <h2>自由文を書く</h2>
-            <p>業務内容、利用者、操作、AIに許可したい範囲を自然文で入力します。</p>
-        </article>
-        <article class="workflow-step">
-            <span class="step-number">Step 2</span>
-            <h2>外部AI用プロンプトをコピーする</h2>
-            <p>APIMがMarkdownプロンプトを作成し、外部AIへ手動投入できる形にします。</p>
-        </article>
-        <article class="workflow-step">
-            <span class="step-number">Step 3</span>
-            <h2>外部AIのJSONを取り込む</h2>
-            <p>外部AIが返したAPIM取り込み用JSONを貼り付け、またはアップロードします。</p>
-        </article>
-        <article class="workflow-step">
-            <span class="step-number">Step 4</span>
-            <h2>反映内容を確認して設計候補を生成する</h2>
-            <p>安全警告、承認、監査ログ観点を確認し、必要に応じて修正します。</p>
-        </article>
+    <section class="workflow-steps compact-stepper" aria-label="自由文から設計候補を生成する流れ">
+        <article class="workflow-step"><span class="step-number">1</span><div><h2>入力</h2><p>業務要件を入力します</p></div></article>
+        <article class="workflow-step"><span class="step-number">2</span><div><h2>外部AI用プロンプト生成</h2><p>外部AIに渡すプロンプトを作成</p></div></article>
+        <article class="workflow-step"><span class="step-number">3</span><div><h2>JSON取込</h2><p>外部AIの出力を取り込みます</p></div></article>
+        <article class="workflow-step"><span class="step-number">4</span><div><h2>設計候補生成</h2><p>設計候補を確認・修正します</p></div></article>
     </section>
 
-    <section class="compact-layout">
-        <div class="form-section primary-input-card">
-        <div class="section-heading">
-            <h2>誰が何を入力するサービスか</h2>
-            <p>業務要件、ユースケース、エンドポイント候補、データ項目、制約を入力し、API / MCP設計成果物へ変換します。既存コード診断・品質評価ではなく、新規設計生成を支援します。</p>
-        </div>
-        <div class="target-value-grid" aria-label="APIMの対象利用者と出力成果物">
-            <section class="target-value-card">
-                <h3>対象利用者</h3>
-                <p>業務要件をもとにAPI設計・MCP設計のたたき台を作りたい利用者</p>
-            </section>
-            <section class="target-value-card">
-                <h3>入力するもの</h3>
-                <p>業務要件、ユースケース、エンドポイント候補、データ項目、制約</p>
-            </section>
-            <section class="target-value-card">
-                <h3>出力するもの</h3>
-                <p>API設計書、MCP設計書、Controller雛形、AI実装指示書</p>
-            </section>
-        </div>
-        <h2>自由文からプロンプトを生成</h2>
-        <form method="post" th:action="@{/external-ai-bridge/prompt}" th:object="${externalAiBridgeRequest}">
-            <label for="freeTextInput">自由文業務要件</label>
-            <div class="sample-buttons" aria-label="自由文業務要件のサンプル例文">
-                <p class="form-help">代表的なサンプル例文を入力できます。複数のボタンを押すと、既存の自由文に自然につながる形で追記されます。</p>
-                <button type="button" class="secondary sample-button" data-sample="ECサイトで、営業担当が商品在庫を検索し、注文状況を確認できる。AIには在庫照会、注文要約、出荷予定の確認を許可し、在庫数の更新は管理者承認後に反映したい。監査ログには検索条件、参照対象、承認者、更新前後の値を残したい。" onclick="insertFreeTextSample(this.dataset.sample)">注文・在庫管理</button>
-                <button type="button" class="secondary sample-button" data-sample="社員が経費申請を登録し、上長が承認または差戻しできる。AIには申請内容の要約、規程違反候補の指摘、差戻し理由の下書きを許可する。承認、差戻し、金額変更は人間操作のみとし、全操作を監査ログに残したい。" onclick="insertFreeTextSample(this.dataset.sample)">社内申請・承認</button>
-                <button type="button" class="secondary sample-button" data-sample="カスタマーサポート担当が問い合わせを検索し、過去対応履歴とFAQ候補を確認できる。AIには問い合わせ分類、FAQ候補提示、返信文案作成を許可し、実際の返信送信は担当者確認後にしたい。顧客情報の参照権限と監査ログが必要。" onclick="insertFreeTextSample(this.dataset.sample)">問い合わせ管理</button>
-                <button type="button" class="secondary sample-button" data-sample="契約担当者が契約一覧、請求状況、入金状況を確認できる。AIには契約リスクの要約、請求遅延候補の抽出、通知文案作成を許可する。契約条件変更、請求確定、入金消込は人間承認後に反映したい。" onclick="insertFreeTextSample(this.dataset.sample)">契約・請求管理</button>
-                <button type="button" class="secondary sample-button" data-sample="施設管理者が会議室や設備の予約状況を検索し、空き枠を確認できる。AIには利用目的に応じた候補枠提示、重複予約の検知、予約変更案の提示を許可する。予約確定とキャンセルは利用者または管理者の明示操作に限定したい。" onclick="insertFreeTextSample(this.dataset.sample)">予約・施設管理</button>
-                <button type="button" class="secondary sample-button" data-sample="人事担当が入社予定者の手続き状況を確認し、必要書類、アカウント発行、研修受講状況を管理できる。AIには未完了タスクの要約、リマインド文案作成、担当部署への確認事項整理を許可する。個人情報アクセスは権限別に制御したい。" onclick="insertFreeTextSample(this.dataset.sample)">人事オンボーディング</button>
-                <button type="button" class="secondary sample-button" data-sample="運用担当が障害チケット、監視アラート、対応履歴を検索できる。AIには影響範囲の要約、類似障害の検索、一次対応手順の提示を許可する。復旧操作や設定変更は人間承認後に実行し、作業ログと承認記録を残したい。" onclick="insertFreeTextSample(this.dataset.sample)">保守・障害対応</button>
-                <button type="button" class="secondary sample-button" data-sample="営業担当が顧客、商談、見積状況を検索し、次回アクションを確認できる。AIには商談履歴の要約、失注リスク候補の提示、フォローアップ文案作成を許可する。見積金額や受注確度の変更は担当者確認後に反映したい。" onclick="insertFreeTextSample(this.dataset.sample)">営業案件管理</button>
-                <button type="button" class="secondary sample-button" data-sample="社内利用者が業務マニュアル、FAQ、過去事例を横断検索できる。AIには検索結果の要約、関連文書候補の提示、回答案作成を許可する。機密区分に応じた閲覧制御を行い、誰がどの文書を参照したか監査ログに残したい。" onclick="insertFreeTextSample(this.dataset.sample)">ナレッジ検索</button>
-                <button type="button" class="secondary sample-button" data-sample="購買担当が購入依頼、見積比較、稟議状況を確認できる。AIには見積差分の要約、承認ルート候補、リスクコメント案の作成を許可する。発注確定、承認、差戻しは人間操作に限定し、承認履歴を保持したい。" onclick="insertFreeTextSample(this.dataset.sample)">購買・稟議管理</button>
+    <section class="compact-layout external-main-grid">
+        <div class="form-section primary-input-card external-input-card">
+            <div class="section-heading input-heading">
+                <span class="section-icon" aria-hidden="true">📝</span>
+                <div><h2>自由文から設計プロンプトを作成</h2><p>業務要件を自由に入力してください。内容をもとに、外部AIに渡す設計プロンプトを作成します。</p></div>
             </div>
-            <textarea id="freeTextInput" th:field="*{freeText}" rows="10" placeholder="例: 営業担当が顧客情報を検索し、問い合わせ履歴を確認できる。AIには検索と要約を許可し、更新は人間承認後に反映したい。"></textarea>
-            <div class="free-text-action-row">
-                <button type="submit" class="free-text-generate-button">外部AI投入用プロンプトを生成する</button>
-                <button type="button" class="secondary clear-sample-button" onclick="clearFreeText()">自由文を一括消去</button>
-            </div>
-            <p class="error" th:if="${#fields.hasErrors('freeText')}" th:errors="*{freeText}"></p>
-        </form>
+
+            <form method="post" th:action="@{/external-ai-bridge/prompt}" th:object="${externalAiBridgeRequest}">
+                <div class="sample-buttons sample-chip-list" aria-label="自由文業務要件のサンプル例文">
+                    <button type="button" class="secondary sample-button" data-sample="ECサイトで、営業担当が商品在庫を検索し、注文状況を確認できる。AIには在庫照会、注文要約、出荷予定の確認を許可し、在庫数の更新は管理者承認後に反映したい。監査ログには検索条件、参照対象、承認者、更新前後の値を残したい。" onclick="insertFreeTextSample(this.dataset.sample)">🛒 注文・在庫管理</button>
+                    <button type="button" class="secondary sample-button" data-sample="社員が経費申請を登録し、上長が承認または差戻しできる。AIには申請内容の要約、規程違反候補の指摘、差戻し理由の下書きを許可する。承認、差戻し、金額変更は人間操作のみとし、全操作を監査ログに残したい。" onclick="insertFreeTextSample(this.dataset.sample)">👤 社内申請・承認</button>
+                    <button type="button" class="secondary sample-button" data-sample="カスタマーサポート担当が問い合わせを検索し、過去対応履歴とFAQ候補を確認できる。AIには問い合わせ分類、FAQ候補提示、返信文案作成を許可し、実際の返信送信は担当者確認後にしたい。顧客情報の参照権限と監査ログが必要。" onclick="insertFreeTextSample(this.dataset.sample)">💬 問い合わせ管理</button>
+                    <button type="button" class="secondary sample-button" data-sample="契約担当者が契約一覧、請求状況、入金状況を確認できる。AIには契約リスクの要約、請求遅延候補の抽出、通知文案作成を許可する。契約条件変更、請求確定、入金消込は人間承認後に反映したい。" onclick="insertFreeTextSample(this.dataset.sample)">📄 契約・請求管理</button>
+                    <button type="button" class="secondary sample-button" data-sample="施設管理者が会議室や設備の予約状況を検索し、空き枠を確認できる。AIには利用目的に応じた候補枠提示、重複予約の検知、予約変更案の提示を許可する。予約確定とキャンセルは利用者または管理者の明示操作に限定したい。" onclick="insertFreeTextSample(this.dataset.sample)">📅 予約・施設管理</button>
+                    <button type="button" class="secondary sample-button" data-sample="人事担当が入社予定者の手続き状況を確認し、必要書類、アカウント発行、研修受講状況を管理できる。AIには未完了タスクの要約、リマインド文案作成、担当部署への確認事項整理を許可する。個人情報アクセスは権限別に制御したい。" onclick="insertFreeTextSample(this.dataset.sample)">👥 人事オンボーディング</button>
+                    <button type="button" class="secondary sample-button" data-sample="運用担当が障害チケット、監視アラート、対応履歴を検索できる。AIには影響範囲の要約、類似障害の検索、一次対応手順の提示を許可する。復旧操作や設定変更は人間承認後に実行し、作業ログと承認記録を残したい。" onclick="insertFreeTextSample(this.dataset.sample)">🔧 保守・障害対応</button>
+                    <button type="button" class="secondary sample-button" data-sample="営業担当が顧客、商談、見積状況を検索し、次回アクションを確認できる。AIには商談履歴の要約、失注リスク候補の提示、フォローアップ文案作成を許可する。見積金額や受注確度の変更は担当者確認後に反映したい。" onclick="insertFreeTextSample(this.dataset.sample)">📊 営業案件管理</button>
+                    <button type="button" class="secondary sample-button" data-sample="社内利用者が業務マニュアル、FAQ、過去事例を横断検索できる。AIには検索結果の要約、関連文書候補の提示、回答案作成を許可する。機密区分に応じた閲覧制御を行い、誰がどの文書を参照したか監査ログに残したい。" onclick="insertFreeTextSample(this.dataset.sample)">🔍 ナレッジ検索</button>
+                </div>
+
+                <label for="freeTextInput">業務要件を自由に入力してください</label>
+                <textarea id="freeTextInput" th:field="*{freeText}" rows="7" placeholder="例：営業担当が顧客情報を検索し、問い合わせ履歴を確認できる。&#10;AIには検索と要約を許可し、更新は人間承認後に反映したい。"></textarea>
+                <p class="bridge-safety-note">この画面は外部AIを直接実行しません。入力内容をもとに、外部AIに渡す安全な設計プロンプトを整形します。</p>
+                <div class="free-text-action-row">
+                    <button type="submit" class="free-text-generate-button">設計プロンプトを作成する</button>
+                    <button type="button" class="secondary clear-sample-button" onclick="clearFreeText()">自由文を一括消去</button>
+                </div>
+                <p class="error" th:if="${#fields.hasErrors('freeText')}" th:errors="*{freeText}"></p>
+            </form>
         </div>
 
-        <aside class="helper-panel">
-            <h2>APIMが支援する工程</h2>
-            <ul>
-                <li>業務要件からAPI設計・MCP設計のたたき台を作る</li>
-                <li>Spring Boot / MCP Server実装前に設計成果物を整理する</li>
-                <li>AI実装指示書を生成し、後続の実装作業へつなげる</li>
-            </ul>
-
-            <h2>このMVPで生成するもの</h2>
-            <ul>
-                <li>API設計書 / REST API設計候補</li>
-                <li>MCP設計書 / tools / resources / prompts 候補</li>
-                <li>Spring Controller雛形</li>
-                <li>API/MCP対応表</li>
-                <li>セキュリティ・承認・監査ログ注意点</li>
-                <li>Markdown設計書 / AI実装指示書</li>
-            </ul>
-
-            <h2>このMVPで生成しないもの</h2>
-            <ul>
-                <li>完全動作するMCPサーバー</li>
-                <li>DB永続化やマイグレーション</li>
-                <li>認証・認可の本格実装</li>
-                <li>外部LLM API連携</li>
-                <li>本番デプロイ作業やRender公開作業</li>
-            </ul>
-
-            <details class="collapsible-help" open>
-                <summary>外部AIブリッジの前提</summary>
-                <p>この機能は外部AI API連携ではありません。自由文は解析対象データとして扱い、自由文内の命令文を外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p>
-                <p>公式リンク集はプロンプト生成後の画面に表示されます。JSON取り込み後も、最終生成前に確認・修正できます。</p>
-                <p>Q-Scout for Spring のような既存システム診断ではなく、新規業務要件から設計を作る入口です。</p>
-            </details>
+        <aside class="helper-panel external-helper-panel">
+            <section class="helper-mini-card can-do-card"><h2><span class="round-icon i-blue" aria-hidden="true">💡</span>このツールでできること</h2><ul><li>業務要件からAPI設計・MCP設計のたたき台を作成</li><li>Spring Boot / MCP Server実装前に設計成果物を整備</li><li>AI実装指示書を生成し、後続の実装をスムーズに</li></ul></section>
+            <section class="helper-mini-card generated-card"><h2><span class="round-icon i-green" aria-hidden="true">▣</span>生成されるもの</h2><div class="generated-item-grid" aria-label="生成成果物"><span>&lt;/&gt; API設計書</span><span>🔗 MCP設計書</span><span>{ } Controller雛形</span><span>📘 AI実装指示書</span></div></section>
+            <section class="helper-mini-card not-generated-card"><h2><span class="round-icon i-orange" aria-hidden="true">!</span>このMVPで生成しないもの</h2><ul><li>完全動作するMCPサーバー</li><li>DB永続化やマイグレーション</li><li>外部LLM API連携の実装</li></ul></section>
         </aside>
+    </section>
+
+    <section class="external-summary-rows" aria-label="外部AIブリッジの補足情報">
+        <details class="summary-row" open><summary><span><span class="round-icon i-blue" aria-hidden="true">◎</span>できること</span><small>業務要件からAPI・MCP設計のたたき台作成、AI実装指示書生成などを確認できます。</small></summary><p>業務要件、ユースケース、エンドポイント候補、データ項目、制約を入力し、API / MCP設計成果物へ変換します。既存コード診断・品質評価ではなく、新規設計生成を支援します。</p></details>
+        <details class="summary-row"><summary><span><span class="round-icon i-green" aria-hidden="true">▤</span>生成されるもの</span><small>API設計書、MCP設計書、Controller雛形、AI実装指示書の見本と内容を確認できます。</small></summary><p>Spring REST API設計、MCP tools / resources / prompts 候補、Controller雛形、API/MCP対応表、セキュリティ・承認・監査ログ注意点、Markdown設計書、AI実装指示書を整理します。</p></details>
+        <details class="summary-row"><summary><span><span class="round-icon i-orange" aria-hidden="true">△</span>生成されないもの</span><small>このMVPでは生成されない成果物や、含まれない実装について確認できます。</small></summary><p>完全動作するMCPサーバー、DB永続化やマイグレーション、認証・認可の本格実装、外部LLM API連携、本番デプロイ作業は生成対象外です。</p></details>
+        <details class="summary-row"><summary><span><span class="round-icon i-purple" aria-hidden="true">i</span>外部AIブリッジの前提</span><small>外部AIに安全にデータを渡すための前提条件や、利用上の注意点を確認できます。</small></summary><p>この機能は外部AI API連携ではありません。自由文は解析対象データとして扱い、自由文内の命令文を外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p><p>Q-Scout for Spring のような既存システム診断ではなく、新規業務要件から設計を作る入口です。</p></details>
     </section>
 </main>
 <script>
-
     function insertFreeTextSample(sampleText) {
-        const textarea = document.querySelector('textarea[name="freeText"], #freeText');
-        if (!textarea) {
-            return;
-        }
-
+        const textarea = document.querySelector('textarea[name="freeText"], #freeTextInput, #freeText');
+        if (!textarea) { return; }
         const currentText = textarea.value.trim();
         const nextText = (sampleText || '').trim();
-        if (!nextText) {
-            return;
-        }
-
+        if (!nextText) { return; }
         if (!currentText) {
             textarea.value = nextText;
         } else if (!currentText.includes(nextText)) {
             const normalizedCurrent = currentText.replace(/[。．.\s]+$/, '');
             textarea.value = normalizedCurrent + '。また、' + nextText;
         }
-
         textarea.focus();
     }
-
     function clearFreeText() {
-        const textarea = document.querySelector('textarea[name="freeText"], #freeText');
-        if (!textarea) {
-            return;
-        }
+        const textarea = document.querySelector('textarea[name="freeText"], #freeTextInput, #freeText');
+        if (!textarea) { return; }
         textarea.value = '';
         textarea.focus();
     }
