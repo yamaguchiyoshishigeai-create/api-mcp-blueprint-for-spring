@@ -2,33 +2,64 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>APIM取り込みJSON検証結果</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main class="container trial-ui-page external-ai-import-page">
-    <section class="app-hero import-result-hero">
+<main class="container trial-ui-page external-ai-import-page step3-import-result-page">
+    <section class="app-hero import-result-hero step3-import-hero" aria-labelledby="step3-page-title">
         <div class="app-hero-content">
-            <p class="trial-ui-note">Step 3-4: JSON検証と反映内容確認</p>
-            <h1>APIM取り込みJSON検証結果</h1>
-            <p>外部AIが生成したJSONをAPIM側で検証し、既存フォーム状態へ反映します。最終成果物生成へ進む前に、内容、安全警告、承認、監査ログ観点を確認してください。</p>
+            <p class="trial-ui-note">Step 3: JSON検証・反映内容確認</p>
+            <h1 id="step3-page-title">APIM取り込みJSON検証結果</h1>
+            <p>外部AIが生成したJSONをAPIM側で検証し、既存フォーム状態へ反映しました。最終成果物を生成する前に、内容・安全警告・承認観点を確認してください。</p>
+            <div class="app-hero-actions step3-hero-actions">
+                <a class="button-link hero-primary-action" href="#review-form">確認項目を修正する</a>
+                <a class="button-link secondary" href="#generate">設計候補生成へ進む</a>
+                <a class="button-link secondary" href="#summary">抽出結果を見る</a>
+            </div>
+        </div>
+        <div class="step3-hero-visual" aria-hidden="true">
+            <div class="step3-hero-node step3-hero-node-json">JSON</div>
+            <div class="step3-hero-window">
+                <div class="step3-hero-window-title">JSON Review</div>
+                <div class="step3-hero-window-line w-92"></div>
+                <div class="step3-hero-window-line w-78"></div>
+                <div class="step3-hero-window-line w-64"></div>
+            </div>
+            <div class="step3-hero-node step3-hero-node-form">Form Reflection</div>
+            <div class="step3-hero-node step3-hero-node-check">✓ Review</div>
+            <div class="step3-hero-connector step3-hero-connector-top"></div>
+            <div class="step3-hero-connector step3-hero-connector-bottom"></div>
         </div>
     </section>
 
-    <section class="form-section error-panel" th:if="${not #lists.isEmpty(importResult.errors)}">
+    <section class="workflow-steps compact-stepper import-progress-stepper" aria-label="外部AIブリッジの作業ステップ">
+        <article class="workflow-step step-completed"><span class="step-number">✓</span><div><h2>入力</h2><p>業務要件を入力済み</p></div></article>
+        <article class="workflow-step step-completed"><span class="step-number">✓</span><div><h2>外部AI用プロンプト生成</h2><p>外部AIに渡すプロンプトを作成済み</p></div></article>
+        <article class="workflow-step step-active"><span class="step-number">3</span><div><h2>JSON検証</h2><p>抽出結果を検証・反映中</p></div></article>
+        <article class="workflow-step"><span class="step-number">4</span><div><h2>設計候補生成</h2><p>確認後に設計候補を生成します</p></div></article>
+    </section>
+
+    <section class="form-section error-panel step3-error-card" th:if="${not #lists.isEmpty(importResult.errors)}">
         <h2>エラー</h2>
+        <p>JSON検証中に問題が見つかりました。内容を確認してStep2から再度取り込んでください。</p>
         <ul>
             <li class="error" th:each="error : ${importResult.errors}" th:text="${error}"></li>
         </ul>
     </section>
 
-    <section class="success-announcement"
+    <section class="success-announcement step3-status-card"
              th:if="${importResult.valid && importResult.canGenerate}">
-        <h2>JSONの検証と反映準備が完了しました</h2>
-        <p>外部AIが返したJSONをAPIM側で検証し、既存フォームへ反映できる状態にしました。内容を確認・修正してから設計候補を生成してください。</p>
+        <div class="step3-status-icon">✓</div>
+        <div>
+            <h2>JSONの検証と反映準備が完了しました</h2>
+            <p>外部AIが返したJSONを検証し、確認フォームへ反映できる状態にしました。内容を確認・修正してから設計候補を生成してください。</p>
+        </div>
+        <a class="button-link hero-primary-action" href="#generate">設計候補生成へ進む</a>
     </section>
 
-    <section class="form-section caution-panel"
+    <section class="form-section caution-panel step3-warning-card"
              th:if="${!(importResult.valid && importResult.canGenerate) && not #lists.isEmpty(importResult.warnings)}">
         <h2>確認事項</h2>
         <ul>
@@ -36,7 +67,7 @@
         </ul>
     </section>
 
-    <section class="form-section cannot-generate-panel" th:if="${importResult.valid && !importResult.canGenerate}">
+    <section class="form-section cannot-generate-panel step3-cannot-generate-card" th:if="${importResult.valid && !importResult.canGenerate}">
         <h2>生成不可</h2>
         <p th:text="${importResult.reason}"></p>
         <h3>不足情報</h3>
@@ -45,74 +76,122 @@
         </ul>
     </section>
 
-    <section class="form-section extraction-summary"
-             th:if="${importResult.valid && importResult.canGenerate && importResult.extractionSummary != null && importResult.extractionSummary.hasContent()}">
-        <div class="section-heading">
-            <h2>v2抽出結果の確認</h2>
-            <p>外部AIが抽出した業務構造です。下の既存APIM入力フォームへ反映する前に、業務領域・対象・利用者・操作・承認監査・曖昧点を確認してください。</p>
-        </div>
+    <section class="step3-main-grid import-result-dashboard"
+             th:if="${importResult.valid && importResult.canGenerate}">
+        <section class="form-section extraction-summary step3-review-card" id="summary"
+                 th:if="${importResult.extractionSummary != null && importResult.extractionSummary.hasContent()}">
+            <div class="section-heading step3-section-heading">
+                <span class="step3-section-icon">▢</span>
+                <div>
+                    <h2>v2抽出結果の確認</h2>
+                    <p>外部AIが抽出した業務構造です。反映前に業務領域・対象・利用者・操作・承認監査・曖昧点を確認してください。</p>
+                </div>
+            </div>
 
-        <div class="summary-card-grid">
-            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.domains)}">
-                <h3>業務領域</h3>
-                <ul>
-                    <li th:each="item : ${importResult.extractionSummary.domains}" th:text="${item}"></li>
+            <div class="step3-metric-grid">
+                <section class="step3-metric-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.domains)}">
+                    <span>業務領域</span>
+                    <strong th:text="${#lists.size(importResult.extractionSummary.domains)}">0</strong>
+                </section>
+                <section class="step3-metric-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.businessObjects)}">
+                    <span>業務オブジェクト</span>
+                    <strong th:text="${#lists.size(importResult.extractionSummary.businessObjects)}">0</strong>
+                </section>
+                <section class="step3-metric-card" th:if="${not #lists.isEmpty(importResult.warnings)}">
+                    <span>確認警告</span>
+                    <strong th:text="${#lists.size(importResult.warnings)}">0</strong>
+                </section>
+            </div>
+
+            <div class="summary-card-grid step3-extract-grid">
+                <section class="summary-card step3-mini-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.domains)}">
+                    <div class="step3-mini-head"><h3>業務領域</h3><span class="step3-tag">domain</span></div>
+                    <ul>
+                        <li th:each="item : ${importResult.extractionSummary.domains}" th:text="${item}"></li>
+                    </ul>
+                </section>
+                <section class="summary-card step3-mini-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.businessObjects)}">
+                    <div class="step3-mini-head"><h3>業務オブジェクト</h3><span class="step3-tag">objects</span></div>
+                    <ul>
+                        <li th:each="item : ${importResult.extractionSummary.businessObjects}" th:text="${item}"></li>
+                    </ul>
+                </section>
+                <section class="summary-card step3-mini-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.actors)}">
+                    <div class="step3-mini-head"><h3>利用者・ロール</h3><span class="step3-tag">roles</span></div>
+                    <ul>
+                        <li th:each="item : ${importResult.extractionSummary.actors}" th:text="${item}"></li>
+                    </ul>
+                </section>
+                <section class="summary-card step3-mini-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.operations)}">
+                    <div class="step3-mini-head"><h3>操作</h3><span class="step3-tag">operations</span></div>
+                    <ul>
+                        <li th:each="item : ${importResult.extractionSummary.operations}" th:text="${item}"></li>
+                    </ul>
+                </section>
+                <section class="summary-card step3-mini-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.relationships)}">
+                    <div class="step3-mini-head"><h3>関係</h3><span class="step3-tag">relations</span></div>
+                    <ul>
+                        <li th:each="item : ${importResult.extractionSummary.relationships}" th:text="${item}"></li>
+                    </ul>
+                </section>
+                <section class="summary-card step3-mini-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.ambiguities)}">
+                    <div class="step3-mini-head"><h3>曖昧点・確認事項</h3><span class="step3-tag">needs review</span></div>
+                    <ul>
+                        <li th:each="item : ${importResult.extractionSummary.ambiguities}" th:text="${item}"></li>
+                    </ul>
+                </section>
+                <section class="summary-card step3-mini-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.approvalRequiredOperations)}">
+                    <div class="step3-mini-head"><h3>承認必須操作</h3><span class="step3-tag">approval</span></div>
+                    <ul>
+                        <li th:each="item : ${importResult.extractionSummary.approvalRequiredOperations}" th:text="${item}"></li>
+                    </ul>
+                </section>
+                <section class="summary-card step3-mini-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.auditLogRequiredOperations)}">
+                    <div class="step3-mini-head"><h3>監査ログ必須操作</h3><span class="step3-tag">audit</span></div>
+                    <ul>
+                        <li th:each="item : ${importResult.extractionSummary.auditLogRequiredOperations}" th:text="${item}"></li>
+                    </ul>
+                </section>
+            </div>
+        </section>
+
+        <aside class="step3-side-stack">
+            <section class="form-section step3-side-card">
+                <h2><span class="step3-round-icon blue">✓</span>このページで行うこと</h2>
+                <ul class="step3-check-list">
+                    <li>外部AIの抽出結果を確認する</li>
+                    <li>フォーム反映内容を必要に応じて修正する</li>
+                    <li>安全・承認・監査観点を確認してからStep4へ進む</li>
                 </ul>
             </section>
-            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.businessObjects)}">
-                <h3>業務オブジェクト</h3>
+            <section class="form-section step3-side-card step3-risk-card">
+                <h2><span class="step3-round-icon orange">!</span>設計候補生成前の注意</h2>
                 <ul>
-                    <li th:each="item : ${importResult.extractionSummary.businessObjects}" th:text="${item}"></li>
+                    <li>金銭・契約・請求に影響する更新は人間承認後の反映として扱います。</li>
+                    <li>外部AIが作成した候補は設計たたき台であり、最終判断は人間が行います。</li>
+                    <li>不明確な承認者・監査ログ要件はStep4前に確認してください。</li>
                 </ul>
             </section>
-            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.actors)}">
-                <h3>利用者・ロール</h3>
-                <ul>
-                    <li th:each="item : ${importResult.extractionSummary.actors}" th:text="${item}"></li>
-                </ul>
+            <section class="form-section step3-side-card">
+                <h2><span class="step3-round-icon green">→</span>次のステップ</h2>
+                <p>確認済みの内容から、API設計・MCP設計・Controller雛形・AI実装指示書の候補を生成します。</p>
+                <a class="button-link hero-primary-action" href="#generate">Step4: 設計候補を生成</a>
             </section>
-            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.operations)}">
-                <h3>操作</h3>
-                <ul>
-                    <li th:each="item : ${importResult.extractionSummary.operations}" th:text="${item}"></li>
-                </ul>
-            </section>
-            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.relationships)}">
-                <h3>関係</h3>
-                <ul>
-                    <li th:each="item : ${importResult.extractionSummary.relationships}" th:text="${item}"></li>
-                </ul>
-            </section>
-            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.approvalRequiredOperations)}">
-                <h3>承認必須操作</h3>
-                <ul>
-                    <li th:each="item : ${importResult.extractionSummary.approvalRequiredOperations}" th:text="${item}"></li>
-                </ul>
-            </section>
-            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.auditLogRequiredOperations)}">
-                <h3>監査ログ必須操作</h3>
-                <ul>
-                    <li th:each="item : ${importResult.extractionSummary.auditLogRequiredOperations}" th:text="${item}"></li>
-                </ul>
-            </section>
-            <section class="summary-card" th:if="${not #lists.isEmpty(importResult.extractionSummary.ambiguities)}">
-                <h3>曖昧点・確認事項</h3>
-                <ul>
-                    <li th:each="item : ${importResult.extractionSummary.ambiguities}" th:text="${item}"></li>
-                </ul>
-            </section>
-        </div>
+        </aside>
     </section>
 
     <form th:if="${importResult.valid && importResult.canGenerate}" method="post"
           th:action="@{/blueprint/generate}" th:object="${blueprintInput}">
-        <section class="form-section">
-            <div class="section-heading">
-                <h2>反映内容の確認・修正</h2>
-                <p>この画面は確認画面です。必要に応じて修正してから、現行APIMの生成ロジックへ進んでください。</p>
+        <section class="form-section step3-reflection-card" id="review-form">
+            <div class="section-heading step3-section-heading">
+                <span class="step3-section-icon">✎</span>
+                <div>
+                    <h2>反映内容の確認・修正</h2>
+                    <p>この画面は確認画面です。必要に応じて修正してから、現行APIMの生成ロジックへ進んでください。</p>
+                </div>
             </div>
 
-            <div class="split-layout confirmation-form-layout">
+            <div class="split-layout confirmation-form-layout step3-form-grid">
                 <div class="confirmation-column required-fields">
                     <h3>必須項目</h3>
                     <label>業務要件（必須）</label>
@@ -162,7 +241,7 @@
                 </div>
             </div>
 
-            <div class="pre-generation-warning"
+            <div class="pre-generation-warning step3-pre-generation-warning"
                  th:if="${not #lists.isEmpty(importResult.warnings)}">
                 <h3>設計候補生成前の確認事項</h3>
                 <p>JSONの取り込み処理は完了しています。以下は、設計候補を生成する前に人間が確認すべき安全・承認・権限上の注意事項です。</p>
@@ -171,13 +250,14 @@
                 </ul>
             </div>
 
-            <div class="primary-action-row">
+            <div class="primary-action-row step3-final-actions" id="generate">
+                <a class="button-link secondary" href="/external-ai-bridge/prompt">Step2へ戻る</a>
                 <button type="submit">確認した内容で設計候補を生成する</button>
             </div>
         </section>
     </form>
 
-    <div class="links secondary-action-row">
+    <div class="links secondary-action-row step3-secondary-links">
         <a href="/external-ai-bridge">外部AIブリッジへ戻る</a>
         <a href="/">入力画面へ戻る</a>
     </div>
