@@ -591,6 +591,32 @@ button.secondary.sample-button {
   padding-left: 18px;
 }
 
+.target-value-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 14px 0 18px;
+}
+
+.target-value-card {
+  border: 1px solid #d8e2f4;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.target-value-card h3 {
+  margin: 0 0 6px;
+  color: #213047;
+  font-size: 15px;
+}
+
+.target-value-card p {
+  margin: 0;
+  color: #536071;
+  line-height: 1.55;
+}
+
 .confirmation-form-layout {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }

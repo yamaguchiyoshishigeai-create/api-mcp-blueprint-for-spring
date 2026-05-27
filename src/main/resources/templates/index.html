@@ -9,8 +9,8 @@
 <main class="container trial-ui-page check-input-page">
     <section class="app-hero check-input-hero">
         <div class="app-hero-content">
-            <h1>チェック式入力フォーム</h1>
-            <p>業務要件、対象ドメイン、利用者、操作、AI許可操作、承認条件、監査ログ条件を、チェック項目から直接調整する設計入力ページです。自由文入力ページと同じ流れで、確認しながらAPI設計とMCP設計候補へ進めます。</p>
+            <h1>業務要件からAPI/MCP設計を作るチェック式入力フォーム</h1>
+            <p>業務要件、対象ドメイン、ユースケース、エンドポイント候補、データ項目、AI許可操作、制約、承認条件、監査ログ条件を直接調整する設計入力ページです。既存コード診断ではなく、API設計書、MCP設計書、Controller雛形、AI実装指示書の生成へ進めます。</p>
             <div class="app-hero-actions">
                 <a class="button-link" href="#blueprintForm">チェック項目を編集する</a>
                 <a class="button-link secondary-link" href="/external-ai-bridge">トップページへ戻る</a>
@@ -43,10 +43,12 @@
             <p id="sampleNextAction" class="form-help">サンプルを使うと、対象ドメイン、利用者、必要操作、AI許可操作、承認必須操作、監査ログ対象を含む入力例がフォームに入ります。</p>
         </div>
         <aside class="helper-panel check-helper-panel">
+            <h2>対象利用者</h2>
+            <ul><li>業務要件からAPI設計・MCP設計のたたき台を作りたい利用者</li><li>Spring Boot / MCP Server実装前に設計成果物を整理したい利用者</li><li>AI実装指示書を生成して後続実装へつなげたい利用者</li></ul>
             <h2>このページで整えること</h2>
-            <ul><li>対象システム種別と業務ドメイン</li><li>利用者種別と想定利用者</li><li>必要操作とAIに許可する操作</li><li>AIに禁止する操作</li><li>承認必須操作と監査ログ対象</li></ul>
+            <ul><li>対象システム種別と業務ドメイン</li><li>利用者種別と想定利用者</li><li>業務要件、ユースケース、エンドポイント候補、データ項目、制約</li><li>必要操作とAIに許可する操作</li><li>AIに禁止する操作</li><li>承認必須操作と監査ログ対象</li></ul>
             <h2>生成後に確認すること</h2>
-            <ul><li>Markdown設計書プレビュー</li><li>RESTエンドポイント候補</li><li>MCP tools/resources/prompts候補</li><li>AI実装指示書</li></ul>
+            <ul><li>API設計書 / Markdown設計書プレビュー</li><li>MCP設計書 / tools/resources/prompts候補</li><li>Controller雛形</li><li>AI実装指示書</li></ul>
             <details class="collapsible-help" open><summary>自由文入力との使い分け</summary><p>自由文から始める場合はトップページへ戻り、外部AI投入用プロンプトを生成します。チェック式入力フォームでは、構造化された項目を直接確認・修正できます。</p></details>
         </aside>
     </section>

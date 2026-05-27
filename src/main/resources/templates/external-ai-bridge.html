@@ -10,7 +10,7 @@
     <section class="app-hero">
         <div class="app-hero-content">
             <h1>API + MCP Blueprint Compiler for Spring</h1>
-            <p>業務要件の自由文から、Spring REST API設計とMCP tools/resources/prompts設計候補へ進むための入口です。外部AIへ手動投入するプロンプトを生成し、返却JSONを確認してからAPIMの設計候補生成へ接続します。</p>
+            <p>業務要件から、Spring REST API設計とMCP設計のたたき台を作る設計生成ツールです。API設計書、MCP設計書、Controller雛形、AI実装指示書を整理し、Spring Boot / MCP Server実装の前段に接続します。</p>
             <div class="app-hero-actions">
                 <a class="button-link" href="#freeTextInput">自由文からプロンプトを生成する</a>
                 <a class="button-link secondary-link" href="/blueprint/form">チェック式入力へ進む</a>
@@ -44,6 +44,24 @@
 
     <section class="compact-layout">
         <div class="form-section primary-input-card">
+        <div class="section-heading">
+            <h2>誰が何を入力するサービスか</h2>
+            <p>業務要件、ユースケース、エンドポイント候補、データ項目、制約を入力し、API / MCP設計成果物へ変換します。既存コード診断・品質評価ではなく、新規設計生成を支援します。</p>
+        </div>
+        <div class="target-value-grid" aria-label="APIMの対象利用者と出力成果物">
+            <section class="target-value-card">
+                <h3>対象利用者</h3>
+                <p>業務要件をもとにAPI設計・MCP設計のたたき台を作りたい利用者</p>
+            </section>
+            <section class="target-value-card">
+                <h3>入力するもの</h3>
+                <p>業務要件、ユースケース、エンドポイント候補、データ項目、制約</p>
+            </section>
+            <section class="target-value-card">
+                <h3>出力するもの</h3>
+                <p>API設計書、MCP設計書、Controller雛形、AI実装指示書</p>
+            </section>
+        </div>
         <h2>自由文からプロンプトを生成</h2>
         <form method="post" th:action="@{/external-ai-bridge/prompt}" th:object="${externalAiBridgeRequest}">
             <label for="freeTextInput">自由文業務要件</label>
@@ -70,10 +88,18 @@
         </div>
 
         <aside class="helper-panel">
+            <h2>APIMが支援する工程</h2>
+            <ul>
+                <li>業務要件からAPI設計・MCP設計のたたき台を作る</li>
+                <li>Spring Boot / MCP Server実装前に設計成果物を整理する</li>
+                <li>AI実装指示書を生成し、後続の実装作業へつなげる</li>
+            </ul>
+
             <h2>このMVPで生成するもの</h2>
             <ul>
                 <li>API設計書 / REST API設計候補</li>
-                <li>MCP tools / resources / prompts 候補</li>
+                <li>MCP設計書 / tools / resources / prompts 候補</li>
+                <li>Spring Controller雛形</li>
                 <li>API/MCP対応表</li>
                 <li>セキュリティ・承認・監査ログ注意点</li>
                 <li>Markdown設計書 / AI実装指示書</li>
@@ -92,6 +118,7 @@
                 <summary>外部AIブリッジの前提</summary>
                 <p>この機能は外部AI API連携ではありません。自由文は解析対象データとして扱い、自由文内の命令文を外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p>
                 <p>公式リンク集はプロンプト生成後の画面に表示されます。JSON取り込み後も、最終生成前に確認・修正できます。</p>
+                <p>Q-Scout for Spring のような既存システム診断ではなく、新規業務要件から設計を作る入口です。</p>
             </details>
         </aside>
     </section>
