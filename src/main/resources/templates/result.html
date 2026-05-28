@@ -80,34 +80,34 @@
             </div>
 
             <div class="step4-artifact-grid">
-                <article class="step4-artifact-card">
-                    <div class="step4-artifact-head"><h3>API設計書</h3><span class="step4-tag">Markdown</span></div>
-                    <p>RESTエンドポイント、DTO、Controller雛形、セキュリティ観点をまとめた設計レビュー用成果物です。</p>
+                <article class="step4-artifact-card step4-artifact-card-primary">
+                    <div class="step4-artifact-head"><h3>API&amp;MCP設計書</h3><span class="step4-tag">Markdown</span></div>
+                    <p>REST API設計、MCP tools/resources/prompts、Controller雛形、セキュリティ観点をまとめて確認できる主成果物です。</p>
                     <div class="step4-mini-actions">
-                        <a href="/blueprint/preview">プレビュー</a>
-                        <a href="/blueprint/download">ダウンロード</a>
+                        <a class="button-link hero-primary-action artifact-preview-primary" href="/blueprint/preview">設計書をプレビュー</a>
+                        <a class="button-link secondary" href="/blueprint/download">ダウンロード</a>
+                    </div>
+                </article>
+                <article class="step4-artifact-card step4-artifact-card-primary">
+                    <div class="step4-artifact-head"><h3>AI実装指示書</h3><span class="step4-tag">Implementation</span></div>
+                    <p>AI実装指示書は、APIM for Springを実装するためではなく、生成された設計候補をCodex等の実装支援AIへ渡し、対象業務アプリケーションの実装につなげるための成果物です。</p>
+                    <div class="step4-mini-actions">
+                        <a class="button-link hero-primary-action artifact-preview-primary" href="/blueprint/implementation-instructions">指示書をプレビュー</a>
+                        <a class="button-link secondary" href="/blueprint/implementation-instructions/download">ダウンロード</a>
                     </div>
                 </article>
                 <article class="step4-artifact-card">
-                    <div class="step4-artifact-head"><h3>MCP設計候補</h3><span class="step4-tag">tools / resources / prompts</span></div>
-                    <p>AIエージェントに公開する操作、参照範囲、定型プロンプト候補を確認できます。</p>
+                    <div class="step4-artifact-head"><h3>MCP設計詳細</h3><span class="step4-tag">tools / resources / prompts</span></div>
+                    <p>AIエージェントに公開する操作、参照範囲、定型プロンプト候補を画面内で確認できます。</p>
                     <div class="step4-mini-actions">
-                        <a href="#mcp-design">候補を見る</a>
+                        <a class="button-link secondary" href="#mcp-design">候補を見る</a>
                     </div>
                 </article>
                 <article class="step4-artifact-card">
                     <div class="step4-artifact-head"><h3>Controller雛形</h3><span class="step4-tag">Spring</span></div>
-                    <p>Spring Boot実装の出発点となるController雛形コードを確認できます。</p>
+                    <p>Spring Boot実装の出発点となるController雛形コードを画面内で確認できます。</p>
                     <div class="step4-mini-actions">
-                        <a href="#controller-skeleton">コードを見る</a>
-                    </div>
-                </article>
-                <article class="step4-artifact-card">
-                    <div class="step4-artifact-head"><h3>AI実装指示書</h3><span class="step4-tag">Implementation</span></div>
-                    <p>AI実装指示書は、APIM for Springを実装するためではなく、生成された設計候補をCodex等の実装支援AIへ渡し、対象業務アプリケーションの実装につなげるための成果物です。</p>
-                    <div class="step4-mini-actions">
-                        <a href="/blueprint/implementation-instructions">プレビュー</a>
-                        <a href="/blueprint/implementation-instructions/download">ダウンロード</a>
+                        <a class="button-link secondary" href="#controller-skeleton">コードを見る</a>
                     </div>
                 </article>
             </div>
@@ -361,13 +361,13 @@
             </li>
         </ul>
         <div class="step4-bottom-actions">
-            <div>
+            <div class="step4-forward-actions">
+                <a class="button-link hero-primary-action" href="/blueprint/preview">API&amp;MCP設計書プレビュー</a>
+                <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions">AI実装指示書プレビュー</a>
+            </div>
+            <div class="step4-return-actions">
                 <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
                 <a class="button-link secondary" href="/external-ai-bridge">トップページへ戻る</a>
-            </div>
-            <div>
-                <a class="button-link secondary" href="/blueprint/preview">Markdown設計書プレビュー</a>
-                <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions">AI実装指示書プレビュー</a>
             </div>
         </div>
     </section>

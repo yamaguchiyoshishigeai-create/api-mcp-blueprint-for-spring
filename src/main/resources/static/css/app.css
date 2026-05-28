@@ -5185,3 +5185,181 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_TSK089_CTA_VISUAL_HIERARCHY */
+
+/* BEGIN APIM_PR209_STEP3_STEP4_CTA_REVIEW */
+.step3-execute-card {
+  margin-top: 18px;
+  border: 1px solid #bfdbfe;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.10);
+}
+
+.step3-execute-heading { align-items: center; }
+
+.step3-execute-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 900;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
+}
+
+.step3-execute-heading h2 {
+  margin: 0 0 6px;
+  font-size: clamp(1.55rem, 2.6vw, 2.05rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.step3-execute-heading p {
+  margin: 0;
+  color: #475569;
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+
+.step3-execute-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.step3-execute-actions .step3-generate-primary {
+  order: 1;
+  min-height: 56px;
+  padding-inline: 28px;
+  font-size: 1.08rem;
+  font-weight: 900;
+  border-radius: 14px;
+  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.22);
+}
+
+.step3-execute-actions .step3-back-secondary {
+  order: 2;
+  margin-left: auto;
+  min-height: 46px;
+  padding-inline: 20px;
+}
+
+.step4-overview-card {
+  border-color: #bfdbfe;
+  box-shadow: 0 18px 48px rgba(37, 99, 235, 0.09);
+}
+
+.step4-overview-card .step4-section-heading h2 {
+  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.step4-artifact-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.step4-artifact-card {
+  position: relative;
+  display: grid;
+  align-content: space-between;
+  min-height: 190px;
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid #d6e4f8;
+  background: #ffffff;
+}
+
+.step4-artifact-card-primary {
+  border-color: #bfdbfe;
+  background:
+    radial-gradient(circle at 92% 12%, rgba(37, 99, 235, 0.10), transparent 34%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 18px 38px rgba(37, 99, 235, 0.11);
+}
+
+.step4-artifact-head h3 {
+  font-size: clamp(1.35rem, 2vw, 1.72rem);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.step4-artifact-card p {
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+
+.step4-mini-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.step4-mini-actions .button-link {
+  min-height: 42px;
+  padding-inline: 16px;
+}
+
+.step4-mini-actions .artifact-preview-primary {
+  min-height: 46px;
+  padding-inline: 22px;
+  font-weight: 900;
+}
+
+.step4-side-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.step4-side-actions .button-link {
+  width: 100%;
+  min-height: 42px;
+}
+
+.step4-bottom-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.step4-forward-actions,
+.step4-return-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.step4-forward-actions { justify-content: flex-start; }
+.step4-return-actions { justify-content: flex-end; margin-left: auto; }
+
+.step4-bottom-actions .button-link { min-height: 42px; }
+.step4-bottom-actions .hero-primary-action { min-height: 46px; padding-inline: 22px; }
+
+@media (max-width: 900px) {
+  .step3-execute-actions,
+  .step4-bottom-actions,
+  .step4-forward-actions,
+  .step4-return-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .step3-execute-actions .step3-back-secondary,
+  .step4-return-actions { margin-left: 0; }
+
+  .step4-artifact-grid,
+  .step4-side-actions { grid-template-columns: 1fr; }
+
+  .step4-artifact-card { min-height: auto; }
+}
+/* END APIM_PR209_STEP3_STEP4_CTA_REVIEW */
