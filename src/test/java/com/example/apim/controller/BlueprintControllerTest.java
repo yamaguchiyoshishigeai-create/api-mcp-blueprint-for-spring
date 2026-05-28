@@ -364,6 +364,9 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("Markdown設計書をレビューできる状態です")))
                 .andExpect(content().string(containsString("markdown-preview-stepper")))
                 .andExpect(content().string(containsString("markdown-preview-body")))
+                .andExpect(content().string(containsString("Markdown設計書のダウンロード・再生成")))
+                .andExpect(content().string(containsString("download-primary-cta")))
+                .andExpect(content().string(containsString("non-interactive-icon")))
                 .andExpect(content().string(containsString("AI実装指示書プレビューへ")))
                 .andExpect(content().string(containsString("/external-ai-bridge")));
     }
@@ -576,6 +579,9 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("AI実装指示書をレビューできる状態です")))
                 .andExpect(content().string(containsString("implementation-preview-stepper")))
                 .andExpect(content().string(containsString("implementation-preview-body")))
+                .andExpect(content().string(containsString("AI実装指示書のダウンロード・再生成")))
+                .andExpect(content().string(containsString("download-primary-cta")))
+                .andExpect(content().string(containsString("non-interactive-icon")))
                 .andExpect(content().string(containsString("実装指示書本文")))
                 .andExpect(content().string(containsString("# Implementation Instructions")))
                 .andExpect(content().string(containsString("/blueprint/preview")))

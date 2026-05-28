@@ -4982,3 +4982,206 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_PR206_IMPLEMENTATION_BUTTON_ALIGN */
+
+/* BEGIN APIM_TSK089_CTA_VISUAL_HIERARCHY */
+.trial-ui-page .button-link,
+.trial-ui-page button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 42px;
+  padding: 0 16px;
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: middle;
+  white-space: normal;
+}
+
+.trial-ui-page .button-link {
+  width: auto;
+  min-width: 0;
+  border-radius: 10px;
+}
+
+.trial-ui-page .hero-primary-action,
+.trial-ui-page button[type="submit"],
+.trial-ui-page .free-text-generate-button,
+.trial-ui-page .download-primary-cta {
+  min-height: 44px;
+  padding-inline: 20px;
+  font-weight: 900;
+}
+
+.trial-ui-page .button-link.secondary,
+.trial-ui-page .button-link.secondary-link,
+.trial-ui-page .hero-secondary-action,
+.trial-ui-page button.secondary {
+  min-height: 40px;
+  background: #ffffff;
+  color: #1e3a8a;
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 4px 10px rgba(20, 34, 58, 0.04);
+}
+
+.trial-ui-page .button-link.secondary:hover,
+.trial-ui-page .button-link.secondary-link:hover,
+.trial-ui-page .hero-secondary-action:hover,
+.trial-ui-page button.secondary:hover {
+  background: #eef6ff;
+}
+
+.trial-ui-page .text-link,
+.trial-ui-page .tertiary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding-inline: 4px;
+}
+
+.markdown-preview-page .markdown-preview-actions .button-link,
+.implementation-preview-page .implementation-preview-actions .button-link {
+  min-height: 44px;
+  flex: 0 0 auto;
+}
+
+.markdown-preview-page .markdown-status-card .download-primary-cta,
+.implementation-preview-page .implementation-status-card .download-primary-cta {
+  min-width: 220px;
+}
+
+.markdown-preview-page .markdown-side-actions,
+.implementation-preview-page .implementation-side-actions {
+  justify-items: start;
+}
+
+.markdown-preview-page .markdown-side-actions .button-link,
+.implementation-preview-page .implementation-side-actions .button-link {
+  width: auto;
+  min-width: min(100%, 220px);
+  max-width: 100%;
+  min-height: 42px;
+}
+
+.markdown-preview-page .markdown-bottom-actions,
+.implementation-preview-page .implementation-bottom-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.markdown-preview-page .markdown-bottom-actions .button-link,
+.implementation-preview-page .implementation-bottom-actions .button-link {
+  flex: 0 0 auto;
+  min-height: 42px;
+}
+
+.markdown-preview-page .markdown-bottom-actions .download-primary-cta,
+.implementation-preview-page .implementation-bottom-actions .download-primary-cta {
+  order: -1;
+  min-width: min(100%, 260px);
+  min-height: 46px;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18);
+}
+
+.markdown-preview-page .markdown-section-icon.non-interactive-icon,
+.implementation-preview-page .implementation-section-icon.non-interactive-icon,
+.markdown-preview-page .markdown-status-icon.non-interactive-icon,
+.implementation-preview-page .implementation-status-icon.non-interactive-icon,
+.markdown-preview-page .markdown-round-icon.non-interactive-icon,
+.implementation-preview-page .implementation-round-icon.non-interactive-icon,
+.trial-ui-page .section-icon.non-interactive-icon,
+.trial-ui-page .round-icon.non-interactive-icon {
+  cursor: default;
+  user-select: none;
+  pointer-events: none;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.markdown-preview-page .markdown-section-icon.non-interactive-icon,
+.implementation-preview-page .implementation-section-icon.non-interactive-icon {
+  min-width: 44px;
+  height: 44px;
+  border-radius: 14px;
+}
+
+.markdown-preview-page .markdown-status-icon.non-interactive-icon,
+.implementation-preview-page .implementation-status-icon.non-interactive-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+}
+
+.markdown-preview-page .markdown-round-icon.non-interactive-icon,
+.implementation-preview-page .implementation-round-icon.non-interactive-icon,
+.trial-ui-page .round-icon.non-interactive-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+}
+
+.markdown-preview-page .markdown-round-icon.orange.non-interactive-icon,
+.implementation-preview-page .implementation-round-icon.orange.non-interactive-icon {
+  background: #fff7ed;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+.markdown-preview-page .markdown-round-icon.green.non-interactive-icon,
+.implementation-preview-page .implementation-round-icon.green.non-interactive-icon {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.markdown-preview-page .markdown-round-icon.blue.non-interactive-icon,
+.implementation-preview-page .implementation-round-icon.blue.non-interactive-icon {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.markdown-preview-page .markdown-bottom-card h2,
+.implementation-preview-page .implementation-bottom-card h2 {
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .trial-ui-page .button-link,
+  .trial-ui-page button {
+    width: 100%;
+    min-height: 42px;
+    padding-inline: 14px;
+  }
+
+  .trial-ui-page .text-link,
+  .trial-ui-page .tertiary-link {
+    width: auto;
+    min-height: 34px;
+  }
+
+  .markdown-preview-page .markdown-status-card .download-primary-cta,
+  .implementation-preview-page .implementation-status-card .download-primary-cta,
+  .markdown-preview-page .markdown-side-actions .button-link,
+  .implementation-preview-page .implementation-side-actions .button-link,
+  .markdown-preview-page .markdown-bottom-actions .download-primary-cta,
+  .implementation-preview-page .implementation-bottom-actions .download-primary-cta {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .markdown-preview-page .markdown-bottom-actions,
+  .implementation-preview-page .implementation-bottom-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+/* END APIM_TSK089_CTA_VISUAL_HIERARCHY */
