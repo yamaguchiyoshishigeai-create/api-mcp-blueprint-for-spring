@@ -161,8 +161,6 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("bottom-action-bar prompt-json-actions")))
                 .andExpect(content().string(containsString("トップページへ戻る")))
                 .andExpect(content().string(not(containsString("Step2の最終アクション"))))
-                .andExpect(content().string(containsString("bottom-action-primary-group")))
-                .andExpect(content().string(containsString("bottom-action-nav-group")))
                 .andExpect(content().string(containsString("generated markdown prompt")));
 
         verify(bridgeService).generatePrompt("顧客検索を行いたい");
@@ -289,23 +287,20 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("必須項目")))
                 .andExpect(content().string(containsString("任意・安全確認項目")))
                 .andExpect(content().string(containsString("営業担当が顧客情報を検索する。")))
-                .andExpect(content().string(containsString("bottom-action-bar primary-action-row step3-final-actions step3-execute-actions")))
-                .andExpect(content().string(containsString("bottom-action-primary-group")))
-                .andExpect(content().string(containsString("bottom-action-nav-group")))
+                .andExpect(content().string(containsString("step3-action-bar")))
+                .andExpect(content().string(containsString("step3-action-primary-group")))
+                .andExpect(content().string(containsString("step3-action-nav-group")))
                 .andExpect(content().string(containsString("href=\"/external-ai-bridge/prompt\"")))
                 .andExpect(content().string(containsString("Step2へ戻る")))
                 .andExpect(content().string(containsString("トップページへ戻る")))
                 .andExpect(content().string(not(containsString("step3-secondary-links"))))
                 .andExpect(content().string(containsString("確認した内容で設計候補を生成する")))
+                .andExpect(content().string(containsString("step3-action-bar")))
+                .andExpect(content().string(containsString("step3-action-primary-group")))
+                .andExpect(content().string(containsString("step3-action-nav-group")))
                 .andReturn();
 
-        assertAppearsInOrder(
-                result.getResponse().getContentAsString(StandardCharsets.UTF_8),
-                "bottom-action-nav-group",
-                "Step2へ戻る",
-                "トップページへ戻る",
-                "bottom-action-primary-group",
-                "確認した内容で設計候補を生成する");
+
     }
 
     @Test
@@ -458,4 +453,35 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(view().name("external-ai-import-result"))
                 .andExpect(content().string(containsString("judgement が存在しません。")));
     }
+    @Test
+    void step3ActionBarPlacesProgressBeforeNavigation() throws Exception {
+        BlueprintInput input = validBlueprintInput();
+        when(bridgeService.importJson("{step3-action-order}"))
+                .thenReturn(ExternalAiImportResult.canGenerate(input, "ok", List.of()));
+
+        MvcResult result = mockMvc.perform(post("/external-ai-bridge/import-text")
+                        .param("jsonText", "{step3-action-order}"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn();
+
+        String redirectUrl = result.getResponse().getRedirectedUrl();
+        MvcResult page = mockMvc.perform(get(redirectUrl)
+                        .session((org.springframework.mock.web.MockHttpSession) result.getRequest().getSession(false)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("external-ai-import-result"))
+                .andExpect(content().string(containsString("step3-action-bar")))
+                .andExpect(content().string(containsString("step3-action-primary-group")))
+                .andExpect(content().string(containsString("step3-action-nav-group")))
+                .andReturn();
+
+        String html = page.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        assertAppearsInOrder(
+                html,
+                "step3-action-primary-group",
+                "確認した内容で設計候補を生成する",
+                "step3-action-nav-group",
+                "Step2へ戻る",
+                "トップページへ戻る");
+    }
+
 }

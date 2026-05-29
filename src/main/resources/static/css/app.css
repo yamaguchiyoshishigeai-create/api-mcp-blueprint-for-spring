@@ -5873,3 +5873,52 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_TSK090_R03_ACTION_REFINEMENT */
+
+/* TSK-090: Step3 action group order
+   Progress CTA stays on the left; Step2/top navigation stays on the right. */
+.step3-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.step3-action-primary-group,
+.step3-action-nav-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.step3-action-primary-group {
+    justify-content: flex-start;
+}
+
+.step3-action-nav-group {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.step3-action-bar .button-link,
+.step3-action-bar button {
+    min-height: 52px;
+}
+
+@media (max-width: 760px) {
+    .step3-action-bar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .step3-action-primary-group,
+    .step3-action-nav-group {
+        justify-content: stretch;
+        margin-left: 0;
+    }
+
+    .step3-action-bar .button-link,
+    .step3-action-bar button {
+        width: 100%;
+    }
+}
