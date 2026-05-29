@@ -308,7 +308,12 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("step4-status-card")))
                 .andExpect(content().string(containsString("生成成果物の全体像")))
                 .andExpect(content().string(containsString("step4-overview-card")))
-                .andExpect(content().string(containsString("step4-detail-card")));
+                .andExpect(content().string(containsString("step4-detail-card")))
+                .andExpect(content().string(containsString("成果物プレビューへ進む")))
+                .andExpect(content().string(containsString("API&amp;MCP設計書とAI実装指示書をプレビュー")))
+                .andExpect(content().string(containsString("AIに許可する操作範囲")))
+                .andExpect(content().string(containsString("承認必須操作")))
+                .andExpect(content().string(containsString("監査ログ要件")));
     }
 
     @Test

@@ -5363,3 +5363,339 @@ button.secondary.sample-button {
   .step4-artifact-card { min-height: auto; }
 }
 /* END APIM_PR209_STEP3_STEP4_CTA_REVIEW */
+
+/* BEGIN APIM_PR209_STEP4_ARTIFACT_CTA_V6 */
+.step4-artifact-card-primary {
+  min-height: 230px;
+  padding: 30px;
+}
+
+.step4-artifact-card-primary .step4-artifact-head {
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.step4-artifact-card-primary .step4-artifact-head h3 {
+  font-size: clamp(1.9rem, 3.1vw, 2.45rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.step4-artifact-card-primary p {
+  margin-top: 18px;
+  font-size: clamp(1.08rem, 1.6vw, 1.22rem);
+  line-height: 1.72;
+}
+
+.step4-artifact-card-primary .step4-tag {
+  font-size: 0.92rem;
+  padding: 7px 13px;
+}
+
+.step4-mini-actions .artifact-preview-primary {
+  min-height: 56px;
+  padding-inline: 28px;
+  border-radius: 14px;
+  font-size: clamp(1.06rem, 1.5vw, 1.22rem);
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.20);
+}
+
+.step4-mini-actions .button-link.secondary {
+  min-height: 48px;
+  padding-inline: 20px;
+  font-size: 1.02rem;
+}
+
+.step4-preview-card {
+  border-color: #bfdbfe;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(37, 99, 235, 0.10), transparent 30%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.10);
+}
+
+.step4-preview-card .step4-section-heading h2 {
+  font-size: clamp(1.7rem, 2.7vw, 2.18rem);
+  line-height: 1.14;
+  letter-spacing: -0.04em;
+}
+
+.step4-preview-card .step4-section-heading p {
+  font-size: 1.05rem;
+  line-height: 1.68;
+}
+
+.step4-preview-note {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+.step4-preview-note strong {
+  color: #7c2d12;
+}
+
+.step4-preview-card .step4-security-list {
+  margin-top: 14px;
+  background: #fffaf3;
+}
+
+.step4-bottom-actions {
+  margin-top: 22px;
+}
+
+.step4-forward-actions .button-link.hero-primary-action {
+  min-height: 56px;
+  padding-inline: 30px;
+  border-radius: 14px;
+  font-size: clamp(1.05rem, 1.45vw, 1.2rem);
+  font-weight: 900;
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.18);
+}
+
+.step4-return-actions .button-link.secondary {
+  min-height: 44px;
+  padding-inline: 18px;
+}
+
+@media (max-width: 900px) {
+  .step4-artifact-card-primary {
+    min-height: auto;
+    padding: 24px;
+  }
+
+  .step4-mini-actions .artifact-preview-primary,
+  .step4-forward-actions .button-link.hero-primary-action {
+    width: 100%;
+  }
+}
+/* END APIM_PR209_STEP4_ARTIFACT_CTA_V6 */
+
+/* BEGIN APIM_PR209_STEP4_ARTIFACT_CTA_V7 */
+.step4-artifact-card-primary {
+  min-height: 230px;
+  padding: 30px;
+}
+
+.step4-artifact-card-primary .step4-artifact-head {
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.step4-artifact-card-primary .step4-artifact-head h3 {
+  font-size: clamp(1.9rem, 3.1vw, 2.45rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.step4-artifact-card-primary p {
+  margin-top: 18px;
+  font-size: clamp(1.08rem, 1.6vw, 1.22rem);
+  line-height: 1.72;
+}
+
+.step4-artifact-card-primary .step4-tag {
+  font-size: 0.92rem;
+  padding: 7px 13px;
+}
+
+.step4-mini-actions .artifact-preview-primary {
+  min-height: 56px;
+  padding-inline: 28px;
+  border-radius: 14px;
+  font-size: clamp(1.06rem, 1.5vw, 1.22rem);
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.20);
+}
+
+.step4-mini-actions .button-link.secondary {
+  min-height: 48px;
+  padding-inline: 20px;
+  font-size: 1.02rem;
+}
+
+.step4-preview-card {
+  border-color: #bfdbfe;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(37, 99, 235, 0.10), transparent 30%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.10);
+}
+
+.step4-preview-card .step4-section-heading h2 {
+  font-size: clamp(1.7rem, 2.7vw, 2.18rem);
+  line-height: 1.14;
+  letter-spacing: -0.04em;
+}
+
+.step4-preview-card .step4-section-heading p {
+  font-size: 1.05rem;
+  line-height: 1.68;
+}
+
+.step4-preview-note {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+.step4-preview-note strong {
+  color: #7c2d12;
+}
+
+.step4-preview-card .step4-security-list {
+  margin-top: 14px;
+  background: #fffaf3;
+}
+
+.step4-bottom-actions {
+  margin-top: 22px;
+}
+
+.step4-forward-actions .button-link.hero-primary-action {
+  min-height: 56px;
+  padding-inline: 30px;
+  border-radius: 14px;
+  font-size: clamp(1.05rem, 1.45vw, 1.2rem);
+  font-weight: 900;
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.18);
+}
+
+.step4-return-actions .button-link.secondary {
+  min-height: 44px;
+  padding-inline: 18px;
+}
+
+@media (max-width: 900px) {
+  .step4-artifact-card-primary {
+    min-height: auto;
+    padding: 24px;
+  }
+
+  .step4-mini-actions .artifact-preview-primary,
+  .step4-forward-actions .button-link.hero-primary-action {
+    width: 100%;
+  }
+}
+/* END APIM_PR209_STEP4_ARTIFACT_CTA_V7 */
+
+/* BEGIN APIM_PR209_STEP4_ARTIFACT_CTA_V8 */
+.step4-artifact-card-primary {
+  min-height: 230px;
+  padding: 30px;
+}
+
+.step4-artifact-card-primary .step4-artifact-head {
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.step4-artifact-card-primary .step4-artifact-head h3 {
+  font-size: clamp(1.9rem, 3.1vw, 2.45rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.step4-artifact-card-primary p {
+  margin-top: 18px;
+  font-size: clamp(1.08rem, 1.6vw, 1.22rem);
+  line-height: 1.72;
+}
+
+.step4-artifact-card-primary .step4-tag {
+  font-size: 0.92rem;
+  padding: 7px 13px;
+}
+
+.step4-mini-actions .artifact-preview-primary {
+  min-height: 56px;
+  padding-inline: 28px;
+  border-radius: 14px;
+  font-size: clamp(1.06rem, 1.5vw, 1.22rem);
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.20);
+}
+
+.step4-mini-actions .button-link.secondary {
+  min-height: 48px;
+  padding-inline: 20px;
+  font-size: 1.02rem;
+}
+
+.step4-preview-card {
+  border-color: #bfdbfe;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(37, 99, 235, 0.10), transparent 30%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 18px 42px rgba(37, 99, 235, 0.10);
+}
+
+.step4-preview-card .step4-section-heading h2 {
+  font-size: clamp(1.7rem, 2.7vw, 2.18rem);
+  line-height: 1.14;
+  letter-spacing: -0.04em;
+}
+
+.step4-preview-card .step4-section-heading p {
+  font-size: 1.05rem;
+  line-height: 1.68;
+}
+
+.step4-preview-note {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+
+.step4-preview-note strong {
+  color: #7c2d12;
+}
+
+.step4-preview-card .step4-security-list {
+  margin-top: 14px;
+  background: #fffaf3;
+}
+
+.step4-bottom-actions {
+  margin-top: 22px;
+}
+
+.step4-forward-actions .button-link.hero-primary-action {
+  min-height: 56px;
+  padding-inline: 30px;
+  border-radius: 14px;
+  font-size: clamp(1.05rem, 1.45vw, 1.2rem);
+  font-weight: 900;
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.18);
+}
+
+.step4-return-actions .button-link.secondary {
+  min-height: 44px;
+  padding-inline: 18px;
+}
+
+@media (max-width: 900px) {
+  .step4-artifact-card-primary {
+    min-height: auto;
+    padding: 24px;
+  }
+
+  .step4-mini-actions .artifact-preview-primary,
+  .step4-forward-actions .button-link.hero-primary-action {
+    width: 100%;
+  }
+}
+/* END APIM_PR209_STEP4_ARTIFACT_CTA_V8 */
