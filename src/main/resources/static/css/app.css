@@ -5699,3 +5699,52 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_PR209_STEP4_ARTIFACT_CTA_V8 */
+
+/* BEGIN APIM_PR209_MARKDOWN_PREVIEW_CTA_V9 */
+.markdown-preview-page .markdown-side-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.markdown-preview-page .markdown-side-actions .button-link {
+  width: auto;
+  min-width: 220px;
+  flex: 0 0 auto;
+}
+
+.markdown-preview-page .markdown-bottom-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.markdown-preview-page .markdown-bottom-actions .button-link {
+  flex: 0 0 auto;
+}
+
+.markdown-preview-page .markdown-bottom-actions a[href="/external-ai-bridge"] {
+  margin-left: auto;
+}
+
+@media (max-width: 720px) {
+  .markdown-preview-page .markdown-side-actions,
+  .markdown-preview-page .markdown-bottom-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .markdown-preview-page .markdown-side-actions .button-link,
+  .markdown-preview-page .markdown-bottom-actions .button-link {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .markdown-preview-page .markdown-bottom-actions a[href="/external-ai-bridge"] {
+    margin-left: 0;
+  }
+}
+/* END APIM_PR209_MARKDOWN_PREVIEW_CTA_V9 */
