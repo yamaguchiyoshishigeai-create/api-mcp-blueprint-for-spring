@@ -69,6 +69,15 @@ public class BlueprintController {
         }
         BlueprintResult result = generationService.generate(input);
         model.addAttribute("blueprintResult", result);
+        model.addAttribute("blueprintInput", input);
+        return "redirect:/blueprint/result";
+    }
+
+    @GetMapping("/blueprint/result")
+    public String showResult(@ModelAttribute("blueprintResult") BlueprintResult result) {
+        if (result.getInputSummary() == null || result.getInputSummary().isBlank()) {
+            return "redirect:/external-ai-bridge";
+        }
         return "result";
     }
 

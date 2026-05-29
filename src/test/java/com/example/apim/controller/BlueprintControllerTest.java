@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(BlueprintController.class)
@@ -136,15 +137,33 @@ class BlueprintControllerTest {
                         .param("userTypes", "営業担当")
                         .param("requiredOperations", "顧客検索")
                         .param("allowedAiOperations", "顧客検索"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attributeExists("blueprintResult"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/blueprint/result"));
 
         ArgumentCaptor<BlueprintInput> captor = ArgumentCaptor.forClass(BlueprintInput.class);
         verify(generationService).generate(captor.capture());
         assertThat(captor.getValue().getBusinessRequirements()).isEqualTo("顧客検索を行う");
         assertThat(captor.getValue().getTargetDomain()).isEqualTo("顧客管理");
         assertThat(captor.getValue().getRequiredOperations()).isEqualTo("顧客検索");
+    }
+
+    @Test
+    void getBlueprintResultDisplaysStoredResult() throws Exception {
+        BlueprintResult mockResult = new BlueprintResult();
+        mockResult.setInputSummary("summary");
+
+        mockMvc.perform(get("/blueprint/result")
+                        .sessionAttr("blueprintResult", mockResult))
+                .andExpect(status().isOk())
+                .andExpect(view().name("result"))
+                .andExpect(content().string(containsString("Step 4: 設計候補生成結果")));
+    }
+
+    @Test
+    void getBlueprintResultRedirectsWhenResultIsNotStored() throws Exception {
+        mockMvc.perform(get("/blueprint/result"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge"));
     }
 
     @Test
@@ -196,9 +215,8 @@ class BlueprintControllerTest {
                         .param("authenticationMethod", "Spring Security + セッション認証")
                         .param("targetUsers", "EC運営担当、倉庫担当、管理者、AIアシスタント")
                         .param("outputLanguage", "日本語"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attributeExists("blueprintResult"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/blueprint/result"));
 
         ArgumentCaptor<BlueprintInput> captor = ArgumentCaptor.forClass(BlueprintInput.class);
         verify(generationService).generate(captor.capture());
@@ -257,9 +275,8 @@ class BlueprintControllerTest {
                         .param("authenticationMethod", "OAuth2 / OIDC")
                         .param("targetUsers", "サポート担当、品質管理担当、管理者、AIアシスタント")
                         .param("outputLanguage", "日本語"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attributeExists("blueprintResult"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/blueprint/result"));
 
         ArgumentCaptor<BlueprintInput> captor = ArgumentCaptor.forClass(BlueprintInput.class);
         verify(generationService).generate(captor.capture());
@@ -279,12 +296,8 @@ class BlueprintControllerTest {
         mockResult.setInputSummary("summary");
         when(generationService.generate(any())).thenReturn(mockResult);
 
-        mockMvc.perform(post("/blueprint/generate")
-                        .param("businessRequirements", "顧客検索を行う")
-                        .param("targetDomain", "顧客管理")
-                        .param("userTypes", "営業担当")
-                        .param("requiredOperations", "顧客検索")
-                        .param("allowedAiOperations", "顧客検索"))
+        mockMvc.perform(get("/blueprint/result")
+                        .sessionAttr("blueprintResult", mockResult))
                 .andExpect(status().isOk())
                 .andExpect(view().name("result"))
                 .andExpect(content().string(containsString("API設計書は、人間による設計レビューやdocs転記に使います")))
@@ -331,9 +344,8 @@ class BlueprintControllerTest {
                         .param("userTypes", "営業担当")
                         .param("requiredOperations", "顧客検索")
                         .param("allowedAiOperations", "顧客検索"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("result"))
-                .andExpect(model().attributeExists("blueprintResult"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/blueprint/result"));
 
         ArgumentCaptor<BlueprintInput> captor = ArgumentCaptor.forClass(BlueprintInput.class);
         verify(generationService).generate(captor.capture());
@@ -399,8 +411,8 @@ class BlueprintControllerTest {
                         .param("authenticationMethod", "OAuth2 / OIDC")
                         .param("targetUsers", "営業担当、AIアシスタント")
                         .param("outputLanguage", "English"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("result"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/blueprint/result"));
 
         mockMvc.perform(get("/blueprint/preview").session(session))
                 .andExpect(status().isOk())
@@ -433,8 +445,8 @@ class BlueprintControllerTest {
                         .param("userTypes", "- 営業担当\n- AIアシスタント")
                         .param("requiredOperations", "- 検索\n- 顧客検索\n- 問い合わせ詳細取得")
                         .param("allowedAiOperations", "- 詳細参照\n- 問い合わせ詳細取得\n- 問い合わせ要約"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("result"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/blueprint/result"));
 
         mockMvc.perform(get("/blueprint/edit").session(session))
                 .andExpect(status().isOk())
@@ -452,8 +464,8 @@ class BlueprintControllerTest {
                         .param("userTypes", "- 営業担当\n- AIアシスタント")
                         .param("requiredOperations", "- 検索\n- 顧客検索\n- 問い合わせ詳細取得")
                         .param("allowedAiOperations", "- 詳細参照\n- 問い合わせ詳細取得\n- 問い合わせ要約"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("result"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/blueprint/result"));
 
         ArgumentCaptor<BlueprintInput> captor = ArgumentCaptor.forClass(BlueprintInput.class);
         verify(generationService, org.mockito.Mockito.times(2)).generate(captor.capture());
