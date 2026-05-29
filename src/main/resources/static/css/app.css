@@ -5922,3 +5922,19 @@ button.secondary.sample-button {
         width: 100%;
     }
 }
+
+/* BEGIN APIM_TSK090_R08_STEP3_CSS_ORDER_FIX
+   Keep Step3 progress CTA on the left and Step2/top navigation on the right.
+   This override intentionally supersedes older R03 order rules. */
+.step3-execute-actions .step3-action-primary-group {
+  order: 0;
+  justify-content: flex-start;
+  margin-left: 0;
+}
+
+.step3-execute-actions .step3-action-nav-group {
+  order: 1;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+/* END APIM_TSK090_R08_STEP3_CSS_ORDER_FIX */
