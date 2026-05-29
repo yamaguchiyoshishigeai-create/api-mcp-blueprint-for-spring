@@ -5938,3 +5938,19 @@ button.secondary.sample-button {
   margin-left: auto;
 }
 /* END APIM_TSK090_R08_STEP3_CSS_ORDER_FIX */
+
+/* BEGIN APIM_TSK090_R09_STEP3_NAV_ORDER_FIX
+   Step3 navigation order is fixed as Step2 -> top page. */
+.step3-execute-actions .step3-action-nav-group,
+.step3-action-bar .step3-action-nav-group {
+  flex-direction: row;
+}
+
+.step3-execute-actions .step3-back-secondary {
+  order: 0;
+}
+
+.step3-execute-actions .step3-top-secondary {
+  order: 1;
+}
+/* END APIM_TSK090_R09_STEP3_NAV_ORDER_FIX */
