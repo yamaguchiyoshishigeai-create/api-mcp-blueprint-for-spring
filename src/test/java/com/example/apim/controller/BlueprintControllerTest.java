@@ -385,6 +385,11 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("download-primary-cta")))
                 .andExpect(content().string(containsString("non-interactive-icon")))
                 .andExpect(content().string(containsString("AI実装指示書プレビューへ")))
+                .andExpect(content().string(containsString("bottom-action-bar markdown-bottom-actions")))
+                .andExpect(content().string(containsString("bottom-action-primary-group")))
+                .andExpect(content().string(containsString("bottom-action-nav-group")))
+                .andExpect(content().string(containsString("Step4へ戻る")))
+                .andExpect(content().string(containsString("/blueprint/result")))
                 .andExpect(content().string(containsString("/external-ai-bridge")));
     }
 
@@ -603,6 +608,11 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("# Implementation Instructions")))
                 .andExpect(content().string(containsString("/blueprint/preview")))
                 .andExpect(content().string(containsString("/blueprint/implementation-instructions/download")))
+                .andExpect(content().string(containsString("bottom-action-bar implementation-bottom-actions")))
+                .andExpect(content().string(containsString("bottom-action-primary-group")))
+                .andExpect(content().string(containsString("bottom-action-nav-group")))
+                .andExpect(content().string(containsString("Step4へ戻る")))
+                .andExpect(content().string(containsString("/blueprint/result")))
                 .andExpect(content().string(containsString("/blueprint/edit")))
                 .andExpect(content().string(containsString("/external-ai-bridge")));
     }

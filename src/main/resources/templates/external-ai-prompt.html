@@ -100,6 +100,22 @@
             </form>
         </div>
     </section>
+
+    <section class="form-section prompt-bottom-card">
+        <div class="section-heading">
+            <h2>Step2の最終アクション</h2>
+            <p>プロンプト保存と再入力導線をここから実行できます。</p>
+        </div>
+        <div class="bottom-action-bar prompt-bottom-actions">
+            <div class="bottom-action-primary-group">
+                <button type="button" class="hero-primary-action" onclick="copyGeneratedPrompt()">生成プロンプトを一括コピー</button>
+                <a class="button-link hero-primary-action download-primary-cta" href="/external-ai-bridge/prompt/download">Markdownダウンロード</a>
+            </div>
+            <div class="bottom-action-nav-group">
+                <a class="button-link secondary" href="/external-ai-bridge">自由文入力トップへ戻る</a>
+            </div>
+        </div>
+    </section>
 </main>
 <script>
     function switchJsonInputMode(mode) {

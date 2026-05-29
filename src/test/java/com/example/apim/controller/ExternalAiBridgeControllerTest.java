@@ -158,6 +158,9 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("DOMContentLoaded")))
                 .andExpect(content().string(containsString("jsonFilePanel")))
                 .andExpect(content().string(containsString("jsonPastePanel")))
+                .andExpect(content().string(containsString("bottom-action-bar prompt-bottom-actions")))
+                .andExpect(content().string(containsString("bottom-action-primary-group")))
+                .andExpect(content().string(containsString("bottom-action-nav-group")))
                 .andExpect(content().string(containsString("generated markdown prompt")));
 
         verify(bridgeService).generatePrompt("顧客検索を行いたい");
@@ -284,6 +287,12 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("必須項目")))
                 .andExpect(content().string(containsString("任意・安全確認項目")))
                 .andExpect(content().string(containsString("営業担当が顧客情報を検索する。")))
+                .andExpect(content().string(containsString("bottom-action-bar primary-action-row step3-final-actions step3-execute-actions")))
+                .andExpect(content().string(containsString("bottom-action-primary-group")))
+                .andExpect(content().string(containsString("bottom-action-nav-group")))
+                .andExpect(content().string(containsString("href=\"/external-ai-bridge/prompt\"")))
+                .andExpect(content().string(containsString("Step2へ戻る")))
+                .andExpect(content().string(containsString("トップページへ戻る")))
                 .andExpect(content().string(containsString("確認した内容で設計候補を生成する")));
     }
 

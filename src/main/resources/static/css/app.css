@@ -5748,3 +5748,81 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_PR209_MARKDOWN_PREVIEW_CTA_V9 */
+
+/* BEGIN APIM_TSK090_BOTTOM_ACTION_BAR */
+.bottom-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(18px, 4vw, 44px);
+  width: 100%;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.bottom-action-primary-group,
+.bottom-action-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bottom-action-primary-group {
+  justify-content: flex-start;
+}
+
+.bottom-action-nav-group {
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.bottom-action-bar .button-link,
+.bottom-action-bar button {
+  min-height: 46px;
+  justify-content: center;
+}
+
+.bottom-action-bar .hero-primary-action,
+.bottom-action-bar .download-primary-cta {
+  min-height: 52px;
+  padding-inline: 26px;
+  border-radius: 14px;
+  font-weight: 900;
+}
+
+.bottom-action-bar .button-link.secondary,
+.bottom-action-bar .button-link.secondary-link {
+  min-height: 44px;
+  padding-inline: 18px;
+}
+
+.markdown-preview-page .markdown-bottom-actions a[href="/external-ai-bridge"] {
+  margin-left: 0;
+}
+
+.prompt-bottom-card,
+.markdown-bottom-card,
+.implementation-bottom-card,
+.step4-preview-card,
+.step3-execute-card {
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .bottom-action-bar,
+  .bottom-action-primary-group,
+  .bottom-action-nav-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .bottom-action-bar .button-link,
+  .bottom-action-bar button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+/* END APIM_TSK090_BOTTOM_ACTION_BAR */
