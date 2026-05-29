@@ -686,4 +686,26 @@ class BlueprintControllerTest {
         return html.substring(markerIndex);
     }
 
+    @Test
+    void implementationPreviewActionsStayInProgressOrder() throws Exception {
+        BlueprintResult result = new BlueprintResult();
+        result.setImplementationInstructions("# Implementation Instructions");
+        result.setBlueprintMarkdown("# API MCP Blueprint");
+
+        MvcResult page = mockMvc.perform(get("/blueprint/implementation-instructions")
+                        .sessionAttr("blueprintResult", result))
+                .andExpect(status().isOk())
+                .andExpect(view().name("implementation-instructions-preview"))
+                .andExpect(content().string(containsString("implementation-preview-action-bar")))
+                .andExpect(content().string(containsString("preview-action-primary-group")))
+                .andReturn();
+
+        String html = page.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        assertAppearsInOrder(
+                html,
+                "AI実装指示書ダウンロード",
+                "Markdown設計書プレビューへ",
+                "設定を修正して再生成");
+    }
+
 }

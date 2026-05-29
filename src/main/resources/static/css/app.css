@@ -5954,3 +5954,42 @@ button.secondary.sample-button {
   order: 1;
 }
 /* END APIM_TSK090_R09_STEP3_NAV_ORDER_FIX */
+
+/* BEGIN APIM_TSK090_R11_IMPLEMENTATION_PREVIEW_ACTION_ROW_FIX
+   Implementation preview progress actions stay in one horizontal row on normal screens. */
+.implementation-preview-action-bar .bottom-action-primary-group,
+.implementation-preview-action-bar .preview-action-primary-group,
+.implementation-instructions-preview-action-bar .bottom-action-primary-group,
+.implementation-instructions-preview-action-bar .preview-action-primary-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.implementation-preview-action-bar .bottom-action-primary-group .button-link,
+.implementation-preview-action-bar .preview-action-primary-group .button-link,
+.implementation-instructions-preview-action-bar .bottom-action-primary-group .button-link,
+.implementation-instructions-preview-action-bar .preview-action-primary-group .button-link {
+  width: auto;
+  min-width: 220px;
+}
+
+@media (max-width: 760px) {
+  .implementation-preview-action-bar .bottom-action-primary-group,
+  .implementation-preview-action-bar .preview-action-primary-group,
+  .implementation-instructions-preview-action-bar .bottom-action-primary-group,
+  .implementation-instructions-preview-action-bar .preview-action-primary-group {
+    flex-wrap: wrap;
+  }
+
+  .implementation-preview-action-bar .bottom-action-primary-group .button-link,
+  .implementation-preview-action-bar .preview-action-primary-group .button-link,
+  .implementation-instructions-preview-action-bar .bottom-action-primary-group .button-link,
+  .implementation-instructions-preview-action-bar .preview-action-primary-group .button-link {
+    width: 100%;
+  }
+}
+/* END APIM_TSK090_R11_IMPLEMENTATION_PREVIEW_ACTION_ROW_FIX */
