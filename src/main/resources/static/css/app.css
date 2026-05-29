@@ -5826,3 +5826,50 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_TSK090_BOTTOM_ACTION_BAR */
+
+/* BEGIN APIM_TSK090_R03_ACTION_REFINEMENT */
+.prompt-json-actions {
+  align-items: flex-end;
+  margin-top: 16px;
+}
+
+.prompt-json-actions .bottom-action-primary-group,
+.prompt-json-actions .bottom-action-nav-group {
+  align-items: stretch;
+}
+
+.prompt-json-actions button,
+.prompt-json-actions .button-link {
+  min-height: 48px;
+}
+
+.step3-execute-actions .bottom-action-nav-group {
+  order: 0;
+  justify-content: flex-start;
+  margin-left: 0;
+}
+
+.step3-execute-actions .bottom-action-primary-group {
+  order: 1;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.step4-forward-actions .button-link.secondary,
+.markdown-bottom-actions .bottom-action-primary-group .button-link.secondary,
+.implementation-bottom-actions .bottom-action-primary-group .button-link.secondary {
+  min-height: 48px;
+}
+
+.markdown-preview-page .markdown-bottom-actions .bottom-action-primary-group,
+.implementation-preview-page .implementation-bottom-actions .bottom-action-primary-group {
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .step3-execute-actions .bottom-action-primary-group,
+  .step3-execute-actions .bottom-action-nav-group {
+    margin-left: 0;
+  }
+}
+/* END APIM_TSK090_R03_ACTION_REFINEMENT */

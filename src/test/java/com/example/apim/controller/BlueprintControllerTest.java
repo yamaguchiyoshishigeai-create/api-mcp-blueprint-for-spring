@@ -1,6 +1,7 @@
 package com.example.apim.controller;
 
 import com.example.apim.model.BlueprintInput;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import com.example.apim.model.BlueprintResult;
 import com.example.apim.service.BlueprintGenerationService;
@@ -12,9 +13,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -152,11 +155,31 @@ class BlueprintControllerTest {
         BlueprintResult mockResult = new BlueprintResult();
         mockResult.setInputSummary("summary");
 
-        mockMvc.perform(get("/blueprint/result")
+        MvcResult result = mockMvc.perform(get("/blueprint/result")
                         .sessionAttr("blueprintResult", mockResult))
                 .andExpect(status().isOk())
                 .andExpect(view().name("result"))
-                .andExpect(content().string(containsString("Step 4: 設計候補生成結果")));
+                .andExpect(content().string(containsString("Step 4: 設計候補生成結果")))
+                .andExpect(content().string(containsString("bottom-action-bar step4-bottom-actions")))
+                .andExpect(content().string(containsString("bottom-action-primary-group step4-forward-actions")))
+                .andExpect(content().string(containsString("bottom-action-nav-group step4-return-actions")))
+                .andExpect(content().string(containsString("Step3へ戻る")))
+                .andExpect(content().string(containsString("/external-ai-bridge/import-result")))
+                .andExpect(content().string(containsString("トップページへ戻る")))
+                .andReturn();
+
+        String bottomActions = fromMarker(
+                result.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                "bottom-action-bar step4-bottom-actions");
+        assertAppearsInOrder(
+                bottomActions,
+                "bottom-action-primary-group step4-forward-actions",
+                "API&amp;MCP設計書プレビュー",
+                "AI実装指示書プレビュー",
+                "設定を修正して再生成",
+                "bottom-action-nav-group step4-return-actions",
+                "Step3へ戻る",
+                "トップページへ戻る");
     }
 
     @Test
@@ -367,7 +390,7 @@ class BlueprintControllerTest {
         BlueprintResult mockResult = new BlueprintResult();
         mockResult.setBlueprintMarkdown("# API MCP Blueprint");
 
-        mockMvc.perform(get("/blueprint/preview")
+        MvcResult mvcResult = mockMvc.perform(get("/blueprint/preview")
                         .sessionAttr("blueprintResult", mockResult))
                 .andExpect(status().isOk())
                 .andExpect(view().name("blueprint-preview"))
@@ -390,7 +413,22 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("bottom-action-nav-group")))
                 .andExpect(content().string(containsString("Step4へ戻る")))
                 .andExpect(content().string(containsString("/blueprint/result")))
-                .andExpect(content().string(containsString("/external-ai-bridge")));
+                .andExpect(content().string(containsString("/external-ai-bridge")))
+                .andExpect(content().string(not(containsString("次のアクション"))))
+                .andReturn();
+
+        String bottomActions = fromMarker(
+                mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                "bottom-action-bar markdown-bottom-actions");
+        assertAppearsInOrder(
+                bottomActions,
+                "bottom-action-primary-group",
+                "Markdown設計書ダウンロード",
+                "AI実装指示書プレビューへ",
+                "設定を修正して再生成",
+                "bottom-action-nav-group",
+                "Step4へ戻る",
+                "トップページへ戻る");
     }
 
     @Test
@@ -593,7 +631,7 @@ class BlueprintControllerTest {
         BlueprintResult result = new BlueprintResult();
         result.setImplementationInstructions("# Implementation Instructions");
 
-        mockMvc.perform(get("/blueprint/implementation-instructions").flashAttr("blueprintResult", result))
+        MvcResult mvcResult = mockMvc.perform(get("/blueprint/implementation-instructions").flashAttr("blueprintResult", result))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("implementation-preview-page")))
                 .andExpect(content().string(containsString("implementation-preview-hero")))
@@ -614,7 +652,38 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("Step4へ戻る")))
                 .andExpect(content().string(containsString("/blueprint/result")))
                 .andExpect(content().string(containsString("/blueprint/edit")))
-                .andExpect(content().string(containsString("/external-ai-bridge")));
+                .andExpect(content().string(containsString("/external-ai-bridge")))
+                .andExpect(content().string(not(containsString("次のアクション"))))
+                .andReturn();
+
+        String bottomActions = fromMarker(
+                mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                "bottom-action-bar implementation-bottom-actions");
+        assertAppearsInOrder(
+                bottomActions,
+                "bottom-action-primary-group",
+                "AI実装指示書ダウンロード",
+                "Markdown設計書プレビューへ",
+                "設定を修正して再生成",
+                "bottom-action-nav-group",
+                "Step4へ戻る",
+                "トップページへ戻る");
+    }
+
+    private static void assertAppearsInOrder(String html, String... texts) {
+        int previousIndex = -1;
+        for (String text : texts) {
+            int currentIndex = html.indexOf(text);
+            assertThat(currentIndex).as("Expected to find text: " + text).isGreaterThanOrEqualTo(0);
+            assertThat(currentIndex).as("Expected text to appear later: " + text).isGreaterThan(previousIndex);
+            previousIndex = currentIndex;
+        }
+    }
+
+    private static String fromMarker(String html, String marker) {
+        int markerIndex = html.indexOf(marker);
+        assertThat(markerIndex).as("Expected to find marker: " + marker).isGreaterThanOrEqualTo(0);
+        return html.substring(markerIndex);
     }
 
 }

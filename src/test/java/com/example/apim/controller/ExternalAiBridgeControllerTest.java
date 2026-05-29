@@ -158,7 +158,9 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("DOMContentLoaded")))
                 .andExpect(content().string(containsString("jsonFilePanel")))
                 .andExpect(content().string(containsString("jsonPastePanel")))
-                .andExpect(content().string(containsString("bottom-action-bar prompt-bottom-actions")))
+                .andExpect(content().string(containsString("bottom-action-bar prompt-json-actions")))
+                .andExpect(content().string(containsString("トップページへ戻る")))
+                .andExpect(content().string(not(containsString("Step2の最終アクション"))))
                 .andExpect(content().string(containsString("bottom-action-primary-group")))
                 .andExpect(content().string(containsString("bottom-action-nav-group")))
                 .andExpect(content().string(containsString("generated markdown prompt")));
@@ -274,7 +276,7 @@ class ExternalAiBridgeControllerTest {
         ExternalAiImportResult importResult = ExternalAiImportResult.canGenerate(input, "ok", List.of());
         when(bridgeService.importJson("{valid}")).thenReturn(importResult);
 
-        mockMvc.perform(get("/external-ai-bridge/import-result")
+        MvcResult result = mockMvc.perform(get("/external-ai-bridge/import-result")
                         .sessionAttr("importResult", importResult)
                         .sessionAttr("blueprintInput", input))
                 .andExpect(status().isOk())
@@ -293,7 +295,17 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("href=\"/external-ai-bridge/prompt\"")))
                 .andExpect(content().string(containsString("Step2へ戻る")))
                 .andExpect(content().string(containsString("トップページへ戻る")))
-                .andExpect(content().string(containsString("確認した内容で設計候補を生成する")));
+                .andExpect(content().string(not(containsString("step3-secondary-links"))))
+                .andExpect(content().string(containsString("確認した内容で設計候補を生成する")))
+                .andReturn();
+
+        assertAppearsInOrder(
+                result.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                "bottom-action-nav-group",
+                "Step2へ戻る",
+                "トップページへ戻る",
+                "bottom-action-primary-group",
+                "確認した内容で設計候補を生成する");
     }
 
     @Test
