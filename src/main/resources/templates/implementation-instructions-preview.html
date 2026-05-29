@@ -14,7 +14,7 @@
             <h1 id="implementation-preview-title">AI実装指示書プレビュー</h1>
             <p>生成された設計候補をCodex等の実装支援AIへ渡す前に、実装範囲、前提、禁止事項、確認観点をレビューします。Markdown設計書と合わせて確認し、実装依頼に使える粒度へ整えてください。</p>
             <div class="app-hero-actions implementation-preview-actions">
-                <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions/download">AI実装指示書ダウンロード</a>
+                <a class="button-link hero-primary-action download-primary-cta" href="/blueprint/implementation-instructions/download">AI実装指示書ダウンロード</a>
                 <a class="button-link secondary" href="/blueprint/preview">Markdown設計書プレビューへ</a>
                 <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
                 <a class="text-link" href="/external-ai-bridge">トップページへ戻る</a>
@@ -42,18 +42,18 @@
     </section>
 
     <section class="success-announcement implementation-status-card">
-        <div class="implementation-status-icon">AI</div>
+        <div class="implementation-status-icon non-interactive-icon" aria-hidden="true">AI</div>
         <div>
             <h2>AI実装指示書をレビューできる状態です</h2>
             <p>この指示書はAPIM for Springを実装するためではなく、生成された設計候補をCodex等の実装支援AIへ渡し、対象業務アプリケーションの実装につなげるための成果物です。</p>
         </div>
-        <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions/download">指示書をダウンロード</a>
+        <a class="button-link hero-primary-action download-primary-cta" href="/blueprint/implementation-instructions/download">指示書をダウンロード</a>
     </section>
 
     <section class="implementation-preview-grid">
         <section class="form-section implementation-preview-card">
             <div class="section-heading implementation-section-heading">
-                <span class="implementation-section-icon">AI</span>
+                <span class="implementation-section-icon non-interactive-icon" aria-hidden="true">AI</span>
                 <div>
                     <h2>実装指示書本文</h2>
                     <p>生成されたAI実装指示書をそのまま表示しています。Codex等へ投入する前に、実装範囲、禁止事項、テスト条件、未確定事項を確認してください。</p>
@@ -64,7 +64,7 @@
 
         <aside class="implementation-side-stack">
             <section class="form-section implementation-side-card">
-                <h2><span class="implementation-round-icon blue">✓</span>この画面で確認すること</h2>
+                <h2><span class="implementation-round-icon blue non-interactive-icon" aria-hidden="true">✓</span>この画面で確認すること</h2>
                 <ul>
                     <li>実装対象が今回のAPI / MCP設計候補に限定されているか</li>
                     <li>Controller、DTO、MCP tools/resources/promptsの実装粒度が明確か</li>
@@ -73,7 +73,7 @@
                 </ul>
             </section>
             <section class="form-section implementation-side-card implementation-risk-card">
-                <h2><span class="implementation-round-icon orange">!</span>投入前の注意</h2>
+                <h2><span class="implementation-round-icon orange non-interactive-icon" aria-hidden="true">!</span>投入前の注意</h2>
                 <ul>
                     <li>生成された指示書は実装依頼のたたき台であり、最終判断は人間が行います。</li>
                     <li>未確定の認証・認可、DB永続化、外部LLM API連携は、勝手に本番仕様へ確定しないでください。</li>
@@ -81,7 +81,7 @@
                 </ul>
             </section>
             <section class="form-section implementation-side-card">
-                <h2><span class="implementation-round-icon green">→</span>次のアクション</h2>
+                <h2><span class="implementation-round-icon green non-interactive-icon" aria-hidden="true">→</span>次のアクション</h2>
                 <p>Markdown設計書とAI実装指示書の内容が揃っているかを確認し、必要に応じて設定を修正して再生成してください。</p>
                 <div class="implementation-side-actions">
                     <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions/download">AI実装指示書ダウンロード</a>
@@ -94,17 +94,17 @@
 
     <section class="form-section implementation-bottom-card">
         <div class="section-heading implementation-section-heading">
-            <span class="implementation-section-icon">DL</span>
+            <span class="implementation-section-icon non-interactive-icon" aria-hidden="true">DL</span>
             <div>
-                <h2>保存・再生成</h2>
+                <h2>AI実装指示書のダウンロード・再生成</h2>
                 <p>実装依頼に使う場合はAI実装指示書をダウンロードしてください。設計内容を再確認する場合はMarkdown設計書プレビューへ戻れます。</p>
             </div>
         </div>
         <div class="implementation-bottom-actions">
+            <a class="button-link hero-primary-action download-primary-cta" href="/blueprint/implementation-instructions/download">AI実装指示書ダウンロード</a>
             <a class="button-link secondary" href="/blueprint/preview">Markdown設計書プレビューへ</a>
             <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
             <a class="button-link secondary" href="/external-ai-bridge">トップページへ戻る</a>
-            <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions/download">AI実装指示書ダウンロード</a>
         </div>
     </section>
 </main>
