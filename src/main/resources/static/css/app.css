@@ -5993,3 +5993,44 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_TSK090_R11_IMPLEMENTATION_PREVIEW_ACTION_ROW_FIX */
+
+/* BEGIN APIM_TSK090_R13_MARKDOWN_PREVIEW_ACTION_ROW_FIX
+   Target the actual Markdown preview bottom action row. */
+.markdown-bottom-actions .markdown-bottom-primary-actions,
+.markdown-bottom-actions .bottom-action-primary-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.markdown-bottom-actions .markdown-bottom-primary-actions .button-link,
+.markdown-bottom-actions .bottom-action-primary-group .button-link {
+  width: auto;
+  min-width: 0;
+  flex: 0 1 auto;
+  white-space: nowrap;
+  padding-left: 22px;
+  padding-right: 22px;
+}
+
+.markdown-bottom-actions .markdown-bottom-primary-actions .download-primary-cta,
+.markdown-bottom-actions .bottom-action-primary-group .download-primary-cta {
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .markdown-bottom-actions .markdown-bottom-primary-actions,
+  .markdown-bottom-actions .bottom-action-primary-group {
+    flex-wrap: wrap;
+  }
+
+  .markdown-bottom-actions .markdown-bottom-primary-actions .button-link,
+  .markdown-bottom-actions .bottom-action-primary-group .button-link {
+    width: 100%;
+  }
+}
+/* END APIM_TSK090_R13_MARKDOWN_PREVIEW_ACTION_ROW_FIX */

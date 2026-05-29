@@ -708,4 +708,32 @@ class BlueprintControllerTest {
                 "設定を修正して再生成");
     }
 
+    @Test
+    void markdownPreviewBottomActionsStayInOneProgressRow() throws Exception {
+        BlueprintResult result = new BlueprintResult();
+        result.setBlueprintMarkdown("# API MCP Blueprint");
+        result.setImplementationInstructions("# Implementation Instructions");
+
+        MvcResult page = mockMvc.perform(get("/blueprint/preview")
+                        .sessionAttr("blueprintResult", result))
+                .andExpect(status().isOk())
+                .andExpect(view().name("blueprint-preview"))
+                .andExpect(content().string(containsString("markdown-bottom-actions")))
+                .andExpect(content().string(containsString("markdown-bottom-primary-actions")))
+                .andReturn();
+
+        String bottomActions = fromMarker(
+                page.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                "markdown-bottom-actions");
+        assertAppearsInOrder(
+                bottomActions,
+                "markdown-bottom-primary-actions",
+                "Markdown設計書ダウンロード",
+                "AI実装指示書プレビューへ",
+                "設定を修正して再生成",
+                "bottom-action-nav-group",
+                "Step4へ戻る",
+                "トップページへ戻る");
+    }
+
 }
