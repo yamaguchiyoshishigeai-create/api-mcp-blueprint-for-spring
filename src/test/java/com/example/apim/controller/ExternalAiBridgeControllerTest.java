@@ -12,6 +12,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -164,6 +165,72 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("generated markdown prompt")));
 
         verify(bridgeService).generatePrompt("顧客検索を行いたい");
+    }
+
+
+    @Test
+    void promptGenerationRedirectDoesNotExposePromptInLocationQuery() throws Exception {
+        String sensitivePrompt = "generated markdown prompt with 業務要件 and confidential-customer-search";
+        when(bridgeService.generatePrompt(anyString())).thenReturn(sensitivePrompt);
+
+        MvcResult result = mockMvc.perform(post("/external-ai-bridge/prompt")
+                        .param("freeText", "顧客検索を行いたい confidential-customer-search"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge/prompt"))
+                .andReturn();
+
+        assertRedirectLocationDoesNotExpose(result.getResponse().getHeader(HttpHeaders.LOCATION),
+                "externalAiPrompt", "generated markdown prompt", "confidential-customer-search", "業務要件");
+    }
+
+    @Test
+    void promptGenerationRedirectPreservesServletContextPath() throws Exception {
+        when(bridgeService.generatePrompt(anyString())).thenReturn("generated prompt");
+
+        MvcResult result = mockMvc.perform(post("/apim/external-ai-bridge/prompt")
+                        .contextPath("/apim")
+                        .param("freeText", "顧客検索を行いたい"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn();
+
+        String location = result.getResponse().getHeader(HttpHeaders.LOCATION);
+        assertTrue(location != null && location.equals("/apim/external-ai-bridge/prompt"),
+                "Redirect Location must preserve servlet context path: " + location);
+        assertRedirectLocationDoesNotExpose(location, "externalAiPrompt", "generated prompt");
+    }
+
+    @Test
+    void importTextRedirectDoesNotExposeJsonOrModelAttributesInLocationQuery() throws Exception {
+        String sensitiveRequirement = "secret-requirement-for-contract-billing";
+        when(bridgeService.importJson(anyString()))
+                .thenReturn(ExternalAiImportResult.canGenerate(validBlueprintInput(), "ok", List.of()));
+
+        MvcResult result = mockMvc.perform(post("/external-ai-bridge/import-text")
+                        .param("jsonText", "{\"businessRequirements\":\"" + sensitiveRequirement + "\"}"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge/import-result"))
+                .andReturn();
+
+        assertRedirectLocationDoesNotExpose(result.getResponse().getHeader(HttpHeaders.LOCATION),
+                "jsonText", "importResult", "blueprintInput", sensitiveRequirement, "businessRequirements");
+    }
+
+    @Test
+    void importFileRedirectDoesNotExposeJsonOrModelAttributesInLocationQuery() throws Exception {
+        String sensitiveRequirement = "secret-requirement-from-uploaded-json";
+        MockMultipartFile file = new MockMultipartFile(
+                "jsonFile", "blueprint.json", "application/json",
+                ("{\"businessRequirements\":\"" + sensitiveRequirement + "\"}").getBytes(StandardCharsets.UTF_8));
+        when(bridgeService.importJson(anyString()))
+                .thenReturn(ExternalAiImportResult.canGenerate(validBlueprintInput(), "ok", List.of()));
+
+        MvcResult result = mockMvc.perform(multipart("/external-ai-bridge/import-file").file(file))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge/import-result"))
+                .andReturn();
+
+        assertRedirectLocationDoesNotExpose(result.getResponse().getHeader(HttpHeaders.LOCATION),
+                "jsonFile", "importResult", "blueprintInput", sensitiveRequirement, "businessRequirements");
     }
 
     @Test
@@ -391,6 +458,17 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(not(containsString("JSONの検証と反映準備が完了しました"))))
                 .andExpect(content().string(not(containsString("確認した内容で設計候補を生成する"))))
                 .andExpect(content().string(not(containsString("反映内容の確認・修正"))));
+    }
+
+
+    private void assertRedirectLocationDoesNotExpose(String location, String... forbiddenFragments) {
+        assertTrue(location != null && !location.isBlank());
+        String decodedLocation = URLDecoder.decode(location, StandardCharsets.UTF_8);
+        assertFalse(decodedLocation.contains("?"), "Redirect Location must not contain a query string: " + decodedLocation);
+        for (String forbiddenFragment : forbiddenFragments) {
+            assertFalse(decodedLocation.contains(forbiddenFragment),
+                    "Redirect Location leaked forbidden fragment [" + forbiddenFragment + "]: " + decodedLocation);
+        }
     }
 
     private static BlueprintInput validBlueprintInput() {
