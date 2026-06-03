@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(ExternalAiBridgeController.class)
@@ -117,9 +118,13 @@ class ExternalAiBridgeControllerTest {
 
         mockMvc.perform(post("/external-ai-bridge/prompt")
                         .param("freeText", "顧客検索を行いたい"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge/prompt"));
+
+        mockMvc.perform(get("/external-ai-bridge/prompt")
+                        .sessionAttr("externalAiPrompt", "generated markdown prompt"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-prompt"))
-                .andExpect(model().attribute("externalAiPrompt", "generated markdown prompt"))
                 .andExpect(content().string(containsString("Markdownダウンロード")))
                 .andExpect(content().string(containsString("自由文入力トップへ戻る")))
                 .andExpect(content().string(containsString("生成プロンプト")))
@@ -153,6 +158,9 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("DOMContentLoaded")))
                 .andExpect(content().string(containsString("jsonFilePanel")))
                 .andExpect(content().string(containsString("jsonPastePanel")))
+                .andExpect(content().string(containsString("bottom-action-bar prompt-json-actions")))
+                .andExpect(content().string(containsString("トップページへ戻る")))
+                .andExpect(content().string(not(containsString("Step2の最終アクション"))))
                 .andExpect(content().string(containsString("generated markdown prompt")));
 
         verify(bridgeService).generatePrompt("顧客検索を行いたい");
@@ -166,6 +174,31 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION,
                         containsString("apim-external-ai-prompt.md")))
                 .andExpect(content().string("# prompt"));
+    }
+
+    @Test
+    void promptPageRedirectsWhenPromptIsNotStored() throws Exception {
+        mockMvc.perform(get("/external-ai-bridge/prompt"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge"));
+    }
+
+    @Test
+    void importTextRedirectsToImportResultAfterStoringResult() throws Exception {
+        when(bridgeService.importJson("{valid}"))
+                .thenReturn(ExternalAiImportResult.canGenerate(validBlueprintInput(), "ok", List.of()));
+
+        mockMvc.perform(post("/external-ai-bridge/import-text")
+                        .param("jsonText", "{valid}"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge/import-result"));
+    }
+
+    @Test
+    void importResultRedirectsWhenResultIsNotStored() throws Exception {
+        mockMvc.perform(get("/external-ai-bridge/import-result"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge/prompt"));
     }
 
     @Test
@@ -195,11 +228,12 @@ class ExternalAiBridgeControllerTest {
                 List.of("請求確定の承認者ロールが未確定です。（medium）")
         );
 
-        when(bridgeService.importJson("{v2}"))
-                .thenReturn(ExternalAiImportResult.canGenerate(input, "ok", List.of(), summary));
+        ExternalAiImportResult importResult = ExternalAiImportResult.canGenerate(input, "ok", List.of(), summary);
+        when(bridgeService.importJson("{v2}")).thenReturn(importResult);
 
-        mockMvc.perform(post("/external-ai-bridge/import-text")
-                        .param("jsonText", "{v2}"))
+        mockMvc.perform(get("/external-ai-bridge/import-result")
+                        .sessionAttr("importResult", importResult)
+                        .sessionAttr("blueprintInput", input))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
                 .andExpect(content().string(containsString("v2抽出結果の確認")))
@@ -237,11 +271,12 @@ class ExternalAiBridgeControllerTest {
         input.setUserTypes("- 営業担当\n- AIアシスタント");
         input.setRequiredOperations("- 顧客検索");
         input.setAllowedAiOperations("- 顧客検索");
-        when(bridgeService.importJson("{valid}"))
-                .thenReturn(ExternalAiImportResult.canGenerate(input, "ok", List.of()));
+        ExternalAiImportResult importResult = ExternalAiImportResult.canGenerate(input, "ok", List.of());
+        when(bridgeService.importJson("{valid}")).thenReturn(importResult);
 
-        mockMvc.perform(post("/external-ai-bridge/import-text")
-                        .param("jsonText", "{valid}"))
+        MvcResult result = mockMvc.perform(get("/external-ai-bridge/import-result")
+                        .sessionAttr("importResult", importResult)
+                        .sessionAttr("blueprintInput", input))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
                 .andExpect(model().attributeExists("blueprintInput"))
@@ -252,20 +287,34 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("必須項目")))
                 .andExpect(content().string(containsString("任意・安全確認項目")))
                 .andExpect(content().string(containsString("営業担当が顧客情報を検索する。")))
-                .andExpect(content().string(containsString("確認した内容で設計候補を生成する")));
+                .andExpect(content().string(containsString("step3-action-bar")))
+                .andExpect(content().string(containsString("step3-action-primary-group")))
+                .andExpect(content().string(containsString("step3-action-nav-group")))
+                .andExpect(content().string(containsString("href=\"/external-ai-bridge/prompt\"")))
+                .andExpect(content().string(containsString("Step2へ戻る")))
+                .andExpect(content().string(containsString("トップページへ戻る")))
+                .andExpect(content().string(not(containsString("step3-secondary-links"))))
+                .andExpect(content().string(containsString("確認した内容で設計候補を生成する")))
+                .andExpect(content().string(containsString("step3-action-bar")))
+                .andExpect(content().string(containsString("step3-action-primary-group")))
+                .andExpect(content().string(containsString("step3-action-nav-group")))
+                .andReturn();
+
+
     }
 
     @Test
     void importTextWithValidJsonShowsSuccessBeforeWarnings() throws Exception {
         BlueprintInput input = validBlueprintInput();
-        when(bridgeService.importJson("{valid-warning}"))
-                .thenReturn(ExternalAiImportResult.canGenerate(
+        ExternalAiImportResult importResult = ExternalAiImportResult.canGenerate(
                         input,
                         "ok",
-                        List.of("承認必須操作は人間確認が必要です。")));
+                        List.of("承認必須操作は人間確認が必要です。"));
+        when(bridgeService.importJson("{valid-warning}")).thenReturn(importResult);
 
-        MvcResult result = mockMvc.perform(post("/external-ai-bridge/import-text")
-                        .param("jsonText", "{valid-warning}"))
+        MvcResult result = mockMvc.perform(get("/external-ai-bridge/import-result")
+                        .sessionAttr("importResult", importResult)
+                        .sessionAttr("blueprintInput", input))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
                 .andExpect(model().attributeExists("blueprintInput"))
@@ -290,14 +339,15 @@ class ExternalAiBridgeControllerTest {
     @Test
     void importTextWithValidJsonShowsWarningsImmediatelyBeforeGenerateButton() throws Exception {
         BlueprintInput input = validBlueprintInput();
-        when(bridgeService.importJson("{valid-warning-order}"))
-                .thenReturn(ExternalAiImportResult.canGenerate(
+        ExternalAiImportResult importResult = ExternalAiImportResult.canGenerate(
                         input,
                         "ok",
-                        List.of("監査ログ対象を確認してください。")));
+                        List.of("監査ログ対象を確認してください。"));
+        when(bridgeService.importJson("{valid-warning-order}")).thenReturn(importResult);
 
-        MvcResult result = mockMvc.perform(post("/external-ai-bridge/import-text")
-                        .param("jsonText", "{valid-warning-order}"))
+        MvcResult result = mockMvc.perform(get("/external-ai-bridge/import-result")
+                        .sessionAttr("importResult", importResult)
+                        .sessionAttr("blueprintInput", input))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
                 .andReturn();
@@ -312,11 +362,12 @@ class ExternalAiBridgeControllerTest {
 
     @Test
     void importTextWithCanGenerateFalseShowsReason() throws Exception {
-        when(bridgeService.importJson("{cannot}")).thenReturn(ExternalAiImportResult.cannotGenerate(
-                "対象ドメインが不足しています。", List.of("対象ドメイン"), List.of()));
+        ExternalAiImportResult importResult = ExternalAiImportResult.cannotGenerate(
+                "対象ドメインが不足しています。", List.of("対象ドメイン"), List.of());
+        when(bridgeService.importJson("{cannot}")).thenReturn(importResult);
 
-        mockMvc.perform(post("/external-ai-bridge/import-text")
-                        .param("jsonText", "{cannot}"))
+        mockMvc.perform(get("/external-ai-bridge/import-result")
+                        .sessionAttr("importResult", importResult))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
                 .andExpect(content().string(containsString("生成不可")))
@@ -326,11 +377,12 @@ class ExternalAiBridgeControllerTest {
 
     @Test
     void importTextWithInvalidJsonShowsErrorEscaped() throws Exception {
-        when(bridgeService.importJson("<script>alert(1)</script>"))
-                .thenReturn(ExternalAiImportResult.invalid(List.of("<script>alert(1)</script>"), List.of()));
+        ExternalAiImportResult importResult =
+                ExternalAiImportResult.invalid(List.of("<script>alert(1)</script>"), List.of());
+        when(bridgeService.importJson("<script>alert(1)</script>")).thenReturn(importResult);
 
-        mockMvc.perform(post("/external-ai-bridge/import-text")
-                        .param("jsonText", "<script>alert(1)</script>"))
+        mockMvc.perform(get("/external-ai-bridge/import-result")
+                        .sessionAttr("importResult", importResult))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
                 .andExpect(content().string(containsString("エラー")))
@@ -369,6 +421,12 @@ class ExternalAiBridgeControllerTest {
                 "jsonFile", "apim-blueprint-input.txt", "text/plain", "{}".getBytes());
 
         mockMvc.perform(multipart("/external-ai-bridge/import-file").file(file))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge/import-result"));
+
+        mockMvc.perform(get("/external-ai-bridge/import-result")
+                        .sessionAttr("importResult", ExternalAiImportResult.invalid(
+                                List.of(".json ファイルのみアップロードできます。"), List.of())))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
                 .andExpect(content().string(containsString(".json ファイルのみアップロードできます。")));
@@ -376,8 +434,9 @@ class ExternalAiBridgeControllerTest {
 
     @Test
     void importFileAcceptsJsonExtension() throws Exception {
-        when(bridgeService.importJson("{\"schemaVersion\":\"apim-blueprint-input/v1\"}"))
-                .thenReturn(ExternalAiImportResult.invalid(List.of("judgement が存在しません。"), List.of()));
+        ExternalAiImportResult importResult =
+                ExternalAiImportResult.invalid(List.of("judgement が存在しません。"), List.of());
+        when(bridgeService.importJson("{\"schemaVersion\":\"apim-blueprint-input/v1\"}")).thenReturn(importResult);
         MockMultipartFile file = new MockMultipartFile(
                 "jsonFile",
                 "apim-blueprint-input.json",
@@ -385,8 +444,44 @@ class ExternalAiBridgeControllerTest {
                 "{\"schemaVersion\":\"apim-blueprint-input/v1\"}".getBytes());
 
         mockMvc.perform(multipart("/external-ai-bridge/import-file").file(file))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/external-ai-bridge/import-result"));
+
+        mockMvc.perform(get("/external-ai-bridge/import-result")
+                        .sessionAttr("importResult", importResult))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
                 .andExpect(content().string(containsString("judgement が存在しません。")));
     }
+    @Test
+    void step3ActionBarPlacesProgressBeforeNavigation() throws Exception {
+        BlueprintInput input = validBlueprintInput();
+        when(bridgeService.importJson("{step3-action-order}"))
+                .thenReturn(ExternalAiImportResult.canGenerate(input, "ok", List.of()));
+
+        MvcResult result = mockMvc.perform(post("/external-ai-bridge/import-text")
+                        .param("jsonText", "{step3-action-order}"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn();
+
+        String redirectUrl = result.getResponse().getRedirectedUrl();
+        MvcResult page = mockMvc.perform(get(redirectUrl)
+                        .session((org.springframework.mock.web.MockHttpSession) result.getRequest().getSession(false)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("external-ai-import-result"))
+                .andExpect(content().string(containsString("step3-action-bar")))
+                .andExpect(content().string(containsString("step3-action-primary-group")))
+                .andExpect(content().string(containsString("step3-action-nav-group")))
+                .andReturn();
+
+        String html = page.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        assertAppearsInOrder(
+                html,
+                "step3-action-primary-group",
+                "確認した内容で設計候補を生成する",
+                "step3-action-nav-group",
+                "Step2へ戻る",
+                "トップページへ戻る");
+    }
+
 }

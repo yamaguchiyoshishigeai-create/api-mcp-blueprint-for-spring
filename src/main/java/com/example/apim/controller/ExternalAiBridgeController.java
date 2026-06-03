@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@SessionAttributes({"blueprintInput", "externalAiPrompt"})
+@SessionAttributes({"blueprintInput", "externalAiPrompt", "importResult"})
 public class ExternalAiBridgeController {
 
     private static final int MAX_JSON_UPLOAD_BYTES = 64 * 1024;
@@ -45,6 +45,11 @@ public class ExternalAiBridgeController {
         return "";
     }
 
+    @ModelAttribute("importResult")
+    public ExternalAiImportResult importResult() {
+        return ExternalAiImportResult.invalid(List.of(), List.of());
+    }
+
     @GetMapping("/external-ai-bridge")
     public String showBridge(Model model) {
         addBridgeRequestIfAbsent(model);
@@ -60,6 +65,14 @@ public class ExternalAiBridgeController {
         }
         String prompt = bridgeService.generatePrompt(request.getFreeText());
         model.addAttribute("externalAiPrompt", prompt);
+        return "redirect:/external-ai-bridge/prompt";
+    }
+
+    @GetMapping("/external-ai-bridge/prompt")
+    public String showPrompt(@ModelAttribute("externalAiPrompt") String prompt) {
+        if (prompt == null || prompt.isBlank()) {
+            return "redirect:/external-ai-bridge";
+        }
         return "external-ai-prompt";
     }
 
@@ -81,35 +94,55 @@ public class ExternalAiBridgeController {
     @PostMapping("/external-ai-bridge/import-text")
     public String importText(@RequestParam(name = "jsonText", required = false) String jsonText,
                              Model model) {
-        return showImportResult(bridgeService.importJson(jsonText), model);
+        storeImportResult(bridgeService.importJson(jsonText), model);
+        return "redirect:/external-ai-bridge/import-result";
     }
 
     @PostMapping("/external-ai-bridge/import-file")
     public String importFile(@RequestParam("jsonFile") MultipartFile jsonFile,
                              Model model) throws IOException {
         if (jsonFile == null || jsonFile.isEmpty()) {
-            return showImportResult(ExternalAiImportResult.invalid(List.of("JSONファイルを選択してください。"), List.of()),
+            storeImportResult(ExternalAiImportResult.invalid(List.of("JSONファイルを選択してください。"), List.of()),
                     model);
+            return "redirect:/external-ai-bridge/import-result";
         }
         String filename = jsonFile.getOriginalFilename() == null ? "" : jsonFile.getOriginalFilename();
         if (!filename.toLowerCase().endsWith(".json")) {
-            return showImportResult(ExternalAiImportResult.invalid(List.of(".json ファイルのみアップロードできます。"),
+            storeImportResult(ExternalAiImportResult.invalid(List.of(".json ファイルのみアップロードできます。"),
                     List.of()), model);
+            return "redirect:/external-ai-bridge/import-result";
         }
         if (jsonFile.getSize() > MAX_JSON_UPLOAD_BYTES) {
-            return showImportResult(ExternalAiImportResult.invalid(
+            storeImportResult(ExternalAiImportResult.invalid(
                     List.of("JSONファイルサイズは64KB以下にしてください。"), List.of()), model);
+            return "redirect:/external-ai-bridge/import-result";
         }
         String json = new String(jsonFile.getBytes(), StandardCharsets.UTF_8);
-        return showImportResult(bridgeService.importJson(json), model);
+        storeImportResult(bridgeService.importJson(json), model);
+        return "redirect:/external-ai-bridge/import-result";
     }
 
-    private String showImportResult(ExternalAiImportResult result, Model model) {
+    @GetMapping("/external-ai-bridge/import-result")
+    public String showImportResult(@ModelAttribute("importResult") ExternalAiImportResult result) {
+        if (isMissingImportResult(result)) {
+            return "redirect:/external-ai-bridge/prompt";
+        }
+        return "external-ai-import-result";
+    }
+
+    private void storeImportResult(ExternalAiImportResult result, Model model) {
         model.addAttribute("importResult", result);
         if (result.valid() && result.canGenerate() && result.blueprintInput() != null) {
             model.addAttribute("blueprintInput", result.blueprintInput());
         }
-        return "external-ai-import-result";
+    }
+
+    private boolean isMissingImportResult(ExternalAiImportResult result) {
+        return result == null
+                || (!result.valid()
+                && result.errors().isEmpty()
+                && result.warnings().isEmpty()
+                && (result.reason() == null || result.reason().isBlank()));
     }
 
     private void addBridgeRequestIfAbsent(Model model) {

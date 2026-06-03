@@ -80,14 +80,6 @@
                     <li>認証・認可、DB永続化、マイグレーション、本番運用設計は別途詳細化が必要です。</li>
                 </ul>
             </section>
-            <section class="form-section markdown-side-card">
-                <h2><span class="markdown-round-icon green non-interactive-icon" aria-hidden="true">→</span>次のアクション</h2>
-                <p>Markdown設計書の確認後、AI実装指示書を確認し、実装支援AIへ渡せる粒度かを確認してください。</p>
-                <div class="markdown-side-actions">
-                    <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
-                    <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
-                </div>
-            </section>
         </aside>
     </section>
 
@@ -99,11 +91,16 @@
                 <p>レビューに回す場合はMarkdown設計書をダウンロードしてください。入力条件を変更する場合は、設定修正画面へ戻れます。</p>
             </div>
         </div>
-        <div class="markdown-bottom-actions">
-            <a class="button-link hero-primary-action download-primary-cta" href="/blueprint/download">Markdown設計書ダウンロード</a>
-            <a class="button-link secondary" href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
-            <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
-            <a class="button-link secondary" href="/external-ai-bridge">トップページへ戻る</a>
+        <div class="bottom-action-bar markdown-bottom-actions">
+            <div class="bottom-action-primary-group markdown-bottom-primary-actions">
+                <a class="button-link hero-primary-action download-primary-cta" href="/blueprint/download">Markdown設計書ダウンロード</a>
+                <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions">AI実装指示書プレビューへ</a>
+                <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
+            </div>
+            <div class="bottom-action-nav-group">
+                <a class="button-link secondary" href="/blueprint/result">Step4へ戻る</a>
+                <a class="button-link secondary" href="/external-ai-bridge">トップページへ戻る</a>
+            </div>
         </div>
     </section>
 </main>

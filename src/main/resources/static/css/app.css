@@ -5748,3 +5748,289 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_PR209_MARKDOWN_PREVIEW_CTA_V9 */
+
+/* BEGIN APIM_TSK090_BOTTOM_ACTION_BAR */
+.bottom-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(18px, 4vw, 44px);
+  width: 100%;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.bottom-action-primary-group,
+.bottom-action-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bottom-action-primary-group {
+  justify-content: flex-start;
+}
+
+.bottom-action-nav-group {
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.bottom-action-bar .button-link,
+.bottom-action-bar button {
+  min-height: 46px;
+  justify-content: center;
+}
+
+.bottom-action-bar .hero-primary-action,
+.bottom-action-bar .download-primary-cta {
+  min-height: 52px;
+  padding-inline: 26px;
+  border-radius: 14px;
+  font-weight: 900;
+}
+
+.bottom-action-bar .button-link.secondary,
+.bottom-action-bar .button-link.secondary-link {
+  min-height: 44px;
+  padding-inline: 18px;
+}
+
+.markdown-preview-page .markdown-bottom-actions a[href="/external-ai-bridge"] {
+  margin-left: 0;
+}
+
+.prompt-bottom-card,
+.markdown-bottom-card,
+.implementation-bottom-card,
+.step4-preview-card,
+.step3-execute-card {
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .bottom-action-bar,
+  .bottom-action-primary-group,
+  .bottom-action-nav-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .bottom-action-bar .button-link,
+  .bottom-action-bar button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+/* END APIM_TSK090_BOTTOM_ACTION_BAR */
+
+/* BEGIN APIM_TSK090_R03_ACTION_REFINEMENT */
+.prompt-json-actions {
+  align-items: flex-end;
+  margin-top: 16px;
+}
+
+.prompt-json-actions .bottom-action-primary-group,
+.prompt-json-actions .bottom-action-nav-group {
+  align-items: stretch;
+}
+
+.prompt-json-actions button,
+.prompt-json-actions .button-link {
+  min-height: 48px;
+}
+
+.step3-execute-actions .bottom-action-nav-group {
+  order: 0;
+  justify-content: flex-start;
+  margin-left: 0;
+}
+
+.step3-execute-actions .bottom-action-primary-group {
+  order: 1;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.step4-forward-actions .button-link.secondary,
+.markdown-bottom-actions .bottom-action-primary-group .button-link.secondary,
+.implementation-bottom-actions .bottom-action-primary-group .button-link.secondary {
+  min-height: 48px;
+}
+
+.markdown-preview-page .markdown-bottom-actions .bottom-action-primary-group,
+.implementation-preview-page .implementation-bottom-actions .bottom-action-primary-group {
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .step3-execute-actions .bottom-action-primary-group,
+  .step3-execute-actions .bottom-action-nav-group {
+    margin-left: 0;
+  }
+}
+/* END APIM_TSK090_R03_ACTION_REFINEMENT */
+
+/* TSK-090: Step3 action group order
+   Progress CTA stays on the left; Step2/top navigation stays on the right. */
+.step3-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.step3-action-primary-group,
+.step3-action-nav-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.step3-action-primary-group {
+    justify-content: flex-start;
+}
+
+.step3-action-nav-group {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.step3-action-bar .button-link,
+.step3-action-bar button {
+    min-height: 52px;
+}
+
+@media (max-width: 760px) {
+    .step3-action-bar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .step3-action-primary-group,
+    .step3-action-nav-group {
+        justify-content: stretch;
+        margin-left: 0;
+    }
+
+    .step3-action-bar .button-link,
+    .step3-action-bar button {
+        width: 100%;
+    }
+}
+
+/* BEGIN APIM_TSK090_R08_STEP3_CSS_ORDER_FIX
+   Keep Step3 progress CTA on the left and Step2/top navigation on the right.
+   This override intentionally supersedes older R03 order rules. */
+.step3-execute-actions .step3-action-primary-group {
+  order: 0;
+  justify-content: flex-start;
+  margin-left: 0;
+}
+
+.step3-execute-actions .step3-action-nav-group {
+  order: 1;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+/* END APIM_TSK090_R08_STEP3_CSS_ORDER_FIX */
+
+/* BEGIN APIM_TSK090_R09_STEP3_NAV_ORDER_FIX
+   Step3 navigation order is fixed as Step2 -> top page. */
+.step3-execute-actions .step3-action-nav-group,
+.step3-action-bar .step3-action-nav-group {
+  flex-direction: row;
+}
+
+.step3-execute-actions .step3-back-secondary {
+  order: 0;
+}
+
+.step3-execute-actions .step3-top-secondary {
+  order: 1;
+}
+/* END APIM_TSK090_R09_STEP3_NAV_ORDER_FIX */
+
+/* BEGIN APIM_TSK090_R11_IMPLEMENTATION_PREVIEW_ACTION_ROW_FIX
+   Implementation preview progress actions stay in one horizontal row on normal screens. */
+.implementation-preview-action-bar .bottom-action-primary-group,
+.implementation-preview-action-bar .preview-action-primary-group,
+.implementation-instructions-preview-action-bar .bottom-action-primary-group,
+.implementation-instructions-preview-action-bar .preview-action-primary-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.implementation-preview-action-bar .bottom-action-primary-group .button-link,
+.implementation-preview-action-bar .preview-action-primary-group .button-link,
+.implementation-instructions-preview-action-bar .bottom-action-primary-group .button-link,
+.implementation-instructions-preview-action-bar .preview-action-primary-group .button-link {
+  width: auto;
+  min-width: 220px;
+}
+
+@media (max-width: 760px) {
+  .implementation-preview-action-bar .bottom-action-primary-group,
+  .implementation-preview-action-bar .preview-action-primary-group,
+  .implementation-instructions-preview-action-bar .bottom-action-primary-group,
+  .implementation-instructions-preview-action-bar .preview-action-primary-group {
+    flex-wrap: wrap;
+  }
+
+  .implementation-preview-action-bar .bottom-action-primary-group .button-link,
+  .implementation-preview-action-bar .preview-action-primary-group .button-link,
+  .implementation-instructions-preview-action-bar .bottom-action-primary-group .button-link,
+  .implementation-instructions-preview-action-bar .preview-action-primary-group .button-link {
+    width: 100%;
+  }
+}
+/* END APIM_TSK090_R11_IMPLEMENTATION_PREVIEW_ACTION_ROW_FIX */
+
+/* BEGIN APIM_TSK090_R13_MARKDOWN_PREVIEW_ACTION_ROW_FIX
+   Target the actual Markdown preview bottom action row. */
+.markdown-bottom-actions .markdown-bottom-primary-actions,
+.markdown-bottom-actions .bottom-action-primary-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.markdown-bottom-actions .markdown-bottom-primary-actions .button-link,
+.markdown-bottom-actions .bottom-action-primary-group .button-link {
+  width: auto;
+  min-width: 0;
+  flex: 0 1 auto;
+  white-space: nowrap;
+  padding-left: 22px;
+  padding-right: 22px;
+}
+
+.markdown-bottom-actions .markdown-bottom-primary-actions .download-primary-cta,
+.markdown-bottom-actions .bottom-action-primary-group .download-primary-cta {
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .markdown-bottom-actions .markdown-bottom-primary-actions,
+  .markdown-bottom-actions .bottom-action-primary-group {
+    flex-wrap: wrap;
+  }
+
+  .markdown-bottom-actions .markdown-bottom-primary-actions .button-link,
+  .markdown-bottom-actions .bottom-action-primary-group .button-link {
+    width: 100%;
+  }
+}
+/* END APIM_TSK090_R13_MARKDOWN_PREVIEW_ACTION_ROW_FIX */
