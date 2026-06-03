@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 @SessionAttributes({"blueprintInput", "externalAiPrompt", "importResult"})
@@ -57,7 +58,7 @@ public class ExternalAiBridgeController {
     }
 
     @PostMapping("/external-ai-bridge/prompt")
-    public String generatePrompt(@Valid @ModelAttribute("externalAiBridgeRequest") ExternalAiBridgeRequest request,
+    public Object generatePrompt(@Valid @ModelAttribute("externalAiBridgeRequest") ExternalAiBridgeRequest request,
                                  BindingResult bindingResult,
                                  Model model) {
         if (bindingResult.hasErrors()) {
@@ -65,13 +66,13 @@ public class ExternalAiBridgeController {
         }
         String prompt = bridgeService.generatePrompt(request.getFreeText());
         model.addAttribute("externalAiPrompt", prompt);
-        return "redirect:/external-ai-bridge/prompt";
+        return safeRedirect("/external-ai-bridge/prompt");
     }
 
     @GetMapping("/external-ai-bridge/prompt")
-    public String showPrompt(@ModelAttribute("externalAiPrompt") String prompt) {
+    public Object showPrompt(@ModelAttribute("externalAiPrompt") String prompt) {
         if (prompt == null || prompt.isBlank()) {
-            return "redirect:/external-ai-bridge";
+            return safeRedirect("/external-ai-bridge");
         }
         return "external-ai-prompt";
     }
@@ -92,42 +93,50 @@ public class ExternalAiBridgeController {
     }
 
     @PostMapping("/external-ai-bridge/import-text")
-    public String importText(@RequestParam(name = "jsonText", required = false) String jsonText,
-                             Model model) {
+    public RedirectView importText(@RequestParam(name = "jsonText", required = false) String jsonText,
+                                   Model model) {
         storeImportResult(bridgeService.importJson(jsonText), model);
-        return "redirect:/external-ai-bridge/import-result";
+        return safeRedirect("/external-ai-bridge/import-result");
     }
 
     @PostMapping("/external-ai-bridge/import-file")
-    public String importFile(@RequestParam("jsonFile") MultipartFile jsonFile,
-                             Model model) throws IOException {
+    public RedirectView importFile(@RequestParam("jsonFile") MultipartFile jsonFile,
+                                   Model model) throws IOException {
         if (jsonFile == null || jsonFile.isEmpty()) {
             storeImportResult(ExternalAiImportResult.invalid(List.of("JSONファイルを選択してください。"), List.of()),
                     model);
-            return "redirect:/external-ai-bridge/import-result";
+            return safeRedirect("/external-ai-bridge/import-result");
         }
         String filename = jsonFile.getOriginalFilename() == null ? "" : jsonFile.getOriginalFilename();
         if (!filename.toLowerCase().endsWith(".json")) {
             storeImportResult(ExternalAiImportResult.invalid(List.of(".json ファイルのみアップロードできます。"),
                     List.of()), model);
-            return "redirect:/external-ai-bridge/import-result";
+            return safeRedirect("/external-ai-bridge/import-result");
         }
         if (jsonFile.getSize() > MAX_JSON_UPLOAD_BYTES) {
             storeImportResult(ExternalAiImportResult.invalid(
                     List.of("JSONファイルサイズは64KB以下にしてください。"), List.of()), model);
-            return "redirect:/external-ai-bridge/import-result";
+            return safeRedirect("/external-ai-bridge/import-result");
         }
         String json = new String(jsonFile.getBytes(), StandardCharsets.UTF_8);
         storeImportResult(bridgeService.importJson(json), model);
-        return "redirect:/external-ai-bridge/import-result";
+        return safeRedirect("/external-ai-bridge/import-result");
     }
 
     @GetMapping("/external-ai-bridge/import-result")
-    public String showImportResult(@ModelAttribute("importResult") ExternalAiImportResult result) {
+    public Object showImportResult(@ModelAttribute("importResult") ExternalAiImportResult result) {
         if (isMissingImportResult(result)) {
-            return "redirect:/external-ai-bridge/prompt";
+            return safeRedirect("/external-ai-bridge/prompt");
         }
         return "external-ai-import-result";
+    }
+
+
+    private RedirectView safeRedirect(String url) {
+        RedirectView redirectView = new RedirectView(url);
+        redirectView.setContextRelative(true);
+        redirectView.setExposeModelAttributes(false);
+        return redirectView;
     }
 
     private void storeImportResult(ExternalAiImportResult result, Model model) {
