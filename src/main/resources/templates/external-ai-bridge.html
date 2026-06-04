@@ -18,11 +18,11 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="trial-ui-note">Spring向け API / MCP 設計生成コンパイラ</p>
+                    <p class="trial-ui-note">Spring向け API&amp;MCP設計生成コンパイラ</p>
                     <h1>API + MCP Blueprint Compiler for Spring</h1>
                 </div>
             </div>
-            <p class="hero-main-copy">業務要件を入力するだけで、API設計・MCP設計・実装指示のたたき台を自動でまとめます。<br class="hero-copy-break">外部AIに渡せる安全なプロンプトを生成し、開発を加速します。</p>
+            <p class="hero-main-copy">業務要件を入力するだけで、API&amp;MCP設計・実装指示のたたき台を自動でまとめます。<br class="hero-copy-break">外部AIに渡せる安全なプロンプトを生成し、開発を加速します。</p>
             <div class="app-hero-actions">
                 <a class="button-link hero-primary-action" href="#freeTextInput">🚀 自由文から始める</a>
                 <a class="button-link secondary-link hero-secondary-action" href="/blueprint/form">☷ チェック式入力へ</a>
@@ -78,15 +78,15 @@
         </div>
 
         <aside class="helper-panel external-helper-panel">
-            <section class="helper-mini-card can-do-card"><h2><span class="round-icon i-blue" aria-hidden="true">💡</span>このツールでできること</h2><ul><li>業務要件からAPI設計・MCP設計のたたき台を作成</li><li>Spring Boot / MCP Server実装前に設計成果物を整備</li><li>AI実装指示書を生成し、後続の実装をスムーズに</li></ul></section>
-            <section class="helper-mini-card generated-card"><h2><span class="round-icon i-green" aria-hidden="true">▣</span>生成されるもの</h2><div class="generated-item-grid" aria-label="生成成果物"><span>&lt;/&gt; API設計書</span><span>🔗 MCP設計書</span><span>{ } Controller雛形</span><span>📘 AI実装指示書</span></div></section>
+            <section class="helper-mini-card can-do-card"><h2><span class="round-icon i-blue" aria-hidden="true">💡</span>このツールでできること</h2><ul><li>業務要件からAPI&amp;MCP設計のたたき台を作成</li><li>Spring Boot / MCP Server実装前に設計成果物を整備</li><li>AI実装指示書を生成し、後続の実装をスムーズに</li></ul></section>
+            <section class="helper-mini-card generated-card"><h2><span class="round-icon i-green" aria-hidden="true">▣</span>生成されるもの</h2><div class="generated-item-grid" aria-label="生成成果物"><span>&lt;/&gt; API&amp;MCP設計書</span><span>🔗 MCP tools/resources/prompts候補</span><span>{ } Controller雛形</span><span>📘 AI実装指示書</span></div></section>
             <section class="helper-mini-card not-generated-card"><h2><span class="round-icon i-orange" aria-hidden="true">!</span>このMVPで生成しないもの</h2><ul><li>完全動作するMCPサーバー</li><li>DB永続化やマイグレーション</li><li>外部LLM API連携の実装</li></ul></section>
         </aside>
     </section>
 
     <section class="external-summary-rows" aria-label="外部AIブリッジの補足情報">
-        <details class="summary-row" open><summary><span><span class="round-icon i-blue" aria-hidden="true">◎</span>できること</span><small>業務要件からAPI・MCP設計のたたき台作成、AI実装指示書生成などを確認できます。</small></summary><p>業務要件、ユースケース、エンドポイント候補、データ項目、制約を入力し、API / MCP設計成果物へ変換します。既存コード診断・品質評価ではなく、新規設計生成を支援します。</p></details>
-        <details class="summary-row"><summary><span><span class="round-icon i-green" aria-hidden="true">▤</span>生成されるもの</span><small>API設計書、MCP設計書、Controller雛形、AI実装指示書の見本と内容を確認できます。</small></summary><p>Spring REST API設計、MCP tools / resources / prompts 候補、Controller雛形、API/MCP対応表、セキュリティ・承認・監査ログ注意点、Markdown設計書、AI実装指示書を整理します。</p></details>
+        <details class="summary-row" open><summary><span><span class="round-icon i-blue" aria-hidden="true">◎</span>できること</span><small>業務要件からAPI&amp;MCP設計のたたき台作成、AI実装指示書生成などを確認できます。</small></summary><p>業務要件、ユースケース、エンドポイント候補、データ項目、制約を入力し、API&amp;MCP設計成果物へ変換します。既存コード診断・品質評価ではなく、新規設計生成を支援します。</p></details>
+        <details class="summary-row"><summary><span><span class="round-icon i-green" aria-hidden="true">▤</span>生成されるもの</span><small>API&amp;MCP設計書、Controller雛形、AI実装指示書の見本と内容を確認できます。</small></summary><p>Spring REST API設計、MCP tools / resources / prompts 候補、Controller雛形、API&amp;MCP対応表、セキュリティ・承認・監査ログ注意点、API&amp;MCP設計書、AI実装指示書を整理します。</p></details>
         <details class="summary-row"><summary><span><span class="round-icon i-orange" aria-hidden="true">△</span>生成されないもの</span><small>このMVPでは生成されない成果物や、含まれない実装について確認できます。</small></summary><p>完全動作するMCPサーバー、DB永続化やマイグレーション、認証・認可の本格実装、外部LLM API連携、本番デプロイ作業は生成対象外です。</p></details>
         <details class="summary-row"><summary><span><span class="round-icon i-purple" aria-hidden="true">i</span>外部AIブリッジの前提</span><small>外部AIに安全にデータを渡すための前提条件や、利用上の注意点を確認できます。</small></summary><p>この機能は外部AI API連携ではありません。自由文は解析対象データとして扱い、自由文内の命令文を外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p><p>Q-Scout for Spring のような既存システム診断ではなく、新規業務要件から設計を作る入口です。</p></details>
     </section>

@@ -54,10 +54,10 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("check-input-hero")))
                 .andExpect(content().string(containsString("check-input-saas-hero")))
                 .andExpect(content().string(containsString("Structured Input: チェック式設計条件入力")))
-                .andExpect(content().string(containsString("チェック項目からAPI / MCP設計候補を作成")))
+                .andExpect(content().string(containsString("チェック項目からAPI&amp;MCP設計候補を作成")))
                 .andExpect(content().string(containsString("check-hero-visual")))
                 .andExpect(content().string(containsString("対象利用者")))
-                .andExpect(content().string(containsString("業務要件からAPI設計・MCP設計のたたき台を作りたい利用者")))
+                .andExpect(content().string(containsString("業務要件からAPI&amp;MCP設計のたたき台を作りたい利用者")))
                 .andExpect(content().string(containsString("ユースケース、エンドポイント候補、データ項目、制約")))
                 .andExpect(content().string(containsString("チェック項目を編集する")))
                 .andExpect(content().string(containsString("トップページへ戻る")))
@@ -325,7 +325,7 @@ class BlueprintControllerTest {
                 .andExpect(view().name("result"))
                 .andExpect(content().string(containsString("API設計書は、人間による設計レビューやdocs転記に使います")))
                 .andExpect(content().string(containsString("MCP tools/resources/promptsは、AIエージェントへ公開する操作・参照範囲・定型指示の設計候補")))
-                .andExpect(content().string(containsString("API/MCP対応表は、人間向けAPIとAI向け操作入口の対応を確認するための表")))
+                .andExpect(content().string(containsString("API&amp;MCP対応表は、人間向けAPIとAI向け操作入口の対応を確認するための表")))
                 .andExpect(content().string(containsString("AI実装指示書は、APIM for Springを実装するためではなく")))
                 .andExpect(content().string(containsString("生成された設計候補をCodex等の実装支援AIへ渡し")))
                 .andExpect(content().string(containsString("対象業務アプリケーションの実装につなげるための成果物")))
@@ -333,13 +333,13 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("まず入力サマリーで、どの業務要件から生成されたかを確認します")))
                 .andExpect(content().string(containsString("RESTエンドポイント一覧で、人間向けAPI候補を確認します")))
                 .andExpect(content().string(containsString("MCP tools/resources/promptsで、AIエージェントに公開する操作候補を確認します")))
-                .andExpect(content().string(containsString("Markdown設計書やAI実装指示書を、レビューやCodex等への実装依頼に使います")))
+                .andExpect(content().string(containsString("API&amp;MCP設計書やAI実装指示書を、レビューやCodex等への実装依頼に使います")))
                 .andExpect(content().string(containsString("完全動作するMCPサーバー")))
                 .andExpect(content().string(containsString("DB永続化やマイグレーション")))
                 .andExpect(content().string(containsString("step4-result-page")))
                 .andExpect(content().string(containsString("step4-result-hero")))
                 .andExpect(content().string(containsString("Step 4: 設計候補生成結果")))
-                .andExpect(content().string(containsString("API / MCP設計候補を生成しました")))
+                .andExpect(content().string(containsString("API&amp;MCP設計候補を生成しました")))
                 .andExpect(content().string(containsString("step4-progress-stepper")))
                 .andExpect(content().string(containsString("step4-status-card")))
                 .andExpect(content().string(containsString("生成成果物の全体像")))
@@ -394,17 +394,17 @@ class BlueprintControllerTest {
                         .sessionAttr("blueprintResult", mockResult))
                 .andExpect(status().isOk())
                 .andExpect(view().name("blueprint-preview"))
-                .andExpect(content().string(containsString("Markdown設計書ダウンロード")))
+                .andExpect(content().string(containsString("API&amp;MCP設計書ダウンロード")))
                 .andExpect(content().string(containsString("/blueprint/download")))
                 .andExpect(content().string(containsString("設定を修正して再生成")))
                 .andExpect(content().string(containsString("/blueprint/edit")))
                 .andExpect(content().string(containsString("markdown-preview-page")))
                 .andExpect(content().string(containsString("markdown-preview-hero")))
-                .andExpect(content().string(containsString("Design Artifact: Markdown設計書レビュー")))
-                .andExpect(content().string(containsString("Markdown設計書をレビューできる状態です")))
+                .andExpect(content().string(containsString("Design Artifact: API&amp;MCP設計書レビュー")))
+                .andExpect(content().string(containsString("API&amp;MCP設計書をレビューできる状態です")))
                 .andExpect(content().string(containsString("markdown-preview-stepper")))
                 .andExpect(content().string(containsString("markdown-preview-body")))
-                .andExpect(content().string(containsString("Markdown設計書のダウンロード・再生成")))
+                .andExpect(content().string(containsString("API&amp;MCP設計書のダウンロード・再生成")))
                 .andExpect(content().string(containsString("download-primary-cta")))
                 .andExpect(content().string(containsString("non-interactive-icon")))
                 .andExpect(content().string(containsString("AI実装指示書プレビューへ")))
@@ -423,7 +423,7 @@ class BlueprintControllerTest {
         assertAppearsInOrder(
                 bottomActions,
                 "bottom-action-primary-group",
-                "Markdown設計書ダウンロード",
+                "API&amp;MCP設計書ダウンロード",
                 "AI実装指示書プレビューへ",
                 "設定を修正して再生成",
                 "bottom-action-nav-group",
@@ -663,7 +663,7 @@ class BlueprintControllerTest {
                 bottomActions,
                 "bottom-action-primary-group",
                 "AI実装指示書ダウンロード",
-                "Markdown設計書プレビューへ",
+                "API&amp;MCP設計書プレビューへ",
                 "設定を修正して再生成",
                 "bottom-action-nav-group",
                 "Step4へ戻る",
@@ -704,7 +704,7 @@ class BlueprintControllerTest {
         assertAppearsInOrder(
                 html,
                 "AI実装指示書ダウンロード",
-                "Markdown設計書プレビューへ",
+                "API&amp;MCP設計書プレビューへ",
                 "設定を修正して再生成");
     }
 
@@ -728,7 +728,7 @@ class BlueprintControllerTest {
         assertAppearsInOrder(
                 bottomActions,
                 "markdown-bottom-primary-actions",
-                "Markdown設計書ダウンロード",
+                "API&amp;MCP設計書ダウンロード",
                 "AI実装指示書プレビューへ",
                 "設定を修正して再生成",
                 "bottom-action-nav-group",

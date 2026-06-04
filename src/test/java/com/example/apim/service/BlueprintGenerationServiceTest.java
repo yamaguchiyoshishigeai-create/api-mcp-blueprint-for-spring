@@ -194,7 +194,7 @@ class BlueprintGenerationServiceTest {
                 .contains("- 対象システム種別: EC / 販売管理 / 資産・備品管理")
                 .contains("searchOrders")
                 .contains("searchInventoryReferences")
-                .contains("## 8. API/MCP対応方針")
+                .contains("## 8. API&MCP対応方針")
                 .doesNotContain("APIM for Spring のMVPを段階実装する");
     }
 

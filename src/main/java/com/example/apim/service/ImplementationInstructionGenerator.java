@@ -44,7 +44,7 @@ public class ImplementationInstructionGenerator {
     private void appendPurpose(StringBuilder sb) {
         sb.append("# implementation-instructions.md\n\n")
                 .append("## 1. 実装目的\n")
-                .append("この指示書は、生成されたAPI/MCP設計候補をもとに、対象業務アプリケーションを実装するための実装支援AI向け指示である。\n")
+                .append("この指示書は、生成されたAPI&MCP設計候補をもとに、対象業務アプリケーションを実装するための実装支援AI向け指示である。\n")
                 .append("入力された業務要件、対象ドメイン、必要操作、AI許可操作、セキュリティ注意点を実装材料として扱う。\n\n");
     }
 
@@ -172,12 +172,12 @@ public class ImplementationInstructionGenerator {
     }
 
     private void appendApiMcpPolicy(StringBuilder sb, BlueprintResult result) {
-        sb.append("## 8. API/MCP対応方針\n")
+        sb.append("## 8. API&MCP対応方針\n")
                 .append("人間向けREST APIとAI向けMCP toolを対応付け、同じ承認条件・監査ログ条件を適用する。\n\n")
                 .append("| API | MCP Tool | Notes |\n")
                 .append("|---|---|---|\n");
         if (empty(result.getApiMcpMappings())) {
-            sb.append("| 未生成 | 未生成 | API/MCP対応表が生成されていない |\n");
+            sb.append("| 未生成 | 未生成 | API&MCP対応表が生成されていない |\n");
         }
         for (ApiMcpMapping mapping : safeList(result.getApiMcpMappings())) {
             sb.append("| ").append(mapping.apiPath()).append(" | ")

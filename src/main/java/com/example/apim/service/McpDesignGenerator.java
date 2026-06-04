@@ -72,7 +72,7 @@ public class McpDesignGenerator {
         resources.add(new McpResourceCandidate(domainPath + "-audit-policy", "監査ログポリシー", "restricted"));
 
         prompts.add(new McpPromptCandidate("analyze-" + domainPath + "-requirements",
-                "業務要件からAPI/MCP境界を整理する",
+                "業務要件からAPI&MCP境界を整理する",
                 "入力要件を読み取り、API候補・MCP候補・承認要件を整理してください。"));
         prompts.add(new McpPromptCandidate("review-" + domainPath + "-safety",
                 "危険操作の承認・監査設計を確認する",
@@ -134,7 +134,7 @@ public class McpDesignGenerator {
         }
 
         prompts.add(new McpPromptCandidate("analyze-" + primaryDomainPath + "-cross-domain-requirements",
-                scopedPurpose("横断prompt", primaryDomain, "複数ドメイン利用場面とAPI/MCP境界を整理する"),
+                scopedPurpose("横断prompt", primaryDomain, "複数ドメイン利用場面とAPI&MCP境界を整理する"),
                 "利用場面: 主ドメインの業務操作に関連ドメイン参照を添えて判断材料を整理する。"
                         + " 禁止事項: 関連ドメインへの書き込み・削除・権限変更を自動実行しない。"
                         + " 人間確認条件: 主ドメイン更新、関連ドメイン境界越え、センシティブ情報を含む要約は承認者確認を必須にする。"));
@@ -503,7 +503,7 @@ public class McpDesignGenerator {
         boolean hasRelatedDomains = input.relatedDomains().stream().anyMatch(domain -> !domain.equals(primaryDomain.rawName()));
         if (!hasRelatedDomains) {
             prompts.add(new McpPromptCandidate("analyze-" + primaryDomain.path() + "-requirements",
-                    scopedPurpose("主ドメインprompt", primaryDomain.rawName(), "業務要件からAPI/MCP境界を整理する"),
+                    scopedPurpose("主ドメインprompt", primaryDomain.rawName(), "業務要件からAPI&MCP境界を整理する"),
                     "入力要件を読み取り、API候補・MCP候補・承認要件を整理してください。"));
             prompts.add(new McpPromptCandidate("review-" + primaryDomain.path() + "-safety",
                     scopedPurpose("主ドメインprompt", primaryDomain.rawName(), "危険操作の承認・監査設計を確認する"),
@@ -511,7 +511,7 @@ public class McpDesignGenerator {
             return prompts;
         }
         prompts.add(new McpPromptCandidate("analyze-" + primaryDomain.path() + "-cross-domain-requirements",
-                scopedPurpose("横断prompt", primaryDomain.rawName(), "複数ドメイン利用場面とAPI/MCP境界を整理する"),
+                scopedPurpose("横断prompt", primaryDomain.rawName(), "複数ドメイン利用場面とAPI&MCP境界を整理する"),
                 "利用場面: 主ドメインの業務操作に関連ドメイン参照を添えて判断材料を整理する。"
                         + " 禁止事項: 関連ドメインへの書き込み・削除・権限変更を自動実行しない。"
                         + " 人間確認条件: 主ドメイン更新、関連ドメイン境界越え、センシティブ情報を含む要約は承認者確認を必須にする。"));

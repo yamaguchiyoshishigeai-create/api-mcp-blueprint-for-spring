@@ -90,7 +90,7 @@ class BlueprintGenerationRegressionTest {
                 .contains("## 7. MCP tools候補")
                 .contains("## 8. MCP resources候補")
                 .contains("## 9. MCP prompts候補")
-                .contains("## 10. API/MCP対応表")
+                .contains("## 10. API&MCP対応表")
                 .contains("## 11. セキュリティ・承認・監査設計")
                 .contains("### 12.1 Request / Response DTO候補")
                 .contains("### 12.3 後続フェーズで具体化する事項")
