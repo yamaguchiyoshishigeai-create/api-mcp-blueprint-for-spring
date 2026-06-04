@@ -740,4 +740,24 @@ class BlueprintControllerTest {
                 "トップページへ戻る");
     }
 
+    @Test
+    void appCssDefinesStep4ArtifactTagAboveTitleLayout() throws Exception {
+        mockMvc.perform(get("/css/app.css"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("/* BEGIN APIM_UX_RESULT_CARD_TAG_ABOVE */")))
+                .andExpect(content().string(containsString(".step4-artifact-head-stacked {")))
+                .andExpect(content().string(containsString("display: flex;")))
+                .andExpect(content().string(containsString("flex-direction: column;")))
+                .andExpect(content().string(containsString("align-items: stretch;")))
+                .andExpect(content().string(containsString("justify-content: flex-start;")))
+                .andExpect(content().string(containsString("gap: 0.35rem;")))
+                .andExpect(content().string(containsString(".step4-artifact-head-stacked .step4-tag-top {")))
+                .andExpect(content().string(containsString("align-self: flex-end;")))
+                .andExpect(content().string(containsString("order: 1;")))
+                .andExpect(content().string(containsString(".step4-artifact-head-stacked h3 {")))
+                .andExpect(content().string(containsString("align-self: flex-start;")))
+                .andExpect(content().string(containsString("order: 2;")))
+                .andExpect(content().string(containsString("margin: 0;")));
+    }
+
 }

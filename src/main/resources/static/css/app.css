@@ -6037,12 +6037,21 @@ button.secondary.sample-button {
 
 /* BEGIN APIM_UX_RESULT_CARD_TAG_ABOVE */
 .step4-artifact-head-stacked {
+  display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.45rem;
+  justify-content: flex-start;
+  gap: 0.35rem;
 }
 
 .step4-artifact-head-stacked .step4-tag-top {
   align-self: flex-end;
+  order: 1;
+}
+
+.step4-artifact-head-stacked h3 {
+  align-self: flex-start;
+  order: 2;
+  margin: 0;
 }
 /* END APIM_UX_RESULT_CARD_TAG_ABOVE */
