@@ -1,42 +1,44 @@
-# TSK-072 viewport meta静的確認結果
+# TSK-072 viewport meta・スマホ幅確認結果
 
-- JOB_ID: `APIM_RECOVERY_002_TSK072_090_R02`
-- 実行日時: `2026-06-04T15:57:46`
+- JOB_ID(static): `APIM_RECOVERY_002_TSK072_090_R02`
+- JOB_ID(fix/verification): `APIM_RECOVERY_002_TSK072_090_R03`
+- PR: #214
 - branch: `chatgpt/apim-recovery-002-tsk072-090-r01`
+- head SHA: `8c4c7427af3012ad9a832eff65091063f8121a6f`
+- merge commit SHA: `45415beeb43ef8b47281c3b8204c455d1772e9d2`
 - 対象: `src/main/resources/templates/**/*.html`
-- 注意: 本結果は静的確認であり、スマホ幅の目視確認を完了扱いしない。
 
-## viewport meta確認
+## viewport meta静的確認
 
 - 確認テンプレート数: 8
 - 追加したテンプレート数: 0
 - 既に設定済みテンプレート数: 8
 - `<head>` 未検出テンプレート数: 0
+- 判定: PASS
 
-### 追加したファイル
+## ローカル検証
 
-- なし
+- `git diff --check`: PASS by ChatExec2 R03
+- `cmd /c mvnw.cmd test`: PASS by ChatExec2 R03
+- GitHub Actions: `template-checks` success on head SHA `8c4c7427af3012ad9a832eff65091063f8121a6f`
 
-### `<head>` 未検出で自動追加できなかったファイル
+## スマホ幅目視確認
 
-- なし
+- 確認方法: Local Spring Boot / `localhost:8080` / PC browser smartphone-width narrow viewport
+- PRコメント証跡: `#issuecomment-4621104314`
+- 判定: PASS
 
-## テスト結果
+### 確認画面
 
-- git diff --check: FAIL
+| Page | Result | Notes |
+|---|---|---|
+| Top / external AI bridge input | PASS | Cards, buttons, form controls, and step list fit within smartphone width. |
+| External AI prompt | PASS | Header, action buttons, prompt preview, external AI link section, and import form fit within smartphone width. |
+| External AI import result | PASS | JSON validation result, summary cards, object sections, and next-action area fit within smartphone width. |
+| Blueprint result | PASS | API/MCP output summary, card sections, warnings, next steps, and generated content remain usable at smartphone width. |
+| Help | PASS | Text, headings, lists, and navigation links reflow without blocking overlap or unusable controls. |
 
-```text
-warning: in the working copy of 'docs/00_プロジェクト管理/02_改善タスク管理/改善タスク課題一覧.md', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-072.md', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'src/main/resources/templates/external-ai-bridge.html', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'src/main/resources/templates/external-ai-prompt.html', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'src/main/resources/templates/help.html', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'src/main/resources/templates/index.html', LF will be replaced by CRLF the next time Git touches it
-docs/00_プロジェクト管理/02_改善タスク管理/未解決/TSK-072.md:92: new blank line at EOF.
-```
+## 判定
 
-## 残作業
-
-- ブラウザのスマホ幅、またはDevTools responsive modeで主要画面を目視確認する。
-- 表示崩れがあれば、追加TSKとして個票化する。
-- 目視確認完了までTSK-072は解決済みにしない。
+TSK-072のviewport meta静的確認およびスマホ幅目視確認は、PR #214上の証跡により完了。
+表示崩れや追加TSK化が必要な重大問題は確認されなかった。
