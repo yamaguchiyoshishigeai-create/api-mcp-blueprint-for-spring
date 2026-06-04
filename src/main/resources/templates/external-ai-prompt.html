@@ -3,19 +3,19 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>外部AI投入用プロンプト</title>
+    <title>外部AI投入用プロンプト生成</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
 <main class="container trial-ui-page external-ai-prompt-page">
     <section class="app-hero step2-hero-with-visual">
         <div class="app-hero-content">
-            <p class="trial-ui-note">Step 2: 外部AI投入用プロンプト</p>
-            <h1>外部AI投入用プロンプト</h1>
+            <p class="trial-ui-note">Step 2: 外部AI投入用プロンプト生成</p>
+            <h1>外部AI投入用プロンプト生成</h1>
             <p>生成されたMarkdownをコピーし、ChatGPT等の外部AIへ手動投入してください。APIMは外部AIへ自動送信せず、APIキーも保存しません。</p>
             <div class="app-hero-actions">
                 <button type="button" onclick="copyGeneratedPrompt()">生成プロンプトを一括コピー</button>
-                <a class="button-link secondary-link" href="/external-ai-bridge/prompt/download">Markdownダウンロード</a>
+                <a class="button-link secondary-link" href="/external-ai-bridge/prompt/download">生成プロンプトをファイルとしてダウンロード</a>
                 <a class="text-link" href="/external-ai-bridge">自由文入力トップへ戻る</a>
             </div>
             <span id="copyStatus" class="copy-feedback-bubble" aria-live="polite" hidden></span>
