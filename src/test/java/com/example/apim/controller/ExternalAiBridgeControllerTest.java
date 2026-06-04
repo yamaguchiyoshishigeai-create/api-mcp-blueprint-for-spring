@@ -303,7 +303,14 @@ class ExternalAiBridgeControllerTest {
                         .sessionAttr("blueprintInput", input))
                 .andExpect(status().isOk())
                 .andExpect(view().name("external-ai-import-result"))
-                .andExpect(content().string(containsString("v2抽出結果の確認")))
+                .andExpect(content().string(containsString("抽出結果の確認")))
+                .andExpect(content().string(not(containsString("v2抽出結果の確認"))))
+                .andExpect(content().string(containsString(
+                        "<a class=\"button-link hero-primary-action\" href=\"#generate\">設計候補生成へ進む</a>")))
+                .andExpect(content().string(containsString(
+                        "<a class=\"button-link secondary\" href=\"#review-form\">確認項目を修正する</a>")))
+                .andExpect(content().string(containsString(
+                        "<a class=\"button-link secondary\" href=\"#summary\">抽出結果を見る</a>")))
                 .andExpect(content().string(containsString("JSONの検証と反映準備が完了しました")))
                 .andExpect(content().string(containsString("step3-import-result-page")))
                 .andExpect(content().string(containsString("import-progress-stepper")))
