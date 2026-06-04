@@ -6034,3 +6034,15 @@ button.secondary.sample-button {
   }
 }
 /* END APIM_TSK090_R13_MARKDOWN_PREVIEW_ACTION_ROW_FIX */
+
+/* BEGIN APIM_UX_RESULT_CARD_TAG_ABOVE */
+.step4-artifact-head-stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+}
+
+.step4-artifact-head-stacked .step4-tag-top {
+  align-self: flex-end;
+}
+/* END APIM_UX_RESULT_CARD_TAG_ABOVE */
