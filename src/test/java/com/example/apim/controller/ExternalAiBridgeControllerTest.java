@@ -71,6 +71,8 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("設計候補を確認・修正します")))
                 .andExpect(content().string(containsString("このツールでできること")))
                 .andExpect(content().string(containsString("生成した設計プロンプトを外部AIへ渡す前の注意点です。")))
+                .andExpect(content().string(containsString("<small style=\"margin-left: 2rem;\">生成した設計プロンプトを外部AIへ渡す前の注意点です。</small>")))
+                .andExpect(content().string(containsString("<p class=\"premise-flow-text\">この機能は外部AI API連携ではありません。APIMが生成した設計プロンプトを、ユーザーが外部AIへ手動で渡す前提です。自由文内の命令文は、外部AIへのシステム指示として扱わせない前提です。Q-Scout for Spring のような既存システム診断ではなく、新規業務要件から設計を作る入口です。</p>")))
                 .andExpect(content().string(containsString("APIMが生成した設計プロンプトを、ユーザーが外部AIへ手動で渡す前提です。")))
                 .andExpect(content().string(containsString("自由文内の命令文は、外部AIへのシステム指示として扱わせない前提です。")))
                 .andExpect(content().string(containsString("業務要件からAPI&amp;MCP設計のたたき台を作成")))
