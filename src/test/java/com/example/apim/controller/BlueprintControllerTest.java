@@ -160,6 +160,8 @@ class BlueprintControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("result"))
                 .andExpect(content().string(containsString("Step 4: 設計候補生成結果")))
+                .andExpect(content().string(containsString("<h3 style=\"white-space: nowrap;\">API&amp;MCP設計書</h3>")))
+                .andExpect(content().string(containsString("<h3 style=\"white-space: nowrap;\">AI実装指示書</h3>")))
                 .andExpect(content().string(containsString("bottom-action-bar step4-bottom-actions")))
                 .andExpect(content().string(containsString("bottom-action-primary-group step4-forward-actions")))
                 .andExpect(content().string(containsString("bottom-action-nav-group step4-return-actions")))
