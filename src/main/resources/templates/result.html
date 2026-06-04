@@ -5,6 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APIM for Spring - 設計候補生成結果</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+
+<style>
+/* TSK-073 R02 post-hero result summary */
+.tsk073-result-summary {
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    border: 1px solid #dbe7f5;
+    border-radius: 18px;
+    background: #ffffff;
+    color: #172033;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+.tsk073-result-summary * {
+    box-sizing: border-box;
+}
+.tsk073-result-summary__header {
+    margin-bottom: 1rem;
+}
+.tsk073-result-summary__eyebrow {
+    margin: 0 0 0.35rem;
+    color: #2563eb;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+.tsk073-result-summary__title {
+    margin: 0 0 0.35rem;
+    color: #111827;
+    font-size: clamp(1.35rem, 2vw, 1.8rem);
+}
+.tsk073-result-summary__lead {
+    margin: 0;
+    color: #475569;
+    line-height: 1.7;
+}
+.tsk073-result-summary__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0.9rem;
+}
+.tsk073-result-summary__card {
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+.tsk073-result-summary__card h3 {
+    margin: 0 0 0.4rem;
+    color: #111827;
+    font-size: 1rem;
+}
+.tsk073-result-summary__card p {
+    margin: 0;
+    color: #475569;
+    line-height: 1.6;
+}
+.tsk073-result-summary__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+.tsk073-result-summary__actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.4rem;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 700;
+    text-decoration: none;
+}
+@media (max-width: 640px) {
+    .tsk073-result-summary {
+        margin: 1rem 0;
+        padding: 1rem;
+        border-radius: 14px;
+    }
+    .tsk073-result-summary__actions a {
+        width: 100%;
+    }
+}
+</style>
+
 </head>
 <body>
 <main class="container trial-ui-page step4-result-page">
@@ -33,6 +120,41 @@
             <div class="step4-hero-node step4-hero-docs">Docs</div>
         </div>
     </section>
+
+    <section id="tsk073-result-summary" class="tsk073-result-summary" aria-labelledby="tsk073-result-summary-title">
+        <div class="tsk073-result-summary__header">
+            <p class="tsk073-result-summary__eyebrow">結果サマリー</p>
+            <h2 id="tsk073-result-summary-title" class="tsk073-result-summary__title">生成成果物の確認ポイント</h2>
+            <p class="tsk073-result-summary__lead">
+                生成された設計候補を、成果物の種類・レビュー観点・次アクションに分けて確認できます。
+                既存のMarkdown設計書、AI実装指示書、生成結果詳細への導線はそのまま維持しています。
+            </p>
+        </div>
+        <div class="tsk073-result-summary__grid" aria-label="生成成果物の概要">
+            <article class="tsk073-result-summary__card">
+                <h3>API設計</h3>
+                <p>REST API候補、入力、出力、エラー処理、利用者向けの確認観点を見直します。</p>
+            </article>
+            <article class="tsk073-result-summary__card">
+                <h3>MCP設計</h3>
+                <p>MCP tools/resources/prompts候補と、AIエージェントに許可する操作範囲を確認します。</p>
+            </article>
+            <article class="tsk073-result-summary__card">
+                <h3>セキュリティ・監査</h3>
+                <p>承認必須操作、監査ログ、外部AI連携時の注意点を実装前に整理します。</p>
+            </article>
+            <article class="tsk073-result-summary__card">
+                <h3>実装引き継ぎ</h3>
+                <p>AI実装指示書やプレビューを確認し、開発・レビューへ進める準備を行います。</p>
+            </article>
+        </div>
+        <div class="tsk073-result-summary__actions" aria-label="結果サマリーからの導線">
+            <a href="#markdown-preview-section">Markdown設計書を確認</a>
+            <a href="#implementation-preview-section">AI実装指示書を確認</a>
+            <a href="#generated-detail-section">生成結果詳細を見る</a>
+        </div>
+    </section>
+
 
     <section class="workflow-steps compact-stepper step4-progress-stepper" aria-label="外部AIブリッジの作業ステップ">
         <article class="workflow-step step-completed"><span class="step-number">✓</span><div><h2>入力</h2><p>業務要件を入力済み</p></div></article>
@@ -89,7 +211,7 @@
                     </div>
                 </article>
                 <article class="step4-artifact-card step4-artifact-card-primary">
-                    <div class="step4-artifact-head"><h3>AI実装指示書</h3><span class="step4-tag">Implementation</span></div>
+                    <div class="step4-artifact-head"><h3 id="implementation-preview-section">AI実装指示書</h3><span class="step4-tag">Implementation</span></div>
                     <p>AI実装指示書は、APIM for Springを実装するためではなく、生成された設計候補をCodex等の実装支援AIへ渡し、対象業務アプリケーションの実装につなげるための成果物です。</p>
                     <div class="step4-mini-actions">
                         <a class="button-link hero-primary-action artifact-preview-primary" href="/blueprint/implementation-instructions">指示書をプレビュー</a>
@@ -322,7 +444,7 @@
         <div class="section-heading step4-section-heading">
             <span class="step4-section-icon">↔</span>
             <div>
-                <h2>API / MCP対応表</h2>
+                <h2 id="generated-detail-section">API / MCP対応表</h2>
                 <p>人間向けAPIとAI向け操作入口の対応を確認するための表です。</p>
             </div>
         </div>
@@ -350,7 +472,7 @@
         <div class="section-heading step4-section-heading">
             <span class="step4-section-icon">!</span>
             <div>
-                <h2>成果物プレビューへ進む</h2>
+                <h2 id="markdown-preview-section">成果物プレビューへ進む</h2>
                 <p>生成されたAPI&amp;MCP設計書とAI実装指示書をプレビューし、設計内容・実装依頼内容を確認してください。</p>
                 <div class="step4-preview-note"><strong>確認観点:</strong> 生成された設計候補をレビューする際は、AIに許可する操作範囲、承認必須操作、監査ログ要件を確認してください。</div>
             </div>
