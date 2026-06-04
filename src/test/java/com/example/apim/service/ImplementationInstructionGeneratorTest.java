@@ -32,7 +32,7 @@ class ImplementationInstructionGeneratorTest {
                 .contains("## 5. 実装するDTO / 入出力モデル")
                 .contains("## 6. 実装するController / Service候補")
                 .contains("## 7. 実装するMCP tools/resources/prompts")
-                .contains("## 8. API/MCP対応方針")
+                .contains("## 8. API&MCP対応方針")
                 .contains("## 9. 認証・認可・承認・人間確認・監査ログ方針")
                 .contains("## 10. 後続フェーズで具体化する事項")
                 .contains("## 11. テスト観点")
@@ -49,7 +49,7 @@ class ImplementationInstructionGeneratorTest {
                 .doesNotContain("- APIM for Spring本体の改修")
                 .doesNotContain("完全動作するMCPサーバーは実装しない")
                 .doesNotContain("- 入力フォーム")
-                .doesNotContain("- API/MCP候補生成")
+                .doesNotContain("- API&MCP候補生成")
                 .doesNotContain("- 結果表示とプレビュー")
                 .doesNotContain("BlueprintController");
     }

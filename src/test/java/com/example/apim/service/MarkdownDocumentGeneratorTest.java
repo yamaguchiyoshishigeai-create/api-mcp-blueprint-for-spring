@@ -34,7 +34,7 @@ class MarkdownDocumentGeneratorTest {
         assertThat(markdown).contains("## 5. 曖昧点・確認事項");
         assertThat(markdown).contains("## 6. REST API候補");
         assertThat(markdown).contains("## 7. MCP tools候補");
-        assertThat(markdown).contains("## 10. API/MCP対応表");
+        assertThat(markdown).contains("## 10. API&MCP対応表");
         assertThat(markdown).contains("## 11. セキュリティ・承認・監査設計");
     }
 

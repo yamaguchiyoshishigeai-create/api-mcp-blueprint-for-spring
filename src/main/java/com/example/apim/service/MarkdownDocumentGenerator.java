@@ -318,7 +318,7 @@ public class MarkdownDocumentGenerator {
     }
 
     private void appendApiMcpMappings(StringBuilder sb, BlueprintResult result) {
-        sb.append("## 10. API/MCP対応表\n\n")
+        sb.append("## 10. API&MCP対応表\n\n")
                 .append("| API | MCP Tool | Safety Notes |\n")
                 .append("|---|---|---|\n");
         for (ApiMcpMapping mapping : result.getApiMcpMappings()) {

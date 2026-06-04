@@ -11,10 +11,10 @@
     <section class="app-hero step4-result-hero" aria-labelledby="step4-page-title">
         <div class="app-hero-content">
             <p class="trial-ui-note">Step 4: 設計候補生成結果</p>
-            <h1 id="step4-page-title">API / MCP設計候補を生成しました</h1>
-            <p>確認済みの業務要件から、REST API設計、MCP tools/resources/prompts、Controller雛形、AI実装指示書の候補を生成しました。レビューと実装引き継ぎに必要な成果物を確認してください。</p>
+            <h1 id="step4-page-title">API&amp;MCP設計候補を生成しました</h1>
+            <p>確認済みの業務要件から、API&amp;MCP設計、Controller雛形、AI実装指示書の候補を生成しました。レビューと実装引き継ぎに必要な成果物を確認してください。</p>
             <div class="app-hero-actions step4-hero-actions">
-                <a class="button-link hero-primary-action" href="/blueprint/preview">Markdown設計書を確認</a>
+                <a class="button-link hero-primary-action" href="/blueprint/preview">API&amp;MCP設計書を確認</a>
                 <a class="button-link secondary" href="/blueprint/implementation-instructions">AI実装指示書を確認</a>
                 <a class="button-link secondary" href="#result-summary">生成結果を見る</a>
             </div>
@@ -45,9 +45,9 @@
         <div class="step4-status-icon">✓</div>
         <div>
             <h2>設計候補の生成が完了しました</h2>
-            <p>API設計書、MCP設計書、Controller雛形、AI実装指示書をレビューできる状態になりました。まずは成果物の全体像と安全・承認観点を確認してください。</p>
+            <p>API&amp;MCP設計書、Controller雛形、AI実装指示書をレビューできる状態になりました。まずは成果物の全体像と安全・承認観点を確認してください。</p>
         </div>
-        <a class="button-link hero-primary-action" href="/blueprint/download">Markdown設計書をダウンロード</a>
+        <a class="button-link hero-primary-action" href="/blueprint/download">API&amp;MCP設計書をダウンロード</a>
     </section>
 
     <section class="step4-main-grid" id="result-summary">
@@ -56,7 +56,7 @@
                 <span class="step4-section-icon">▣</span>
                 <div>
                     <h2>生成成果物の全体像</h2>
-                    <p>このページでは、生成されたRESTエンドポイント、DTO、Controller雛形、MCP設計候補、API/MCP対応、安全上の注意点を確認できます。</p>
+                    <p>このページでは、生成されたRESTエンドポイント、DTO、Controller雛形、MCP設計候補、API&amp;MCP対応、安全上の注意点を確認できます。</p>
                 </div>
             </div>
 
@@ -81,7 +81,7 @@
 
             <div class="step4-artifact-grid">
                 <article class="step4-artifact-card step4-artifact-card-primary">
-                    <div class="step4-artifact-head"><h3>API&amp;MCP設計書</h3><span class="step4-tag">Markdown</span></div>
+                    <div class="step4-artifact-head step4-artifact-head-stacked"><span class="step4-tag step4-tag-top">Markdown</span><h3 style="white-space: nowrap;">API&amp;MCP設計書</h3></div>
                     <p>REST API設計、MCP tools/resources/prompts、Controller雛形、セキュリティ観点をまとめて確認できる主成果物です。</p>
                     <div class="step4-mini-actions">
                         <a class="button-link hero-primary-action artifact-preview-primary" href="/blueprint/preview">設計書をプレビュー</a>
@@ -89,7 +89,7 @@
                     </div>
                 </article>
                 <article class="step4-artifact-card step4-artifact-card-primary">
-                    <div class="step4-artifact-head"><h3>AI実装指示書</h3><span class="step4-tag">Implementation</span></div>
+                    <div class="step4-artifact-head step4-artifact-head-stacked"><span class="step4-tag step4-tag-top">Implementation</span><h3 style="white-space: nowrap;">AI実装指示書</h3></div>
                     <p>AI実装指示書は、APIM for Springを実装するためではなく、生成された設計候補をCodex等の実装支援AIへ渡し、対象業務アプリケーションの実装につなげるための成果物です。</p>
                     <div class="step4-mini-actions">
                         <a class="button-link hero-primary-action artifact-preview-primary" href="/blueprint/implementation-instructions">指示書をプレビュー</a>
@@ -120,7 +120,7 @@
                     <li>生成成果物の全体像を確認する</li>
                     <li>REST APIとMCP toolsの対応を確認する</li>
                     <li>承認・監査・危険操作の注意点をレビューする</li>
-                    <li>Markdown設計書とAI実装指示書を保存する</li>
+                    <li>API&amp;MCP設計書とAI実装指示書を保存する</li>
                 </ul>
             </section>
             <section class="form-section step4-side-card step4-risk-card">
@@ -133,7 +133,7 @@
             </section>
             <section class="form-section step4-side-card">
                 <h2><span class="step4-round-icon green">→</span>次のアクション</h2>
-                <p>Markdown設計書とAI実装指示書をレビューし、必要に応じて設定を修正して再生成してください。</p>
+                <p>API&amp;MCP設計書とAI実装指示書をレビューし、必要に応じて設定を修正して再生成してください。</p>
                 <div class="step4-side-actions">
                     <a class="button-link hero-primary-action" href="/blueprint/implementation-instructions">AI実装指示書を見る</a>
                     <a class="button-link secondary" href="/blueprint/edit">設定を修正して再生成</a>
@@ -157,8 +157,8 @@
                     <li>まず入力サマリーで、どの業務要件から生成されたかを確認します。</li>
                     <li>RESTエンドポイント一覧で、人間向けAPI候補を確認します。</li>
                     <li>MCP tools/resources/promptsで、AIエージェントに公開する操作候補を確認します。</li>
-                    <li>API/MCP対応表は、人間向けAPIとAI向け操作入口の対応を確認するための表です。</li>
-                    <li>Markdown設計書やAI実装指示書を、レビューやCodex等への実装依頼に使います。</li>
+                    <li>API&amp;MCP対応表は、人間向けAPIとAI向け操作入口の対応を確認するための表です。</li>
+                    <li>API&amp;MCP設計書やAI実装指示書を、レビューやCodex等への実装依頼に使います。</li>
                 </ul>
             </section>
             <section>
@@ -322,7 +322,7 @@
         <div class="section-heading step4-section-heading">
             <span class="step4-section-icon">↔</span>
             <div>
-                <h2>API / MCP対応表</h2>
+                <h2>API&amp;MCP対応表</h2>
                 <p>人間向けAPIとAI向け操作入口の対応を確認するための表です。</p>
             </div>
         </div>
