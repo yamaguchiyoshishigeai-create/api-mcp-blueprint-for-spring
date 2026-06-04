@@ -68,7 +68,7 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("設計候補を確認・修正します")))
                 .andExpect(content().string(containsString("このツールでできること")))
                 .andExpect(content().string(containsString("業務要件からAPI&amp;MCP設計のたたき台を作成")))
-                .andExpect(content().string(containsString("Spring Boot / MCP Server実装前に設計成果物を整備")))
+                .andExpect(content().string(containsString("Spring Boot向けAPI&amp;MCP設計成果物を整備")))
                 .andExpect(content().string(containsString("API&amp;MCP設計書")))
                 .andExpect(content().string(containsString("MCP tools/resources/prompts候補")))
                 .andExpect(content().string(containsString("Controller雛形")))
