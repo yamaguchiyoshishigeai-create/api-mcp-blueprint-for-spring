@@ -5,6 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APIM for Spring - 設計候補生成結果</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+<style>
+
+/* TSK-073 result summary */
+.result-summary-panel {
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    border: 1px solid #d7e2f0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
+}
+.result-summary-panel__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+}
+.result-summary-panel__eyebrow {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #2563eb;
+}
+.result-summary-panel__title {
+    margin: 0;
+    font-size: clamp(1.35rem, 2vw, 1.85rem);
+}
+.result-summary-panel__description {
+    margin: 0;
+    color: #42526e;
+}
+.result-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.85rem;
+}
+.result-summary-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    min-height: 100%;
+    padding: 1rem;
+    border: 1px solid #dbe7f5;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.07);
+}
+.result-summary-card__label {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748b;
+}
+.result-summary-card__title {
+    margin: 0;
+    font-size: 1.02rem;
+}
+.result-summary-card__text {
+    margin: 0;
+    color: #475569;
+    line-height: 1.55;
+}
+.result-summary-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+.result-summary-actions a {
+    text-decoration: none;
+}
+
+</style>
 </head>
 <body>
 <main class="container trial-ui-page step4-result-page">
@@ -12,6 +86,45 @@
         <div class="app-hero-content">
             <p class="trial-ui-note">Step 4: 設計候補生成結果</p>
             <h1 id="step4-page-title">API / MCP設計候補を生成しました</h1>
+
+<section id="result-summary-overview" class="result-summary-panel" aria-labelledby="result-summary-title">
+    <div class="result-summary-panel__header">
+        <p class="result-summary-panel__eyebrow">Generated blueprint summary</p>
+        <h2 id="result-summary-title" class="result-summary-panel__title">生成結果の全体像</h2>
+        <p class="result-summary-panel__description">
+            この画面では、生成されたAPI設計、MCP設計、セキュリティ/承認/監査メモ、実装指示書を確認できます。
+            まず成果物の種類と利用場面を把握し、必要に応じてコピー、ダウンロード、プレビューへ進んでください。
+        </p>
+    </div>
+    <div class="result-summary-grid" aria-label="生成成果物サマリー">
+        <article class="result-summary-card">
+            <p class="result-summary-card__label">API Design</p>
+            <h3 class="result-summary-card__title">API設計</h3>
+            <p class="result-summary-card__text">エンドポイント、入力、出力、バリデーション観点を確認するための主要成果物です。</p>
+        </article>
+        <article class="result-summary-card">
+            <p class="result-summary-card__label">MCP Design</p>
+            <h3 class="result-summary-card__title">MCP設計</h3>
+            <p class="result-summary-card__text">MCPツール定義、連携方針、実装時に確認すべき接続観点を整理します。</p>
+        </article>
+        <article class="result-summary-card">
+            <p class="result-summary-card__label">Security / Audit</p>
+            <h3 class="result-summary-card__title">セキュリティ・監査</h3>
+            <p class="result-summary-card__text">認可、監査ログ、入力値、外部連携時の注意点を実装前に確認できます。</p>
+        </article>
+        <article class="result-summary-card">
+            <p class="result-summary-card__label">Implementation</p>
+            <h3 class="result-summary-card__title">実装指示書</h3>
+            <p class="result-summary-card__text">開発者またはAI実装支援へ渡すための作業単位、手順、確認観点を確認できます。</p>
+        </article>
+    </div>
+    <div class="result-summary-actions" aria-label="結果画面の主な導線">
+        <a href="#result-summary-overview">サマリーを確認</a>
+        <a href="#download-section">ダウンロード導線へ</a>
+        <a href="#preview-section">プレビュー導線へ</a>
+    </div>
+</section>
+
             <p>確認済みの業務要件から、REST API設計、MCP tools/resources/prompts、Controller雛形、AI実装指示書の候補を生成しました。レビューと実装引き継ぎに必要な成果物を確認してください。</p>
             <div class="app-hero-actions step4-hero-actions">
                 <a class="button-link hero-primary-action" href="/blueprint/preview">Markdown設計書を確認</a>
@@ -350,7 +463,7 @@
         <div class="section-heading step4-section-heading">
             <span class="step4-section-icon">!</span>
             <div>
-                <h2>成果物プレビューへ進む</h2>
+                <h2 id="preview-section">成果物プレビューへ進む</h2>
                 <p>生成されたAPI&amp;MCP設計書とAI実装指示書をプレビューし、設計内容・実装依頼内容を確認してください。</p>
                 <div class="step4-preview-note"><strong>確認観点:</strong> 生成された設計候補をレビューする際は、AIに許可する操作範囲、承認必須操作、監査ログ要件を確認してください。</div>
             </div>
