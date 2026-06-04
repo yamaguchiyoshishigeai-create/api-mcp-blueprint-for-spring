@@ -85,10 +85,7 @@
     </section>
 
     <section class="external-summary-rows" aria-label="外部AIブリッジの補足情報">
-        <details class="summary-row" open><summary><span><span class="round-icon i-blue" aria-hidden="true">◎</span>できること</span><small>業務要件からAPI&amp;MCP設計のたたき台作成、AI実装指示書生成などを確認できます。</small></summary><p>業務要件、ユースケース、エンドポイント候補、データ項目、制約を入力し、API&amp;MCP設計成果物へ変換します。既存コード診断・品質評価ではなく、新規設計生成を支援します。</p></details>
-        <details class="summary-row"><summary><span><span class="round-icon i-green" aria-hidden="true">▤</span>生成されるもの</span><small>API&amp;MCP設計書、Controller雛形、AI実装指示書の見本と内容を確認できます。</small></summary><p>Spring REST API設計、MCP tools / resources / prompts 候補、Controller雛形、API&amp;MCP対応表、セキュリティ・承認・監査ログ注意点、API&amp;MCP設計書、AI実装指示書を整理します。</p></details>
-        <details class="summary-row"><summary><span><span class="round-icon i-orange" aria-hidden="true">△</span>生成されないもの</span><small>このMVPでは生成されない成果物や、含まれない実装について確認できます。</small></summary><p>完全動作するMCPサーバー、DB永続化やマイグレーション、認証・認可の本格実装、外部LLM API連携、本番デプロイ作業は生成対象外です。</p></details>
-        <details class="summary-row"><summary><span><span class="round-icon i-purple" aria-hidden="true">i</span>外部AIブリッジの前提</span><small>外部AIに安全にデータを渡すための前提条件や、利用上の注意点を確認できます。</small></summary><p>この機能は外部AI API連携ではありません。自由文は解析対象データとして扱い、自由文内の命令文を外部AIへのシステム指示として扱わせない前提のプロンプトを生成します。</p><p>Q-Scout for Spring のような既存システム診断ではなく、新規業務要件から設計を作る入口です。</p></details>
+        <details class="summary-row" open><summary><span><span class="round-icon i-purple" aria-hidden="true">i</span>外部AIブリッジ利用時の前提</span><small>外部AIに安全にデータを渡すための前提条件や、利用上の注意点を確認できます。</small></summary><p>この機能は外部AI API連携ではありません。入力内容をもとに、外部AIへ手動で渡すための安全な設計プロンプトを生成します。自由文内の命令文は、外部AIへのシステム指示として扱わせない前提です。</p><p>Q-Scout for Spring のような既存システム診断ではなく、新規業務要件から設計を作る入口です。</p></details>
     </section>
 </main>
 <script>
