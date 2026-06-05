@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APIM for Spring - 設計候補生成結果</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/result-summary.css}">
 </head>
 <body>
 <main class="container trial-ui-page step4-result-page">
@@ -31,6 +32,40 @@
             <div class="step4-hero-node step4-hero-mcp">MCP</div>
             <div class="step4-hero-node step4-hero-code">&lt;/&gt;</div>
             <div class="step4-hero-node step4-hero-docs">Docs</div>
+        </div>
+    </section>
+
+    <section id="tsk073-result-summary" class="tsk073-result-summary" aria-labelledby="tsk073-result-summary-title">
+        <div class="tsk073-result-summary__header">
+            <p class="tsk073-result-summary__eyebrow">結果サマリー</p>
+            <h2 id="tsk073-result-summary-title" class="tsk073-result-summary__title">生成成果物の確認ポイント</h2>
+            <p class="tsk073-result-summary__lead">
+                生成された設計候補を、成果物の種類・レビュー観点・次アクションに分けて確認できます。
+                API&amp;MCP設計書、AI実装指示書、生成結果詳細への導線をここから確認してください。
+            </p>
+        </div>
+        <div class="tsk073-result-summary__grid" aria-label="生成成果物の概要">
+            <article class="tsk073-result-summary__card">
+                <h3>API設計</h3>
+                <p>REST API候補、DTO候補、Controller雛形を確認し、対象業務アプリケーションの設計たたき台として使います。</p>
+            </article>
+            <article class="tsk073-result-summary__card">
+                <h3>MCP設計</h3>
+                <p>MCP tools/resources/prompts候補と、AIエージェントに許可する操作範囲を確認します。</p>
+            </article>
+            <article class="tsk073-result-summary__card">
+                <h3>セキュリティ・監査</h3>
+                <p>承認必須操作、監査ログ、危険操作の注意点を実装前に整理します。</p>
+            </article>
+            <article class="tsk073-result-summary__card">
+                <h3>実装引き継ぎ</h3>
+                <p>API&amp;MCP設計書とAI実装指示書を保存し、Codex等の実装支援AIへ渡す準備を行います。</p>
+            </article>
+        </div>
+        <div class="tsk073-result-summary__actions" aria-label="結果サマリーからの導線">
+            <a href="/blueprint/preview">API&amp;MCP設計書を確認</a>
+            <a href="/blueprint/implementation-instructions">AI実装指示書を確認</a>
+            <a href="#result-summary">生成結果詳細を見る</a>
         </div>
     </section>
 
