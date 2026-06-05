@@ -30,6 +30,32 @@ APIM-008で Maven Wrapper を追加済みです。ローカルPCにMaven本体�
 - `implementation-instructions.md`（AI実装入力）
 - 要件・設計・運用ドキュメント群（`docs/`）
 
+## 画面イメージ
+
+APIM for Spring は、業務要件入力から外部AI投入用プロンプト生成、API&MCP設計書、AI実装指示書の確認までを一連のWeb画面で進めます。
+
+### トップ画面
+
+![APIM top screen](docs/80_リリース/10_表示確認スクリーンショット/apim-01-top.png)
+
+### Step1 入力画面
+
+![APIM input screen](docs/80_リリース/10_表示確認スクリーンショット/apim-02-input.png)
+
+### 外部AI投入用プロンプト生成画面
+
+![APIM external AI prompt screen](docs/80_リリース/10_表示確認スクリーンショット/apim-03-external-ai-prompt.png)
+
+### Step4 結果サマリー画面
+
+![APIM result summary screen](docs/80_リリース/10_表示確認スクリーンショット/apim-04-result-summary.png)
+
+### プレビュー画面
+
+![APIM preview screen](docs/80_リリース/10_表示確認スクリーンショット/apim-05-preview.png)
+
+スクリーンショットの配置・命名方針は `docs/80_リリース/10_表示確認スクリーンショット/README.md` を参照してください。
+
 ## APIMとQ-Scoutの違い
 
 - APIM for Spring: 新規業務要件から設計を生成する設計生成系
