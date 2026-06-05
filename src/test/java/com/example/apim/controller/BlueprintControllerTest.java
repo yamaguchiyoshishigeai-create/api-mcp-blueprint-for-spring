@@ -81,7 +81,10 @@ class BlueprintControllerTest {
                 .andExpect(content().string(containsString("fillSample('internal-approval')")))
                 .andExpect(content().string(containsString("fillSample('support-inquiry')")))
                 .andExpect(content().string(containsString("fillSample('contract-billing')")))
-                .andExpect(content().string(containsString("restoreCheckedItemsFromBlueprintInput")))
+                .andExpect(content().string(containsString("window.APIM_CHECK_INPUT_STATE")))
+                .andExpect(content().string(containsString("/js/check-input.js")))
+                .andExpect(content().string(containsString("fillSample(\'order-inventory\')")))
+                .andExpect(content().string(not(containsString("const systemTypePresets ="))))
                 .andExpect(content().string(containsString("設計候補を生成する")));
     }
 
@@ -470,6 +473,7 @@ class BlueprintControllerTest {
                 .andExpect(view().name("index"))
                 .andExpect(content().string(containsString("顧客検索と問い合わせ回答を行う")))
                 .andExpect(content().string(containsString("顧客管理 / 問い合わせ管理")))
+                .andExpect(content().string(containsString("/js/check-input.js")))
                 .andExpect(content().string(containsString("customer-crm")))
                 .andExpect(content().string(containsString("問い合わせ管理")))
                 .andExpect(content().string(containsString("顧客検索")))
@@ -497,9 +501,6 @@ class BlueprintControllerTest {
 
         mockMvc.perform(get("/blueprint/edit").session(session))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("function syncOperationTextareaPreservingFreeForm(target)")))
-                .andExpect(content().string(containsString("syncOperationTextareaPreservingFreeForm('requiredOperations')")))
-                .andExpect(content().string(containsString("syncOperationTextareaPreservingFreeForm('allowedAiOperations')")))
                 .andExpect(content().string(containsString("顧客検索")))
                 .andExpect(content().string(containsString("問い合わせ詳細取得")))
                 .andExpect(content().string(containsString("問い合わせ要約")));
@@ -590,8 +591,6 @@ class BlueprintControllerTest {
 
         mockMvc.perform(get("/blueprint/edit").session(session))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("restoreCheckedItemsFromBlueprintInput")))
-                .andExpect(content().string(containsString("restoreCheckboxGroupFromCurrentValues")))
                 .andExpect(content().string(containsString("systemTypePresets")))
                 .andExpect(content().string(containsString("domainCatalog")))
                 .andExpect(content().string(containsString("approvalRequiredOperations")))
@@ -621,13 +620,8 @@ class BlueprintControllerTest {
 
         mockMvc.perform(get("/blueprint/edit").session(session))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("normalizeRestoreText")))
-                .andExpect(content().string(containsString("isRestoredCheckboxValueMatch")))
-                .andExpect(content().string(containsString("normalizedRestored.includes('外部')")))
-                .andExpect(content().string(containsString("normalizedCandidate === '詳細参照'")))
                 .andExpect(content().string(containsString("注文ステータス更新")))
-                .andExpect(content().string(containsString("外部通知送信")))
-                .andExpect(content().string(containsString("restoreCheckedItemsFromBlueprintInput();")));
+                .andExpect(content().string(containsString("外部通知送信")));
     }
 
     @Test
