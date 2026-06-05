@@ -103,10 +103,9 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("営業案件管理")))
                 .andExpect(content().string(containsString("ナレッジ検索")))
                 .andExpect(content().string(containsString("insertFreeTextSample")))
-                .andExpect(content().string(containsString("currentText.includes(nextText)")))
-                .andExpect(content().string(containsString("また、")))
                 .andExpect(content().string(containsString("clearFreeText")))
-                .andExpect(content().string(containsString("data-sample")));
+                .andExpect(content().string(containsString("data-sample")))
+                .andExpect(content().string(containsString("/js/external-ai-bridge.js")));
     }
 
 
@@ -151,13 +150,9 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("json-import-card")))
                 .andExpect(content().string(containsString("prompt-copy-toolbar")))
                 .andExpect(content().string(containsString("copy-feedback-bubble")))
-                .andExpect(content().string(containsString("コピーされました")))
-                .andExpect(content().string(containsString("window.setTimeout")))
                 .andExpect(content().string(containsString("生成プロンプトを一括コピー")))
                 .andExpect(content().string(containsString("copyGeneratedPrompt")))
-                .andExpect(content().string(containsString("navigator.clipboard.writeText")))
-                .andExpect(content().string(containsString("promptText.value || promptText.textContent || promptText.innerText")))
-                .andExpect(content().string(containsString("document.execCommand")))
+                .andExpect(content().string(containsString("/js/external-ai-prompt.js")))
                 .andExpect(content().string(containsString("外部AI公式リンク集")))
                 .andExpect(content().string(containsString("ChatGPT公式サイトを別タブで開く")))
                 .andExpect(content().string(containsString("Claude公式サイトを別タブで開く")))
@@ -169,7 +164,6 @@ class ExternalAiBridgeControllerTest {
                 .andExpect(content().string(containsString("ファイルアップロードで取り込む")))
                 .andExpect(content().string(containsString("貼り付けで取り込む")))
                 .andExpect(content().string(containsString("switchJsonInputMode")))
-                .andExpect(content().string(containsString("DOMContentLoaded")))
                 .andExpect(content().string(containsString("jsonFilePanel")))
                 .andExpect(content().string(containsString("jsonPastePanel")))
                 .andExpect(content().string(containsString("bottom-action-bar prompt-json-actions")))
